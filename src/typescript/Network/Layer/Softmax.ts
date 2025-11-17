@@ -1,0 +1,22 @@
+import { CalcMatrix2D } from "../../Math";
+import { LayerType } from "../../types";
+import { AbstractLayer1D } from "./AbstractLayer1D";
+
+class SoftmaxLayer extends AbstractLayer1D {
+  activationAsync(value: CalcMatrix2D): Promise<CalcMatrix2D> {
+    throw new Error("Method not implemented.");
+  }
+  activation(m: CalcMatrix2D): CalcMatrix2D {
+    return m.softmax();
+  }
+
+  getType(): LayerType {
+    return LayerType.softmax;
+  }
+
+  derivative(delta: CalcMatrix2D): CalcMatrix2D {
+    return delta.softmaxDerivative();
+  }
+}
+
+export { SoftmaxLayer };
