@@ -1,4 +1,4 @@
-import { Layers, LayerType } from "../../../types";
+import { Layers } from "../../../types";
 import { Backpropagation1Dto1D } from "./Backpropagation1Dto1D";
 import { AbstractBackPropagation } from "./AbstractBackpropagation";
 
@@ -8,8 +8,7 @@ export class BackpropagationFactory {
       if (previousLayer.is1D()) {
         return new Backpropagation1Dto1D(layer, previousLayer);
       }
-    }
-    else {
+    } else {
       if (layer.is1D()) {
         return new Backpropagation1Dto1D(layer, previousLayer);
       }

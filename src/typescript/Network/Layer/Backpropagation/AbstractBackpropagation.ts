@@ -16,6 +16,6 @@ export abstract class AbstractBackPropagation {
     regularization: number,
     layer: Layers,
     sigma: CalcMatrix2D,
-    previousSigma: CalcMatrix2D
+    previousSigma: CalcMatrix2D,
   ): CalcMatrix2D;
 }

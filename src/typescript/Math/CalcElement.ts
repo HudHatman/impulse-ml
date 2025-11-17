@@ -107,7 +107,7 @@ export class CalcElement {
     return this;
   }
 
-  public reluBackpropagation(number: number) {
+  public reluBackpropagation() {
     this.calcSync((calc) => {
       calc.reluBackpropagation();
     });
@@ -131,18 +131,17 @@ export class CalcElement {
   }
 
   private getCalcSandbox(async = false) {
-    const that = this;
     return {
       sum: () => {
         const result = new CalcScalar().allocate();
-        return that._call("algebra", "algebra_sum", async)([that, result])(result);
+        return this._call("algebra", "algebra_sum", async)([this, result])(result);
       },
       setZeros: () => {
-        return that._call("matrix", "matrix_set_zeros", async)([that])(that);
+        return this._call("matrix", "matrix_set_zeros", async)([this])(this);
       },
       setRandom: (number: number) => {
         const nb = new CalcScalar().allocate().set([number]);
-        return that._call("matrix", "matrix_set_random", async)([that, nb])(that);
+        return this._call("matrix", "matrix_set_random", async)([this, nb])(this);
       },
     };
   }

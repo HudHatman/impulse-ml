@@ -7,7 +7,7 @@ abstract class AbstractNetworkBuilder {
   protected lastLayer: Layers | null = null;
   protected network: Networks | null = null;
 
-  constructor(dimension: Dimension, type = "DNN") {
+  constructor(dimension: Dimension) {
     this.dimensions = dimension;
     this.network = new Network(this.dimensions);
   }

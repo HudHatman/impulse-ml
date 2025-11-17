@@ -1,11 +1,6 @@
 import Math from "./Math";
 import { NetworkBuilder1D } from "./Network/Builder";
-import {
-  SoftmaxLayer,
-  LogisticLayer,
-  ReluLayer,
-  TanhLayer,
-} from "./Network/Layer";
+import { SoftmaxLayer, LogisticLayer, ReluLayer, TanhLayer } from "./Network/Layer";
 import {
   OptimizerAdam,
   OptimizerGradientDescent,
@@ -47,11 +42,9 @@ import { SourceCSV } from "./Dataset/Builder/Source";
 import { TextFile } from "./Dataset/Builder/VocabularySource";
 
 import {
-  CallbackDatasetModifier,
   MinMaxScalingDatasetModifier,
   MissingDataDatasetModifier,
   ShuffleDatasetModifier,
-  CategoryDatasetModifier,
   SplitDatasetModifier,
 } from "./Dataset/Modifier";
 
@@ -63,11 +56,9 @@ const Dataset = {
   Dataset: DatasetDataset,
 };
 const DatasetModifier = {
-  CallbackDatasetModifier,
   MinMaxScalingDatasetModifier,
   MissingDataDatasetModifier,
   ShuffleDatasetModifier,
-  CategoryDatasetModifier,
   SplitDatasetModifier,
 };
 const DatasetBuilderSource = {

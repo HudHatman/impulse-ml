@@ -220,10 +220,10 @@ void algebra_tanh(MEMORY * inputs, MEMORY * outputs) {
     result = m1.array().tanh();
 }
 void algebra_tanh_derivative(MEMORY * inputs, MEMORY * outputs) {
-    Eigen::Map<Eigen::MatrixXd> y(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> z(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
-    result = 1.0 - y.array().square();
+    result = 1.0 - z.array().tanh().square();
 }
 
 void algebra_sqrt(MEMORY * inputs, MEMORY * outputs) {

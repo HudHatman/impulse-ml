@@ -8,7 +8,7 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
     numberOfExamples: number,
     regularization: number,
     layer: Layers,
-    sigma: CalcMatrix2D
+    sigma: CalcMatrix2D,
   ): CalcMatrix2D {
     const previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
     const delta = sigma.dot(previousActivations.transpose().conjugate());
@@ -16,24 +16,23 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
     this.layer.gb = sigma.rowwiseSum().divide(numberOfExamples);
 
     if (this.previousLayer !== null) {
-      // @ts-ignore
       const result = this.layer.W.transpose().dot(sigma);
       if (result.rows() !== previousActivations.rows() || result.cols() !== previousActivations.cols()) {
         throw new Error(
-          `Dimension error 1. (${result.rows()}, ${result.cols()}) | (${previousActivations.rows()}, ${previousActivations.cols()})`
+          `Dimension error 1. (${result.rows()}, ${result.cols()}) | (${previousActivations.rows()}, ${previousActivations.cols()})`,
         );
       }
       if (this.layer.gW.rows() !== this.layer.W.rows() || this.layer.gW.cols() !== this.layer.W.cols()) {
         throw new Error(
-          `Dimension error 2. (${this.layer.gW.rows()}, ${this.layer.gW.cols()}) | (${this.layer.W.rows()}, ${this.layer.W.cols()})`
+          `Dimension error 2. (${this.layer.gW.rows()}, ${this.layer.gW.cols()}) | (${this.layer.W.rows()}, ${this.layer.W.cols()})`,
         );
       }
       if (this.layer.gb.rows() !== this.layer.b.rows() || this.layer.gb.cols() !== this.layer.b.cols()) {
         throw new Error(
-          `Dimension error 3. (${this.layer.gb.rows()}, ${this.layer.gb.cols()}) | (${this.layer.b.rows()}, ${this.layer.b.cols()})`
+          `Dimension error 3. (${this.layer.gb.rows()}, ${this.layer.gb.cols()}) | (${this.layer.b.rows()}, ${this.layer.b.cols()})`,
         );
       }
-      return result.multiply(this.layer.previousLayer.derivative(this.layer.previousLayer.A));
+      return result.multiply(this.layer.previousLayer.derivative(this.layer.previousLayer.Z));
     }
     return new CalcMatrix2D();
   }

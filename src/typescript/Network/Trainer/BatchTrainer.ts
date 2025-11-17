@@ -42,8 +42,8 @@ export class BatchTrainer extends AbstractTrainer {
         console.log(
           `Iteration: ${i + 1} | Cost: ${round(currentResult.cost, 5)} | Accuracy: ${round(
             currentResult.accuracy,
-            2
-          )}% | Time: ${(endTime - startTime) / 1000} s.`
+            2,
+          )}% | Time: ${(endTime - startTime) / 1000} s.`,
         );
       }
 

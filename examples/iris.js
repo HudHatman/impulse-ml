@@ -12,13 +12,13 @@ const path = require("path");
 
 const builder = new NetworkBuilder1D([4]);
 builder
-  .createLayer(TanhLayer, (layer) => {
+  .createLayer(ReluLayer, (layer) => {
     layer.setSize(8);
   })
-  .createLayer(TanhLayer, (layer) => {
+  .createLayer(ReluLayer, (layer) => {
     layer.setSize(6);
   })
-  .createLayer(TanhLayer, (layer) => {
+  .createLayer(SoftmaxLayer, (layer) => {
     layer.setSize(3);
   });
 
@@ -37,10 +37,10 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
       async (outputDataset) => {
         const x = inputDataset.exampleAt(0);
         inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
-        const trainer = new BatchTrainer(network, new OptimizerAdagrad(), new MeanSquaredErrorCost());
+        const trainer = new BatchTrainer(network, new OptimizerAdagrad(), new CrossEntropyCost());
         trainer.setIterations(500);
         trainer.setLearningRate(0.1);
-        trainer.setRegularization(0.001);
+        trainer.setRegularization(0.1);
         trainer.setStepCallback(() => {
           //console.log("forward", network.forward(x).get(), outputDataset.data.get());
         });

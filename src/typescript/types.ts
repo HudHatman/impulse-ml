@@ -10,10 +10,5 @@ export enum LayerType {
   relu = "relu",
 }
 
-export type Layers =
-  | LogisticLayer
-  | SoftmaxLayer
-  | TanhLayer
-  | ReluLayer
-  | AbstractLayer1D;
+export type Layers = LogisticLayer | SoftmaxLayer | TanhLayer | ReluLayer | AbstractLayer1D;
 export type Layers1D = LogisticLayer | SoftmaxLayer | TanhLayer | ReluLayer;

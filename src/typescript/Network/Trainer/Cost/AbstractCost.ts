@@ -5,6 +5,6 @@ export abstract class AbstractCost {
   abstract derivative(
     correctOutput: CalcMatrix2D,
     predictions: CalcMatrix2D,
-    activationDerivative: CalcMatrix2D
+    activationDerivative: CalcMatrix2D,
   ): CalcMatrix2D;
 }

@@ -11,7 +11,6 @@ export class MeanSquaredErrorCost extends AbstractCost {
   }
 
   derivative(correctOutput: CalcMatrix2D, predictions: CalcMatrix2D, lastLayer: AbstractLayer): CalcMatrix2D {
-    const dA = predictions.subtract(correctOutput);
-    return dA.multiply(lastLayer.derivative(predictions));
+    return predictions.subtract(correctOutput);
   }
 }

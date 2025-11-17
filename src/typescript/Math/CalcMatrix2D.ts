@@ -11,12 +11,12 @@ export class CalcMatrix2D extends CalcElement {
     return true;
   }
 
-  public row(index: Number): CalcMatrix2D {
+  public row(index: number): CalcMatrix2D {
     const result = new CalcMatrix2D(1, this.cols()).allocate();
     return this._call(
       "matrix",
       "matrix_row",
-      false
+      false,
     )([this, new CalcScalar().allocate().set(new Float64Array([index])), result])(result);
   }
 
@@ -25,7 +25,7 @@ export class CalcMatrix2D extends CalcElement {
     return this._call(
       "matrix",
       "matrix_col",
-      false
+      false,
     )([this, new CalcScalar().allocate().set(new Float64Array([index])), result])(result);
   }
 
@@ -171,7 +171,6 @@ export class CalcMatrix2D extends CalcElement {
 
   protected getCalcSandbox(async = false) {
     const baseSandbox = super.getCalcSandbox(async);
-    const that = this;
     return {
       ...baseSandbox,
       block(offset: number, batch: number, start: number, end: number): CalcMatrix2D {
@@ -180,99 +179,99 @@ export class CalcMatrix2D extends CalcElement {
         const _batch = new CalcScalar().allocate().set([batch]);
         const _start = new CalcScalar().allocate().set([start]);
         const _end = new CalcScalar().allocate().set([end]);
-        return that._call("matrix", "matrix_block", async)([that, _offset, _batch, _start, _end, result])(result);
+        return this._call("matrix", "matrix_block", async)([this, _offset, _batch, _start, _end, result])(result);
       },
       pow: (number: number) => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_pow", async)([that, new CalcScalar().allocate().set([number]), result])(
-          result
+        return this._call("algebra", "algebra_pow", async)([this, new CalcScalar().allocate().set([number]), result])(
+          result,
         );
       },
       fraction: (number: number) => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call(
+        return this._call(
           "algebra",
           "algebra_fraction",
-          async
-        )([that, new CalcScalar().allocate().set([number]), result])(result);
+          async,
+        )([this, new CalcScalar().allocate().set([number]), result])(result);
       },
       softmax: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_softmax", async)([that, result])(result);
+        return this._call("algebra", "algebra_softmax", async)([this, result])(result);
       },
       sqrt: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_sqrt", async)([that, result])(result);
+        return this._call("algebra", "algebra_sqrt", async)([this, result])(result);
       },
       tanh: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_tanh", async)([that, result])(result);
+        return this._call("algebra", "algebra_tanh", async)([this, result])(result);
       },
       tanhDerivative: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_tanh_derivative", async)([that, result])(result);
+        return this._call("algebra", "algebra_tanh_derivative", async)([this, result])(result);
       },
       softmaxDerivative: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_softmax_derivative", async)([that, result])(result);
+        return this._call("algebra", "algebra_softmax_derivative", async)([this, result])(result);
       },
       rowwiseSum: () => {
         const result = new CalcMatrix2D(this.rows(), 1).allocate();
-        return that._call("algebra", "algebra_rowwise_sum", async)([that, result])(result);
+        return this._call("algebra", "algebra_rowwise_sum", async)([this, result])(result);
       },
       multiply: (m: CalcMatrix2D | number) => {
         if (typeof m === "number") {
           const _m = new CalcScalar().allocate().set([m]);
           const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-          return that._call("algebra", "algebra_multiply_number", async)([that, _m, result])(result);
+          return this._call("algebra", "algebra_multiply_number", async)([this, _m, result])(result);
         } else {
           const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-          return that._call("algebra", "algebra_multiply", async)([that, m, result])(result);
+          return this._call("algebra", "algebra_multiply", async)([this, m, result])(result);
         }
       },
       log: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_log", async)([that, result])(result);
+        return this._call("algebra", "algebra_log", async)([this, result])(result);
       },
       divide: (mOrNumber: number | CalcMatrix2D) => {
         if (typeof mOrNumber === "number") {
           const num = new CalcScalar().allocate().set([mOrNumber]);
           const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-          return that._call("algebra", "algebra_divide_number", async)([that, num, result])(result);
+          return this._call("algebra", "algebra_divide_number", async)([this, num, result])(result);
         } else {
           const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-          return that._call("algebra", "algebra_divide_matrix", async)([that, mOrNumber, result])(result);
+          return this._call("algebra", "algebra_divide_matrix", async)([this, mOrNumber, result])(result);
         }
       },
       dot: (m: CalcMatrix2D) => {
         const result = new CalcMatrix2D(this.rows(), m.cols()).allocate();
-        return that._call("algebra", "algebra_dot", async)([that, m, result])(result);
+        return this._call("algebra", "algebra_dot", async)([this, m, result])(result);
       },
       add: (m: CalcMatrix2D | number) => {
         if (typeof m === "number") {
           const num = new CalcScalar().allocate().set([m]);
           const result = new CalcMatrix2D(this.rows(), this.cols()).allocate(); // Corrected dimensions for dot product result
-          return that._call("algebra", "algebra_add_number", async)([that, num, result])(result);
+          return this._call("algebra", "algebra_add_number", async)([this, num, result])(result);
         } else {
           const result = new CalcMatrix2D(this.rows(), this.cols()).allocate(); // Corrected dimensions for dot product result
-          return that._call("algebra", "algebra_add_matrix", async)([that, m, result])(result);
+          return this._call("algebra", "algebra_add_matrix", async)([this, m, result])(result);
         }
       },
       subtract: (m: CalcMatrix2D) => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate(); // Corrected dimensions for dot product result
-        return that._call("algebra", "algebra_subtract", async)([that, m, result])(result);
+        return this._call("algebra", "algebra_subtract", async)([this, m, result])(result);
       },
       transpose: () => {
         const result = new CalcMatrix2D(this.cols(), this.rows()).allocate(); // Corrected dimensions for dot product result
-        return that._call("matrix", "matrix_transpose", async)([that, result])(result);
+        return this._call("matrix", "matrix_transpose", async)([this, result])(result);
       },
       logMinusOne: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate(); // Corrected dimensions for dot product result
-        return that._call("algebra", "algebra_log_minus_one", async)([that, result])(result);
+        return this._call("algebra", "algebra_log_minus_one", async)([this, result])(result);
       },
       minusOne: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate(); // Corrected dimensions for dot product result
-        return that._call("algebra", "algebra_minus_one", async)([that, result])(result);
+        return this._call("algebra", "algebra_minus_one", async)([this, result])(result);
       },
       replicate: (rows: number, cols: number) => {
         const _rows = this.rows() * rows;
@@ -280,54 +279,54 @@ export class CalcMatrix2D extends CalcElement {
         const result = new CalcMatrix2D(_rows, _cols).allocate();
         const __rows = new CalcScalar().allocate().set([rows]);
         const __cols = new CalcScalar().allocate().set([cols]);
-        return that._call("algebra", "algebra_replicate_matrix", async)([that, __rows, __cols, result])(result);
+        return this._call("algebra", "algebra_replicate_matrix", async)([this, __rows, __cols, result])(result);
       },
       logisticForwardPropagation: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_logistic_forward_propagation", async)([that, result])(result);
+        return this._call("algebra", "algebra_logistic_forward_propagation", async)([this, result])(result);
       },
       conjugate: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_conjugate", async)([that, result])(result);
+        return this._call("algebra", "algebra_conjugate", async)([this, result])(result);
       },
       logisticBackwardPropagation: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_logistic_backward_propagation", async)([that, result])(result);
+        return this._call("algebra", "algebra_logistic_backward_propagation", async)([this, result])(result);
       },
       reluBackpropagation: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_reluBackpropagation", async)([that, result])(result);
+        return this._call("algebra", "algebra_reluBackpropagation", async)([this, result])(result);
       },
       maxCoeff: () => {
         const result = new CalcScalar().allocate();
-        return that._call("algebra", "algebra_max_coeff", async)([that, result])(result);
+        return this._call("algebra", "algebra_max_coeff", async)([this, result])(result);
       },
       setMin: (number: number) => {
         const nb = new CalcScalar().allocate().set([number]);
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("matrix", "matrix_set_min", async)([that, nb, result])(result);
+        return this._call("matrix", "matrix_set_min", async)([this, nb, result])(result);
       },
       setMax: (number: number) => {
         const nb = new CalcScalar().allocate().set([number]);
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("matrix", "matrix_set_max", async)([that, nb, result])(result);
+        return this._call("matrix", "matrix_set_max", async)([this, nb, result])(result);
       },
       min: () => {
         const result = new CalcScalar().allocate();
-        return that._call("matrix", "matrix_min", async)([that, result])(result);
+        return this._call("matrix", "matrix_min", async)([this, result])(result);
       },
       max: () => {
         const result = new CalcScalar().allocate();
-        return that._call("matrix", "matrix_max", async)([that, result])(result);
+        return this._call("matrix", "matrix_max", async)([this, result])(result);
       },
       minMax: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_min_max", async)([that, result])(result);
+        return this._call("algebra", "algebra_min_max", async)([this, result])(result);
       },
       img2col: (filterSize, stride, padding) => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
         const params = new CalcRowVector(3).allocate().set([filterSize, stride, padding]);
-        return that._call("algebra", "algebra_img2col", async)([that, params, result])(result);
+        return this._call("algebra", "algebra_img2col", async)([this, params, result])(result);
       },
     };
   }

@@ -33,7 +33,7 @@ export class Calc {
       this.exec(
         module,
         kernel,
-        true
+        true,
       )(this._params, this._result).then(() => {
         resolve(this);
       });
@@ -50,7 +50,7 @@ export class Calc {
         return fn.execute(
           (input || []).map((m) => m.getMemory()),
           (output || []).map((m) => m.getMemory()),
-          async
+          async,
         );
       };
     } catch (e) {
