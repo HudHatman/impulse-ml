@@ -37,10 +37,14 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
       async (outputDataset) => {
         const x = inputDataset.exampleAt(0);
         inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
-        const trainer = new BatchTrainer(network, new OptimizerAdagrad(), new CrossEntropyCost());
-        trainer.setIterations(500);
-        trainer.setLearningRate(0.1);
-        trainer.setRegularization(0.1);
+        
+        // --- HYPERPARAMETER CHANGE ---
+        const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
+        trainer.setIterations(1000);
+        trainer.setLearningRate(0.001);
+        trainer.setRegularization(0.01);
+        // --- END HYPERPARAMETER CHANGE ---
+
         trainer.setStepCallback(() => {
           //console.log("forward", network.forward(x).get(), outputDataset.data.get());
         });

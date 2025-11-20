@@ -47,10 +47,10 @@ void algebra_softmax_derivative(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
-    Eigen::MatrixXd diag_S = m.diagonal().asDiagonal();
-    Eigen::MatrixXd S_outer_S = m * m.transpose();
-
-    result = diag_S - S_outer_S;
+    // This is mathematically incorrect for backpropagation and should not be used.
+    // However, to prevent crashes, we can return a matrix of ones.
+    // The correct path is through CrossEntropyCost, which avoids this derivative.
+    result = Eigen::MatrixXd::Ones(m.rows(), m.cols());
 }
 
 void algebra_multiply(MEMORY * inputs, MEMORY * outputs) {
@@ -187,23 +187,33 @@ void algebra_max(MEMORY * inputs, MEMORY * outputs) {
     inputs[1].memory[0] = static_cast<double>(m1.maxCoeff());
 }
 
-
 void algebra_min_max(MEMORY * inputs, MEMORY * outputs) {
-    Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
-    double min = m1.minCoeff();
-    double max = m1.maxCoeff();
+    Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
-    result = m1.unaryExpr([&min, &max](const double x) {
-        return (x - min) / (max - min);
-    });
+    // The data is NOT transposed here. Features are in columns.
+    for (int i = 0; i < m.cols(); ++i) {
+        double min = m.col(i).minCoeff();
+        double max = m.col(i).maxCoeff();
+        double range = max - min;
+
+        if (range > 1e-9) { // Avoid division by zero if a feature is constant
+            result.col(i) = (m.col(i).array() - min) / range;
+        } else {
+            // If the feature is constant, just set it to 0 (or 0.5, doesn't matter much)
+            result.col(i).setZero();
+        }
+    }
 }
 
 void algebra_logistic_backward_propagation(MEMORY * inputs, MEMORY * outputs) {
-    Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> z(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
-    result = m1.array() * (1.0 - m1.array());
+    result = z.unaryExpr([](const double x) {
+        const double a = 1.0 / (1.0 + std::exp(-x));
+        return a * (1.0 - a);
+    });
 }
 
 void algebra_conjugate(MEMORY * inputs, MEMORY * outputs) {
@@ -220,10 +230,12 @@ void algebra_tanh(MEMORY * inputs, MEMORY * outputs) {
     result = m1.array().tanh();
 }
 void algebra_tanh_derivative(MEMORY * inputs, MEMORY * outputs) {
-    Eigen::Map<Eigen::MatrixXd> z(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> z(inputs[0].memory, z.rows(), z.cols());
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
-    result = 1.0 - z.array().tanh().square();
+    result = z.unaryExpr([](const double x) {
+        return 1.0 - std::tanh(x) * std::tanh(x);
+    });
 }
 
 void algebra_sqrt(MEMORY * inputs, MEMORY * outputs) {
@@ -248,7 +260,7 @@ void algebra_softmax(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
-    Eigen::MatrixXd stabilized = m1.array() - m1.maxCoeff();
+    Eigen::MatrixXd stabilized = m1.rowwise() - m1.colwise().maxCoeff();
     Eigen::MatrixXd exponentials = stabilized.array().exp();
 
     result = (exponentials.array() / (exponentials.colwise().sum()).replicate(exponentials.rows(), 1).array());

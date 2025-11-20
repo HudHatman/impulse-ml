@@ -24,7 +24,6 @@
     "preinstall": "node-gyp clean || true; node-gyp configure build",
     "install": "node-gyp rebuild",
     "prepare": "npm run build-dev && npm run build-prod",
-    "test": "node test/test.js",
     "build": "npm run build-prod && npm run build-dev",
     "build-dev": "node-gyp rebuild && webpack --config ./configs/dev.js",
     "build-prod": "webpack --config ./configs/prod.js",

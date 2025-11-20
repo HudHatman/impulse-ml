@@ -4,7 +4,7 @@ import { AbstractLayer1D } from "./AbstractLayer1D";
 
 class ReluLayer extends AbstractLayer1D {
   activation(m: CalcMatrix2D): CalcMatrix2D {
-    return m.setMin(0.0);
+    return m.setMax(0.0);
   }
 
   getType(): LayerType {

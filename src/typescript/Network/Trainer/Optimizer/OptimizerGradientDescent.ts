@@ -8,6 +8,6 @@ export class OptimizerGradientDescent extends AbstractOptimizer {
 
   gradientDescent(layer: Layers, learningRate: number): void {
     layer.W = layer.W.subtract(layer.gW.multiply(learningRate));
-    layer.b = layer.b.subtract(layer.b.multiply(learningRate));
+    layer.b = layer.b.subtract(layer.gb.multiply(learningRate));
   }
 }

@@ -19,9 +19,7 @@ export class CrossEntropyCost extends AbstractCost {
     }
 
     const denominator = predictions.multiply(predictions.minusOne().multiply(-1)).add(this.epsilon);
-
     const dA = predictions.subtract(correctOutput).divide(denominator);
-
-    return dA.multiply(lastLayer.derivative(predictions));
+    return dA.multiply(lastLayer.derivative(lastLayer.Z));
   }
 }

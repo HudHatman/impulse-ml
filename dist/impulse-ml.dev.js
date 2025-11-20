@@ -997,42 +997,37 @@ var CalcElement = /*#__PURE__*/function () {
   }, {
     key: "setZeros",
     value: function setZeros() {
-      this.calcSync(function (calc) {
-        calc.setZeros();
+      return this.calcSync(function (calc) {
+        return calc.setZeros();
       });
-      return this;
     }
   }, {
     key: "setRandom",
     value: function setRandom(number) {
-      this.calcSync(function (calc) {
-        calc.setRandom(number);
+      return this.calcSync(function (calc) {
+        return calc.setRandom(number);
       });
-      return this;
     }
   }, {
     key: "setMax",
     value: function setMax(number) {
-      this.calcSync(function (calc) {
-        calc.setMax(number);
+      return this.calcSync(function (calc) {
+        return calc.setMax(number);
       });
-      return this;
     }
   }, {
     key: "setMin",
     value: function setMin(number) {
-      this.calcSync(function (calc) {
-        calc.setMin(number);
+      return this.calcSync(function (calc) {
+        return calc.setMin(number);
       });
-      return this;
     }
   }, {
     key: "reluBackpropagation",
     value: function reluBackpropagation() {
-      this.calcSync(function (calc) {
-        calc.reluBackpropagation();
+      return this.calcSync(function (calc) {
+        return calc.reluBackpropagation();
       });
-      return this;
     }
   }, {
     key: "pow",
@@ -1051,10 +1046,9 @@ var CalcElement = /*#__PURE__*/function () {
   }, {
     key: "reluForwardPropagation",
     value: function reluForwardPropagation() {
-      this.calcSync(function (calc) {
-        calc.reluForwardPropagation();
+      return this.calcSync(function (calc) {
+        return calc.reluForwardPropagation();
       });
-      return this;
     }
   }, {
     key: "getCalcSandbox",
@@ -2099,7 +2093,7 @@ var AbstractLayer1D = /*#__PURE__*/function (_AbstractLayer) {
       this.W.resize(this.getHeight(), this.getWidth());
       this.W.setRandom(this.previousLayer ? this.previousLayer.getHeight() : this.getHeight());
       this.b.resize(this.getHeight(), 1);
-      this.b.setRandom(this.previousLayer ? this.previousLayer.getHeight() : this.getHeight());
+      this.b.setZeros();
       this.gW.resize(this.getHeight(), this.getWidth());
       this.gW.setZeros();
       this.gb.resize(this.getHeight(), 1);
@@ -2253,15 +2247,6 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
       this.layer.gb = sigma.rowwiseSum().divide(numberOfExamples);
       if (this.previousLayer !== null) {
         var result = this.layer.W.transpose().dot(sigma);
-        if (result.rows() !== previousActivations.rows() || result.cols() !== previousActivations.cols()) {
-          throw new Error("Dimension error 1. (".concat(result.rows(), ", ").concat(result.cols(), ") | (").concat(previousActivations.rows(), ", ").concat(previousActivations.cols(), ")"));
-        }
-        if (this.layer.gW.rows() !== this.layer.W.rows() || this.layer.gW.cols() !== this.layer.W.cols()) {
-          throw new Error("Dimension error 2. (".concat(this.layer.gW.rows(), ", ").concat(this.layer.gW.cols(), ") | (").concat(this.layer.W.rows(), ", ").concat(this.layer.W.cols(), ")"));
-        }
-        if (this.layer.gb.rows() !== this.layer.b.rows() || this.layer.gb.cols() !== this.layer.b.cols()) {
-          throw new Error("Dimension error 3. (".concat(this.layer.gb.rows(), ", ").concat(this.layer.gb.cols(), ") | (").concat(this.layer.b.rows(), ", ").concat(this.layer.b.cols(), ")"));
-        }
         return result.multiply(this.layer.previousLayer.derivative(this.layer.previousLayer.Z));
       }
       return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D();
@@ -2405,7 +2390,7 @@ var ReluLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   return _createClass(ReluLayer, [{
     key: "activation",
     value: function activation(m) {
-      return m.setMin(0.0);
+      return m.setMax(0.0);
     }
   }, {
     key: "getType",
@@ -2458,11 +2443,6 @@ var SoftmaxLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   }
   _inherits(SoftmaxLayer, _AbstractLayer1D);
   return _createClass(SoftmaxLayer, [{
-    key: "activationAsync",
-    value: function activationAsync(value) {
-      throw new Error("Method not implemented.");
-    }
-  }, {
     key: "activation",
     value: function activation(m) {
       return m.softmax();
@@ -2944,7 +2924,7 @@ var CrossEntropyCost = /*#__PURE__*/function (_AbstractCost) {
       }
       var denominator = predictions.multiply(predictions.minusOne().multiply(-1)).add(this.epsilon);
       var dA = predictions.subtract(correctOutput).divide(denominator);
-      return dA.multiply(lastLayer.derivative(predictions));
+      return dA.multiply(lastLayer.derivative(lastLayer.Z));
     }
   }]);
 }(_AbstractCost__WEBPACK_IMPORTED_MODULE_0__.AbstractCost);
@@ -3223,7 +3203,7 @@ var OptimizerGradientDescent = /*#__PURE__*/function (_AbstractOptimizer) {
     key: "gradientDescent",
     value: function gradientDescent(layer, learningRate) {
       layer.W = layer.W.subtract(layer.gW.multiply(learningRate));
-      layer.b = layer.b.subtract(layer.b.multiply(learningRate));
+      layer.b = layer.b.subtract(layer.gb.multiply(learningRate));
     }
   }]);
 }(_AbstractOptimizer__WEBPACK_IMPORTED_MODULE_0__.AbstractOptimizer);

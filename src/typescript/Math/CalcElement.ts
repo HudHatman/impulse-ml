@@ -80,38 +80,33 @@ export class CalcElement {
   }
 
   public setZeros() {
-    this.calcSync((calc) => {
-      calc.setZeros();
+    return this.calcSync((calc) => {
+      return calc.setZeros();
     });
-    return this;
   }
 
   public setRandom(number: number) {
-    this.calcSync((calc) => {
-      calc.setRandom(number);
+    return this.calcSync((calc) => {
+      return calc.setRandom(number);
     });
-    return this;
   }
 
   public setMax(number: number) {
-    this.calcSync((calc) => {
-      calc.setMax(number);
+    return this.calcSync((calc) => {
+      return calc.setMax(number);
     });
-    return this;
   }
 
   public setMin(number: number) {
-    this.calcSync((calc) => {
-      calc.setMin(number);
+    return this.calcSync((calc) => {
+      return calc.setMin(number);
     });
-    return this;
   }
 
   public reluBackpropagation() {
-    this.calcSync((calc) => {
-      calc.reluBackpropagation();
+    return this.calcSync((calc) => {
+      return calc.reluBackpropagation();
     });
-    return this;
   }
   public pow(number: number) {
     return this.calcSync((calc) => {
@@ -124,10 +119,9 @@ export class CalcElement {
     });
   }
   public reluForwardPropagation() {
-    this.calcSync((calc) => {
-      calc.reluForwardPropagation();
+    return this.calcSync((calc) => {
+      return calc.reluForwardPropagation();
     });
-    return this;
   }
 
   private getCalcSandbox(async = false) {
