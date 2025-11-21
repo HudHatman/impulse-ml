@@ -137,12 +137,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var csvtojson__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! csvtojson */ "csvtojson");
 /* harmony import */ var csvtojson__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(csvtojson__WEBPACK_IMPORTED_MODULE_2__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -172,25 +166,23 @@ var SourceCSV = /*#__PURE__*/function (_AbstractSource) {
   return _createClass(SourceCSV, [{
     key: "parse",
     value: function parse() {
-      var _this$data$,
-        _this2 = this;
+      var _this$data$;
       var numberOfExamples = this.data.length;
       var exampleSize = (_this$data$ = this.data[0]) === null || _this$data$ === void 0 ? void 0 : _this$data$.length;
+      console.log(numberOfExamples, exampleSize);
       if (typeof numberOfExamples !== "undefined" && typeof exampleSize !== "undefined") {
         var data = [];
-        var _loop = function _loop() {
-          var newData = [];
-          _this2.data[i].forEach(function (value, index) {
-            newData.push(Number(value));
-          });
-          data = [].concat(_toConsumableArray(data), newData);
-        };
         for (var i = 0; i < numberOfExamples; i += 1) {
-          _loop();
+          var newData = this.data[i].map(function (value) {
+            return Number(value);
+          });
+          data.push(newData);
         }
-        return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(numberOfExamples, exampleSize).allocate().set(new Float64Array(data));
+        console.log(data);
+        process.exit();
+        return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(new Float64Array(data));
       }
-      return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(0, 0);
+      return null;
     }
   }], [{
     key: "fromLocalFile",
@@ -200,6 +192,7 @@ var SourceCSV = /*#__PURE__*/function (_AbstractSource) {
           noheader: true,
           output: "csv"
         }).fromFile(path).then(function (arr) {
+          console.log(arr);
           resolve(new SourceCSV(arr));
         });
       });
@@ -400,7 +393,7 @@ var Dataset = /*#__PURE__*/function () {
   }, {
     key: "getBatch",
     value: function getBatch(offset, batchSize) {
-      return this.data.block(offset, 0, batchSize, this.data.cols()).transpose();
+      return this.data.block(offset, 0, batchSize, this.data.cols());
     }
 
     /*insertColumnAfter(column, size = 1) {
@@ -1441,12 +1434,14 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           return that._call("algebra", "algebra_cross_entropy_derivative", async)([correctOutput, predictions, _epsilon], [result])(result);
         },
         block: function block(rowOffset, colOffset, numRows, numCols) {
-          var result = new CalcMatrix2D(numRows, numCols).allocate();
+          console.log(rowOffset, colOffset, numRows, numCols);
+          process.exit();
+          var result = new CalcMatrix2D(Math.min(numRows, that.rows() - rowOffset), numCols).allocate();
           var _rowOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([rowOffset]);
           var _colOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([colOffset]);
           var _numRows = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numRows]);
           var _numCols = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numCols]);
-          return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
+          return that._call("matrix", "matrix_block", async)([this, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
         },
         forwardPropagation: function forwardPropagation(w, b) {
           var result = new CalcMatrix2D(w.rows(), _this.cols()).allocate();
@@ -2957,9 +2952,10 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
       this.optimizer.setLearningRate(this.learningRate);
       for (var i = 0; i < this.iterations; i += 1) {
         var startTime = new Date().getTime();
-        for (var batch = 0, offset = 0; batch < numberOfExamples; batch += this._batchSize, offset += this._batchSize) {
-          var input = inputDataset.getBatch(offset, batch);
-          var output = outputDataset.getBatch(offset, batch);
+        for (var batch = 0, offset = 0; batch < numberOfExamples; offset += this._batchSize) {
+          console.log(offset, this._batchSize);
+          var input = inputDataset.getBatch(offset, this._batchSize);
+          var output = outputDataset.getBatch(offset, this._batchSize);
           var predictions = this.network.forward(input);
           var sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
           this.network.backward(input, this.regularization, sigma);

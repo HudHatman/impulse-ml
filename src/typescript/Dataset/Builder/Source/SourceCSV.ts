@@ -27,18 +27,19 @@ export class SourceCSV extends AbstractSource {
     const numberOfExamples = this.data.length;
     const exampleSize = this.data[0]?.length;
 
+    console.log(numberOfExamples, exampleSize)
+
     if (typeof numberOfExamples !== "undefined" && typeof exampleSize !== "undefined") {
       let data = [];
       for (let i = 0; i < numberOfExamples; i += 1) {
-        const newData = [];
-        this.data[i].forEach((value, index) => {
-          newData.push(Number(value));
-        });
-        data = [...data, ...newData];
+        const newData = this.data[i].map(value => {
+          return Number(value);
+        })
+        data.push(newData)
       }
-      return new CalcMatrix2D(numberOfExamples, exampleSize).allocate().set(new Float64Array(data));
+      return new CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(new Float64Array(data));
     }
 
-    return new CalcMatrix2D(0, 0);
+   return null;
   }
 }

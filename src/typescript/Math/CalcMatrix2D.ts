@@ -222,7 +222,8 @@ export class CalcMatrix2D extends CalcElement {
       },
       block(rowOffset: number, colOffset: number, numRows: number, numCols: number): CalcMatrix2D {
         console.log(rowOffset, colOffset, numRows, numCols);
-        const result = new CalcMatrix2D(numRows, numCols).allocate();
+        process.exit();
+        const result = new CalcMatrix2D(Math.min(numRows, that.rows() - rowOffset), numCols).allocate();
         const _rowOffset = new CalcScalar().allocate().set([rowOffset]);
         const _colOffset = new CalcScalar().allocate().set([colOffset]);
         const _numRows = new CalcScalar().allocate().set([numRows]);

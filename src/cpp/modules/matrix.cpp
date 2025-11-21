@@ -71,12 +71,28 @@ void matrix_set_min(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void matrix_block(MEMORY * inputs, MEMORY * outputs) {
-std::cout << inputs[1].memory[0] << inputs[2].memory[0] << inputs[3].memory[0] << inputs[4].memory[0] << std::endl;
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
-    Eigen::Map<Eigen::MatrixXd> rowOffset(inputs[1].memory, 1, 1);
-    Eigen::Map<Eigen::MatrixXd> colOffset(inputs[2].memory, 1, 1);
-    Eigen::Map<Eigen::MatrixXd> numRows(inputs[3].memory, 1, 1);
-    Eigen::Map<Eigen::MatrixXd> numCols(inputs[4].memory, 1, 1);
+    Eigen::Map<Eigen::MatrixXd> offset(inputs[1].memory, 1, 1);
+    Eigen::Map<Eigen::MatrixXd> batch(inputs[2].memory, 1, 1);
+    Eigen::Map<Eigen::MatrixXd> start(inputs[3].memory, 1, 1);
+    Eigen::Map<Eigen::MatrixXd> end(inputs[4].memory, 1, 1);
     Eigen::Map<Eigen::MatrixXd> result(inputs[5].memory, inputs[5].rows, inputs[5].cols);
-    //result = m.block(rowOffset(0, 0), colOffset(0, 0), numRows(0, 0), numCols(0, 0));
+
+    long startRow = static_cast<long>(offset(0, 0));
+    long startCol = static_cast<long>(start(0, 0));
+    long blockRows = static_cast<long>(batch(0, 0));
+    long blockCols = static_cast<long>(end(0, 0));
+
+    if (startRow + blockRows > m.rows()) {
+        blockRows = m.rows() - startRow;
+    }
+    if (startCol + blockCols > m.cols()) {
+        blockCols = m.cols() - startCol;
+    }
+
+    if (result.rows() != blockRows || result.cols() != blockCols) {
+        std::cout << inputs[1].memory[0] << inputs[2].memory[0] << inputs[3].memory[0] << inputs[4].memory[0] << std::endl;
+    }
+
+    //result = m.block(startRow, startCol, blockRows, blockCols);
 }
