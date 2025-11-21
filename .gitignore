@@ -2,3 +2,5 @@ package-lock.json
 node_modules/
 .idea/
 build
+data/input.csv
+data/mnist_train.csv

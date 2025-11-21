@@ -1433,7 +1433,7 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
         crossEntropyLoss: function crossEntropyLoss(correctOutput, predictions, epsilon) {
           var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
           var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
-          return that._call("algebra", "algebra_cross_entropy_loss", async)([correctOutput, predictions, _epsilon], [result])(result);
+          return that._call("algebra", "algebra_cross_entropy_loss", async)([correctOutput, predictions, _epsilon], [result])(result.get()[0]);
         },
         crossEntropyDerivative: function crossEntropyDerivative(correctOutput, predictions, epsilon) {
           var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
@@ -2951,17 +2951,15 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
     key: "train",
     value: function train(inputDataset, outputDataset) {
       var _this2 = this;
-      var numberOfExamples = inputDataset.data.cols();
-      var X = inputDataset.data.transpose();
-      var Y = outputDataset.data.transpose();
+      var numberOfExamples = inputDataset.data.rows();
       var t = 0;
       this.optimizer.setBatchSize(this._batchSize);
       this.optimizer.setLearningRate(this.learningRate);
       for (var i = 0; i < this.iterations; i += 1) {
         var startTime = new Date().getTime();
         for (var batch = 0, offset = 0; batch < numberOfExamples; batch += this._batchSize, offset += this._batchSize) {
-          var input = inputDataset.getBatch(offset, this._batchSize);
-          var output = outputDataset.getBatch(offset, this._batchSize);
+          var input = inputDataset.getBatch(offset, batch);
+          var output = outputDataset.getBatch(offset, batch);
           var predictions = this.network.forward(input);
           var sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
           this.network.backward(input, this.regularization, sigma);

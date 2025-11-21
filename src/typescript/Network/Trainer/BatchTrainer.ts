@@ -17,9 +17,7 @@ export class BatchTrainer extends AbstractTrainer {
   }
 
   train(inputDataset: Dataset, outputDataset: Dataset): AbstractTrainer {
-    const numberOfExamples = inputDataset.data.cols();
-    const X = inputDataset.data.transpose();
-    const Y = outputDataset.data.transpose();
+    const numberOfExamples = inputDataset.data.rows();
 
     let t = 0;
 
@@ -30,8 +28,8 @@ export class BatchTrainer extends AbstractTrainer {
       const startTime = new Date().getTime();
 
       for (let batch = 0, offset = 0; batch < numberOfExamples; batch += this._batchSize, offset += this._batchSize) {
-        const input = inputDataset.getBatch(offset, this._batchSize);
-        const output = outputDataset.getBatch(offset, this._batchSize);
+        const input = inputDataset.getBatch(offset, batch);
+        const output = outputDataset.getBatch(offset, batch);
 
         const predictions = this.network.forward(input);
         const sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
