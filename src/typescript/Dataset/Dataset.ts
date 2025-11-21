@@ -12,7 +12,7 @@ export class Dataset {
   }
 
   exampleAt(index: number): CalcMatrix2D {
-    return this.data.row(index).transpose();
+    return this.data.col(index);
   }
 
   getNumberOfExamples(): number {
@@ -24,7 +24,6 @@ export class Dataset {
   }
 
   getBatch(offset: number, batchSize: number): CalcMatrix2D {
-    console.log(offset, 0, batchSize, this.data.cols())
-    return this.data.block(offset, 0, batchSize, this.data.cols());
+    return this.data.block(0, offset, this.getExampleSize(), this.getNumberOfExamples(), batchSize);
   }
 }

@@ -15,6 +15,7 @@ export class SourceCSV extends AbstractSource {
     return new Promise((resolve) => {
       csvtojson({
         noheader: true,
+        trim: true,
         output: "csv",
       })
         .fromFile(path)
@@ -31,10 +32,9 @@ export class SourceCSV extends AbstractSource {
     if (typeof numberOfExamples !== "undefined" && typeof exampleSize !== "undefined") {
       let data = [];
       for (let i = 0; i < numberOfExamples; i += 1) {
-        const newData = this.data[i].map((value) => {
-          return Number(value);
+        this.data[i].forEach((value) => {
+          data.push(Number(value))
         });
-        data.push(newData);
       }
       return Dataset.fromMatrix(new CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(new Float64Array(data)));
     }

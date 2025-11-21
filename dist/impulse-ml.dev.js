@@ -169,10 +169,9 @@ var SourceCSV = /*#__PURE__*/function (_AbstractSource) {
       if (typeof numberOfExamples !== "undefined" && typeof exampleSize !== "undefined") {
         var data = [];
         for (var i = 0; i < numberOfExamples; i += 1) {
-          var newData = this.data[i].map(function (value) {
-            return Number(value);
+          this.data[i].forEach(function (value) {
+            data.push(Number(value));
           });
-          data.push(newData);
         }
         return _Dataset__WEBPACK_IMPORTED_MODULE_3__.Dataset.fromMatrix(new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(new Float64Array(data)));
       }
@@ -184,6 +183,7 @@ var SourceCSV = /*#__PURE__*/function (_AbstractSource) {
       return new Promise(function (resolve) {
         csvtojson__WEBPACK_IMPORTED_MODULE_2__({
           noheader: true,
+          trim: true,
           output: "csv"
         }).fromFile(path).then(function (arr) {
           resolve(new SourceCSV(arr));
@@ -363,7 +363,7 @@ var Dataset = /*#__PURE__*/function () {
   return _createClass(Dataset, [{
     key: "exampleAt",
     value: function exampleAt(index) {
-      return this.data.row(index).transpose();
+      return this.data.col(index);
     }
   }, {
     key: "getNumberOfExamples",
@@ -378,8 +378,7 @@ var Dataset = /*#__PURE__*/function () {
   }, {
     key: "getBatch",
     value: function getBatch(offset, batchSize) {
-      console.log(offset, 0, batchSize, this.data.cols());
-      return this.data.block(offset, 0, batchSize, this.data.cols());
+      return this.data.block(0, offset, this.getExampleSize(), batchSize);
     }
   }], [{
     key: "fromMatrix",
@@ -1400,13 +1399,12 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           return that._call("algebra", "algebra_cross_entropy_derivative", async)([correctOutput, predictions, _epsilon], [result])(result);
         },
         block: function block(rowOffset, colOffset, numRows, numCols) {
-          console.log(numRows, numCols);
           var result = new CalcMatrix2D(numRows, numCols).allocate();
           var _rowOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([rowOffset]);
           var _colOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([colOffset]);
           var _numRows = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numRows]);
           var _numCols = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numCols]);
-          return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
+          return result._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
         },
         forwardPropagation: function forwardPropagation(w, b) {
           var result = new CalcMatrix2D(w.rows(), _this.cols()).allocate();
@@ -2999,15 +2997,13 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
     key: "train",
     value: function train(inputDataset, outputDataset) {
       var _this2 = this;
-      var numberOfExamples = inputDataset.data.rows();
+      var numberOfExamples = inputDataset.getNumberOfExamples();
       var t = 0;
       this.optimizer.setBatchSize(this._batchSize);
       this.optimizer.setLearningRate(this.learningRate);
       for (var i = 0; i < this.iterations; i += 1) {
         var startTime = new Date().getTime();
-        for (var batch = 0, offset = 0; batch < numberOfExamples; offset += this._batchSize) {
-          console.log(offset, Math.min(this._batchSize, numberOfExamples - offset));
-          process.exit();
+        for (var offset = 0; offset < numberOfExamples; offset += this._batchSize) {
           var input = inputDataset.getBatch(offset, this._batchSize);
           var output = outputDataset.getBatch(offset, this._batchSize);
           var predictions = this.network.forward(input);

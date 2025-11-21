@@ -36,10 +36,8 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
     DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__dirname, "../data/iris_y.csv"))).then(
       async (outputDataset) => {
         console.log("Loaded iris_y.csv", inputDataset.data, inputDataset.getNumberOfExamples(), inputDataset.getExampleSize());
-        console.log(inputDataset.exampleAt(0).get())
         inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
-        console.log(inputDataset.exampleAt(0).get())
-        
+
         const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
         trainer.setIterations(300);
         trainer.setBatchSize(16);
@@ -50,7 +48,7 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
         trainer.setStepCallback(() => {
           //console.log("forward", network.forward(x).get(), outputDataset.data.get());
         });
-        const start = new Date().getTime();return;
+        const start = new Date().getTime();
         trainer.train(inputDataset, outputDataset);
         const end = new Date().getTime();
         console.log(end - start);

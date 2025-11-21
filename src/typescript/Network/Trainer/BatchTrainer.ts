@@ -17,7 +17,7 @@ export class BatchTrainer extends AbstractTrainer {
   }
 
   train(inputDataset: Dataset, outputDataset: Dataset): AbstractTrainer {
-    const numberOfExamples = inputDataset.data.rows();
+    const numberOfExamples = inputDataset.getNumberOfExamples();
     let t = 0;
 
     this.optimizer.setBatchSize(this._batchSize);
@@ -26,8 +26,7 @@ export class BatchTrainer extends AbstractTrainer {
     for (let i = 0; i < this.iterations; i += 1) {
       const startTime = new Date().getTime();
 
-      for (let batch = 0, offset = 0; batch < numberOfExamples; offset += this._batchSize) {
-        console.log(offset, Math.min(this._batchSize, numberOfExamples - offset));process.exit();
+      for (let offset = 0; offset < numberOfExamples; offset += this._batchSize) {
         const input = inputDataset.getBatch(offset, this._batchSize);
         const output = outputDataset.getBatch(offset, this._batchSize);
 
