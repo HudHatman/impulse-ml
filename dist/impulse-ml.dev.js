@@ -1988,8 +1988,8 @@ var NetworkBuilder1D = /*#__PURE__*/function (_AbstractNetworkBuild) {
           });
           var network = builder.getNetwork();
           network.getLayers().forEach(function (layer, i) {
-            layer.W = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["W"].length, json["layers"][i]["weights"]["W"][0].length, json["layers"][i]["weights"]["W"]);
-            layer.b = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["b"].length, json["layers"][i]["weights"]["b"][0].length, json["layers"][i]["weights"]["b"]);
+            layer.W = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["W"].rows, json["layers"][i]["weights"]["W"].cols).allocate().set(json["layers"][i]["weights"]["W"].data);
+            layer.b = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["b"].rows, json["layers"][i]["weights"]["b"].cols).allocate().set(json["layers"][i]["weights"]["b"].data);
           });
           resolve(network);
         });
@@ -2161,9 +2161,7 @@ var AbstractLayer1D = /*#__PURE__*/function (_AbstractLayer) {
     key: "configure",
     value: function configure() {
       this.W.resize(this.getHeight(), this.getWidth());
-      var fanIn = this.getWidth();
-      // Corrected He initialization for uniform distribution
-      this.W.setRandom(Math.sqrt(6 / fanIn));
+      this.W.setRandom(Math.sqrt(6 / this.getWidth()));
       this.b.resize(this.getHeight(), 1).setZeros().add(1.0);
       this.gW.resize(this.getHeight(), this.getWidth());
       this.gW.setZeros();
@@ -2318,16 +2316,15 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
   return _createClass(Backpropagation1Dto1D, [{
     key: "propagate",
     value: function propagate(input, numberOfExamples, regularization, layer, sigma, isLastLayer) {
-      var dZ;
-      if (isLastLayer && layer.getType() === _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax) {
-        dZ = sigma;
+      var dZ = sigma;
+      if (isLastLayer && layer.getType() !== _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax) {
+        dZ.replace(sigma.multiply(layer.derivative(layer.Z)));
         //console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
         //console.log("sigma (A - Y):", sigma.get());
-      } else {
-        //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
-        //console.log("sigma (dA_prev from next layer):", sigma.get());
-        dZ = sigma.multiply(layer.derivative(layer.Z));
-      }
+      } /* else {
+         //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
+         //console.log("sigma (dA_prev from next layer):", sigma.get());
+        }*/
 
       //console.log("dZ (gradient of linear output):", dZ.get());
 
@@ -2608,11 +2605,6 @@ var TanhLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   }
   _inherits(TanhLayer, _AbstractLayer1D);
   return _createClass(TanhLayer, [{
-    key: "activationAsync",
-    value: function activationAsync(value) {
-      throw new Error("Method not implemented.");
-    }
-  }, {
     key: "activation",
     value: function activation(m) {
       return m.tanh();
@@ -2677,6 +2669,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! fs */ "fs");
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_0__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -2741,8 +2739,16 @@ var Network = /*#__PURE__*/function () {
           type: layer.getType(),
           size: layer.getSize(),
           weights: {
-            W: layer.W.get(),
-            b: layer.b.get()
+            W: {
+              data: _toConsumableArray(layer.W.get()),
+              rows: layer.W.rows(),
+              cols: layer.W.cols()
+            },
+            b: {
+              data: _toConsumableArray(layer.b.get()),
+              rows: layer.b.rows(),
+              cols: layer.b.cols()
+            }
           }
         });
       });

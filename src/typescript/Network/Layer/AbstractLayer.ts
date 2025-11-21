@@ -66,8 +66,6 @@ abstract class AbstractLayer {
 
   abstract activation(value: CalcMatrix2D): CalcMatrix2D;
 
-  abstract activationAsync(value: CalcMatrix2D): Promise<CalcMatrix2D>;
-
   abstract getType(): string;
 
   abstract derivative(delta: CalcMatrix2D): CalcMatrix2D;

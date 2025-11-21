@@ -58,8 +58,8 @@ class Network {
         type: layer.getType(),
         size: layer.getSize(),
         weights: {
-          W: layer.W.get(),
-          b: layer.b.get(),
+          W: {data: [...layer.W.get()], rows: layer.W.rows(), cols: layer.W.cols()},
+          b: {data: [...layer.b.get()], rows: layer.b.rows(), cols: layer.b.cols()},
         },
       });
     });

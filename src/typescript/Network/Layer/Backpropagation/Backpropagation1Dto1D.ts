@@ -12,17 +12,16 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
     sigma: CalcMatrix2D,
     isLastLayer: boolean,
   ): CalcMatrix2D {
-    let dZ: CalcMatrix2D;
+    let dZ = sigma;
 
-    if (isLastLayer && layer.getType() === LayerType.softmax) {
-      dZ = sigma;
+    if (isLastLayer && layer.getType() !== LayerType.softmax) {
+      dZ.replace(sigma.multiply(layer.derivative(layer.Z)));
       //console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
       //console.log("sigma (A - Y):", sigma.get());
-    } else {
+    }/* else {
       //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
       //console.log("sigma (dA_prev from next layer):", sigma.get());
-      dZ = sigma.multiply(layer.derivative(layer.Z));
-    }
+    }*/
 
     //console.log("dZ (gradient of linear output):", dZ.get());
 

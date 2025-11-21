@@ -45,15 +45,13 @@ class NetworkBuilder1D extends AbstractNetworkBuilder {
 
         network.getLayers().forEach((layer, i) => {
           layer.W = new CalcMatrix2D(
-            json["layers"][i]["weights"]["W"].length,
-            json["layers"][i]["weights"]["W"][0].length,
-            json["layers"][i]["weights"]["W"],
-          );
+            json["layers"][i]["weights"]["W"].rows,
+            json["layers"][i]["weights"]["W"].cols
+          ).allocate().set(json["layers"][i]["weights"]["W"].data);
           layer.b = new CalcMatrix2D(
-            json["layers"][i]["weights"]["b"].length,
-            json["layers"][i]["weights"]["b"][0].length,
-            json["layers"][i]["weights"]["b"],
-          );
+            json["layers"][i]["weights"]["b"].rows,
+            json["layers"][i]["weights"]["b"].cols
+          ).allocate().set(json["layers"][i]["weights"]["b"].data);
         });
 
         resolve(network);

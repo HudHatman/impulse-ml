@@ -38,7 +38,7 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
         inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
         
         const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
-        trainer.setIterations(400);
+        trainer.setIterations(300);
         trainer.setBatchSize(16);
         trainer.setLearningRate(0.01);
         trainer.setRegularization(0.0001);
@@ -51,6 +51,8 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
         trainer.train(inputDataset, outputDataset);
         const end = new Date().getTime();
         console.log(end - start);
+        mem();
+        network.save(path.resolve(__dirname, 'iris.json'))
       }
     );
   }
