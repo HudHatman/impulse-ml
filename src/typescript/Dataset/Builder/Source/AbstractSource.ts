@@ -1,5 +1,5 @@
-import { CalcMatrix2D } from "../../../Math/CalcMatrix2D";
+import { Dataset } from "../../Dataset";
 
 export abstract class AbstractSource {
-  abstract parse(): CalcMatrix2D;
+  abstract parse(): Dataset;
 }

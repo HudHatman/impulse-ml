@@ -24,7 +24,7 @@ export class SourceCSV extends AbstractSource {
     });
   }
 
-  parse(): CalcMatrix2D {
+  parse(): Dataset {
     const numberOfExamples = this.data.length;
     const exampleSize = this.data[0]?.length;
 

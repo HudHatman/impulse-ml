@@ -16,11 +16,11 @@ export class Dataset {
   }
 
   getNumberOfExamples(): number {
-    return this.data.rows();
+    return this.data.cols();
   }
 
   getExampleSize(): number {
-    return this.data.cols();
+    return this.data.rows();
   }
 
   getBatch(offset: number, batchSize: number): CalcMatrix2D {
