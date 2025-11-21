@@ -1,6 +1,7 @@
 import { CalcElement } from "./CalcElement";
 import { CalcRowVector } from "./CalcRowVector";
 import { CalcScalar } from "./CalcScalar";
+import { Calc } from "./Calc";
 
 export class CalcMatrix2D extends CalcElement {
   constructor(rows = 1, cols = 1) {
@@ -304,9 +305,13 @@ export class CalcMatrix2D extends CalcElement {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
         return this._call("algebra", "algebra_logistic_backward_propagation", async)([this, result])(result);
       },
-      reluBackpropagation: () => {
+      leakyRelu: (alpha: number) => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return this._call("algebra", "algebra_reluBackpropagation", async)([this, result])(result);
+        return this._call("algebra", "algebra_leaky_relu", async)([this, new CalcScalar().allocate().set([alpha]), result])(result);
+      },
+      leakyReluBackpropagation: (alpha: number) => {
+        const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+        return this._call("algebra", "algebra_leaky_reluBackpropagation", async)([this, new CalcScalar().allocate().set([alpha]),  result])(result);
       },
       maxCoeff: () => {
         const result = new CalcScalar().allocate();

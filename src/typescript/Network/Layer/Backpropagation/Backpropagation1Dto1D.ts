@@ -16,22 +16,22 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
 
     if (isLastLayer && layer.getType() === LayerType.softmax) {
       dZ = sigma;
-      //console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
-      //console.log("sigma (A - Y):", sigma.get());
+      console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
+      console.log("sigma (A - Y):", sigma.get());
     } else {
-      //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
-      //console.log("sigma (dA_prev from next layer):", sigma.get());
+      console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
+      console.log("sigma (dA_prev from next layer):", sigma.get());
       dZ = sigma.multiply(layer.derivative(layer.Z));
     }
 
-    //console.log("dZ (gradient of linear output):", dZ.get());
+    console.log("dZ (gradient of linear output):", dZ.get());
 
     const previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
     const [gW, gb, dA_prev] = dZ.backwardPropagation(layer.W, previousActivations, regularization, numberOfExamples);
 
-    //console.log("gW (weight gradients):", gW.get());
-    //console.log("gb (bias gradients):", gb.get());
-    //console.log("dA_prev (propagating to previous layer):", dA_prev.get());
+    console.log("gW (weight gradients):", gW.get());
+    console.log("gb (bias gradients):", gb.get());
+    console.log("dA_prev (propagating to previous layer):", dA_prev.get());
 
     layer.gW.replace(gW);
     layer.gb.replace(gb);

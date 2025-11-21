@@ -38,10 +38,10 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
         inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
         
         const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
-        trainer.setIterations(500);
-        trainer.setLearningRate(0.05);
+        trainer.setIterations(1);
+        trainer.setLearningRate(0.002);
         trainer.setRegularization(0.001);
-        trainer.setVerboseStep(10);
+        trainer.setVerboseStep(1);
 
         trainer.setStepCallback(() => {
           //console.log("forward", network.forward(x).get(), outputDataset.data.get());

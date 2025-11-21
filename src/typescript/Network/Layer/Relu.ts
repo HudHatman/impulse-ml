@@ -3,8 +3,12 @@ import { LayerType } from "../../types";
 import { AbstractLayer1D } from "./AbstractLayer1D";
 
 class ReluLayer extends AbstractLayer1D {
+  private readonly alpha = 0.01;
+
   activation(m: CalcMatrix2D): CalcMatrix2D {
-    return m.setMax(0.0);
+    return m.calcSync((calc) => {
+      return calc.leakyRelu(this.alpha);
+    })
   }
 
   getType(): LayerType {
@@ -12,7 +16,9 @@ class ReluLayer extends AbstractLayer1D {
   }
 
   derivative(delta: CalcMatrix2D) {
-    return delta.reluBackpropagation();
+    return delta.calcSync((calc) => {
+      return calc.leakyReluBackpropagation(this.alpha);
+    })
   }
 }
 

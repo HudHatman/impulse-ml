@@ -1534,9 +1534,13 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
           return _this._call("algebra", "algebra_logistic_backward_propagation", async)([_this, result])(result);
         },
-        reluBackpropagation: function reluBackpropagation() {
+        leakyRelu: function leakyRelu(alpha) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_reluBackpropagation", async)([_this, result])(result);
+          return _this._call("algebra", "algebra_leaky_relu", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([alpha]), result])(result);
+        },
+        leakyReluBackpropagation: function leakyReluBackpropagation(alpha) {
+          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
+          return _this._call("algebra", "algebra_leaky_reluBackpropagation", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([alpha]), result])(result);
         },
         maxCoeff: function maxCoeff() {
           var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
@@ -2117,10 +2121,10 @@ var AbstractLayer1D = /*#__PURE__*/function (_AbstractLayer) {
     key: "configure",
     value: function configure() {
       this.W.resize(this.getHeight(), this.getWidth());
-      var fanIn = this.previousLayer ? this.previousLayer.getHeight() : this.getHeight();
-      this.W.setRandom(Math.sqrt(2 / fanIn));
-      this.b.resize(this.getHeight(), 1);
-      this.b.setZeros();
+      var fanIn = this.getWidth();
+      this.W.setRandom(Math.sqrt(2 / fanIn)); // Changed to He initialization
+
+      this.b.resize(this.getHeight(), 1).setRandom(Math.sqrt(1 / fanIn));
       this.gW.resize(this.getHeight(), this.getWidth());
       this.gW.setZeros();
       this.gb.resize(this.getHeight(), 1);
@@ -2277,27 +2281,23 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
       var dZ;
       if (isLastLayer && layer.getType() === _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax) {
         dZ = sigma;
-        //console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
-        //console.log("sigma (A - Y):", sigma.get());
+        console.log("\n--- Backpropagation: Last Layer (".concat(layer.getType(), ") ---"));
+        console.log("sigma (A - Y):", sigma.get());
       } else {
-        //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
-        //console.log("sigma (dA_prev from next layer):", sigma.get());
+        console.log("\n--- Backpropagation: Hidden Layer (".concat(layer.getType(), ") ---"));
+        console.log("sigma (dA_prev from next layer):", sigma.get());
         dZ = sigma.multiply(layer.derivative(layer.Z));
       }
-
-      //console.log("dZ (gradient of linear output):", dZ.get());
-
+      console.log("dZ (gradient of linear output):", dZ.get());
       var previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
       var _dZ$backwardPropagati = dZ.backwardPropagation(layer.W, previousActivations, regularization, numberOfExamples),
         _dZ$backwardPropagati2 = _slicedToArray(_dZ$backwardPropagati, 3),
         gW = _dZ$backwardPropagati2[0],
         gb = _dZ$backwardPropagati2[1],
         dA_prev = _dZ$backwardPropagati2[2];
-
-      //console.log("gW (weight gradients):", gW.get());
-      //console.log("gb (bias gradients):", gb.get());
-      //console.log("dA_prev (propagating to previous layer):", dA_prev.get());
-
+      console.log("gW (weight gradients):", gW.get());
+      console.log("gb (bias gradients):", gb.get());
+      console.log("dA_prev (propagating to previous layer):", dA_prev.get());
       layer.gW.replace(gW);
       layer.gb.replace(gb);
       return dA_prev;
@@ -2421,8 +2421,6 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
@@ -2430,18 +2428,30 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
 var ReluLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   function ReluLayer() {
+    var _this;
     _classCallCheck(this, ReluLayer);
-    return _callSuper(this, ReluLayer, arguments);
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+    _this = _callSuper(this, ReluLayer, [].concat(args));
+    _defineProperty(_this, "alpha", 0.01);
+    return _this;
   }
   _inherits(ReluLayer, _AbstractLayer1D);
   return _createClass(ReluLayer, [{
     key: "activation",
     value: function activation(m) {
-      return m.setMax(0.0);
+      var _this2 = this;
+      return m.calcSync(function (calc) {
+        return calc.leakyRelu(_this2.alpha);
+      });
     }
   }, {
     key: "getType",
@@ -2451,7 +2461,10 @@ var ReluLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   }, {
     key: "derivative",
     value: function derivative(delta) {
-      return delta.reluBackpropagation();
+      var _this3 = this;
+      return delta.calcSync(function (calc) {
+        return calc.leakyReluBackpropagation(_this3.alpha);
+      });
     }
   }]);
 }(_AbstractLayer1D__WEBPACK_IMPORTED_MODULE_1__.AbstractLayer1D);
@@ -3178,9 +3191,9 @@ var OptimizerAdam = /*#__PURE__*/function (_AbstractOptimizer) {
   return _createClass(OptimizerAdam, [{
     key: "optimize",
     value: function optimize(layer) {
-      ///console.log(`\n--- OptimizerAdam: Layer ${layer.getType()} ---`);
-      //console.log("gW received by optimizer:", layer.gW.get());
-      //console.log("gb received by optimizer:", layer.gb.get());
+      console.log("\n--- OptimizerAdam: Layer ".concat(layer.getType(), " ---"));
+      console.log("gW received by optimizer:", layer.gW.get());
+      console.log("gb received by optimizer:", layer.gb.get());
 
       // v (momentum) update
       layer.vW = layer.vW.multiply(this.beta1).add(layer.gW.multiply(1 - this.beta1));

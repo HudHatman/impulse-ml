@@ -147,6 +147,26 @@ void algebra_reluBackpropagation(MEMORY * inputs, MEMORY * outputs) {
     });
 }
 
+void algebra_leaky_relu(MEMORY * inputs, MEMORY * outputs) {
+    Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    double alpha = inputs[1].memory[0];
+    Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
+
+    result = m.unaryExpr([&alpha](const double x) {
+        return (x > 0.0) ? x : alpha * x;
+    });
+}
+
+void algebra_leaky_reluBackpropagation(MEMORY * inputs, MEMORY * outputs) {
+    Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    double alpha = inputs[1].memory[0];
+    Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
+
+    result = m.unaryExpr([&alpha](const double x) {
+        return (x > 0.0) ? 1.0 : alpha;
+    });
+}
+
 void algebra_dot(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> a(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> b(inputs[1].memory, inputs[1].rows, inputs[1].cols);
