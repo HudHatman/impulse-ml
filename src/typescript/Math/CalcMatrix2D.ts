@@ -150,9 +150,9 @@ export class CalcMatrix2D extends CalcElement {
       return calc.sqrt();
     });
   }
-  public block(offset: number, batch: number, start: number, end: number): CalcMatrix2D {
+  public block(rowOffset: number, colOffset: number, numRows: number, numCols: number): CalcMatrix2D {
     return this.calcSync((calc) => {
-      return calc.block(offset, batch, start, end);
+      return calc.block(rowOffset, colOffset, numRows, numCols);
     });
   }
   public softmaxDerivative(): CalcMatrix2D {
@@ -176,18 +176,34 @@ export class CalcMatrix2D extends CalcElement {
     });
   }
 
+  // Static method to run Adam optimizer
+  public static runAdamOptimizer(
+    W: CalcMatrix2D, b: CalcMatrix2D,
+    gW: CalcMatrix2D, gb: CalcMatrix2D,
+    vW: CalcMatrix2D, vb: CalcMatrix2D,
+    sW: CalcMatrix2D, sb: CalcMatrix2D,
+    learningRate: number, beta1: number, beta2: number, epsilon: number, t: number
+  ): { W: CalcMatrix2D, b: CalcMatrix2D, vW: CalcMatrix2D, vb: CalcMatrix2D, sW: CalcMatrix2D, sb: CalcMatrix2D } {
+    // Create a dummy CalcMatrix2D instance to access calcSync
+    const dummy = new CalcMatrix2D(1, 1);
+    return dummy.calcSync((calc) => {
+      // Call the sandbox version of adamOptimize
+      return calc.adamOptimize(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t);
+    });
+  }
+
   protected getCalcSandbox(async = false) {
     const baseSandbox = super.getCalcSandbox(async);
     const that = this;
     return {
       ...baseSandbox,
-      block(offset: number, batch: number, start: number, end: number): CalcMatrix2D {
-        const result = new CalcMatrix2D(end - start, batch).allocate();
-        const _offset = new CalcScalar().allocate().set([offset]);
-        const _batch = new CalcScalar().allocate().set([batch]);
-        const _start = new CalcScalar().allocate().set([start]);
-        const _end = new CalcScalar().allocate().set([end]);
-        return that._call("matrix", "matrix_block", async)([this, _offset, _batch, _start, _end, result])(result);
+      block(rowOffset: number, colOffset: number, numRows: number, numCols: number): CalcMatrix2D {
+        const result = new CalcMatrix2D(numRows, numCols).allocate();
+        const _rowOffset = new CalcScalar().allocate().set([rowOffset]);
+        const _colOffset = new CalcScalar().allocate().set([colOffset]);
+        const _numRows = new CalcScalar().allocate().set([numRows]);
+        const _numCols = new CalcScalar().allocate().set([numCols]);
+        return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
       },
       forwardPropagation: (w: CalcMatrix2D, b: CalcMatrix2D) => {
         const result = new CalcMatrix2D(w.rows(), this.cols()).allocate();
@@ -344,6 +360,38 @@ export class CalcMatrix2D extends CalcElement {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
         const params = new CalcRowVector(3).allocate().set([filterSize, stride, padding]);
         return that._call("algebra", "algebra_img2col", async)([this, params, result])(result);
+      },
+      adamOptimize: (
+        W: CalcMatrix2D, b: CalcMatrix2D,
+        gW: CalcMatrix2D, gb: CalcMatrix2D,
+        vW: CalcMatrix2D, vb: CalcMatrix2D,
+        sW: CalcMatrix2D, sb: CalcMatrix2D,
+        learningRate: number, beta1: number, beta2: number, epsilon: number, t: number
+      ): { W: CalcMatrix2D, b: CalcMatrix2D, vW: CalcMatrix2D, vb: CalcMatrix2D, sW: CalcMatrix2D, sb: CalcMatrix2D } => {
+        // Allocate memory for the results
+        const updatedW = new CalcMatrix2D(W.rows(), W.cols()).allocate();
+        const updatedB = new CalcMatrix2D(b.rows(), b.cols()).allocate();
+        const updatedVW = new CalcMatrix2D(vW.rows(), vW.cols()).allocate();
+        const updatedVB = new CalcMatrix2D(vb.rows(), vb.cols()).allocate();
+        const updatedSW = new CalcMatrix2D(sW.rows(), sW.cols()).allocate();
+        const updatedSB = new CalcMatrix2D(sb.rows(), sb.cols()).allocate();
+
+        // Create CalcScalar instances for numbers
+        const _learningRate = new CalcScalar().allocate().set([learningRate]);
+        const _beta1 = new CalcScalar().allocate().set([beta1]);
+        const _beta2 = new CalcScalar().allocate().set([beta2]);
+        const _epsilon = new CalcScalar().allocate().set([epsilon]);
+        const _t = new CalcScalar().allocate().set([t]);
+
+        // Call the C++ function
+        return that._call("algebra", "algebra_adam_optimize", async)(
+          [W, b, gW, gb, vW, vb, sW, sb, _learningRate, _beta1, _beta2, _epsilon, _t], // Inputs
+          [updatedW, updatedB, updatedVW, updatedVB, updatedSW, updatedSB] // Outputs
+        )({ // Return object mapping
+          W: updatedW, b: updatedB,
+          vW: updatedVW, vb: updatedVB,
+          sW: updatedSW, sb: updatedSB
+        });
       },
     };
   }

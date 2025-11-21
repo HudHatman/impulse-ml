@@ -33,8 +33,8 @@ export class Dataset {
     return this.data.cols();
   }
 
-  getBatch(offset: number, batchSize: number): Dataset {
-    return this.data.block(0, offset, this.data.rows(), batchSize);
+  getBatch(offset: number, batchSize: number): CalcMatrix2D {
+    return this.data.block(offset, 0, batchSize, this.data.cols()).transpose()
   }
 
   /*insertColumnAfter(column, size = 1) {
@@ -47,7 +47,7 @@ export class Dataset {
       for (let col = 0; col < this.data.cols; col += 1) {
         if (row <= column) {
           this.data.data[row][col] = oldData.data[row][col];
-        } else if (row > column && row <= column + size) {
+        } else if (row > column && row <= column + size) {.tran
           this.data.data[row][col] = undefined;
         } else if (row > column + size) {
           this.data.data[row][col] = oldData.data[row - size][col];

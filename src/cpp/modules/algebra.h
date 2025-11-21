@@ -40,6 +40,7 @@ extern "C" {
     void algebra_backward_propagation(MEMORY * inputs, MEMORY * outputs);
     void algebra_leaky_relu(MEMORY * inputs, MEMORY * outputs);
     void algebra_leaky_reluBackpropagation(MEMORY * inputs, MEMORY * outputs);
+    void algebra_adam_optimize(MEMORY * inputs, MEMORY * outputs);
     //void algebra_img2col(MEMORY * inputs, MEMORY * outputs);
 }
 

@@ -400,7 +400,7 @@ var Dataset = /*#__PURE__*/function () {
   }, {
     key: "getBatch",
     value: function getBatch(offset, batchSize) {
-      return Dataset.fromMatrix(this.data.block(0, offset, this.data.rows(), batchSize));
+      return this.data.block(offset, 0, batchSize, this.data.cols()).transpose();
     }
 
     /*insertColumnAfter(column, size = 1) {
@@ -411,7 +411,7 @@ var Dataset = /*#__PURE__*/function () {
         for (let col = 0; col < this.data.cols; col += 1) {
           if (row <= column) {
             this.data.data[row][col] = oldData.data[row][col];
-          } else if (row > column && row <= column + size) {
+          } else if (row > column && row <= column + size) {.tran
             this.data.data[row][col] = undefined;
           } else if (row > column + size) {
             this.data.data[row][col] = oldData.data[row - size][col];
@@ -1373,9 +1373,9 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
     }
   }, {
     key: "block",
-    value: function block(offset, batch, start, end) {
+    value: function block(rowOffset, colOffset, numRows, numCols) {
       return this.calcSync(function (calc) {
-        return calc.block(offset, batch, start, end);
+        return calc.block(rowOffset, colOffset, numRows, numCols);
       });
     }
   }, {
@@ -1406,6 +1406,8 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
         return calc.minMax();
       });
     }
+
+    // Static method to run Adam optimizer
   }, {
     key: "getCalcSandbox",
     value: function getCalcSandbox() {
@@ -1414,13 +1416,13 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       var baseSandbox = _superPropGet(CalcMatrix2D, "getCalcSandbox", this, 3)([async]);
       var that = this;
       return _objectSpread(_objectSpread({}, baseSandbox), {}, {
-        block: function block(offset, batch, start, end) {
-          var result = new CalcMatrix2D(end - start, batch).allocate();
-          var _offset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([offset]);
-          var _batch = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([batch]);
-          var _start = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([start]);
-          var _end = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([end]);
-          return that._call("matrix", "matrix_block", async)([this, _offset, _batch, _start, _end, result])(result);
+        block: function block(rowOffset, colOffset, numRows, numCols) {
+          var result = new CalcMatrix2D(numRows, numCols).allocate();
+          var _rowOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([rowOffset]);
+          var _colOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([colOffset]);
+          var _numRows = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numRows]);
+          var _numCols = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numCols]);
+          return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
         },
         forwardPropagation: function forwardPropagation(w, b) {
           var result = new CalcMatrix2D(w.rows(), _this.cols()).allocate();
@@ -1570,6 +1572,36 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
           var params = new _CalcRowVector__WEBPACK_IMPORTED_MODULE_1__.CalcRowVector(3).allocate().set([filterSize, stride, padding]);
           return that._call("algebra", "algebra_img2col", async)([_this, params, result])(result);
+        },
+        adamOptimize: function adamOptimize(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t) {
+          // Allocate memory for the results
+          var updatedW = new CalcMatrix2D(W.rows(), W.cols()).allocate();
+          var updatedB = new CalcMatrix2D(b.rows(), b.cols()).allocate();
+          var updatedVW = new CalcMatrix2D(vW.rows(), vW.cols()).allocate();
+          var updatedVB = new CalcMatrix2D(vb.rows(), vb.cols()).allocate();
+          var updatedSW = new CalcMatrix2D(sW.rows(), sW.cols()).allocate();
+          var updatedSB = new CalcMatrix2D(sb.rows(), sb.cols()).allocate();
+
+          // Create CalcScalar instances for numbers
+          var _learningRate = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([learningRate]);
+          var _beta1 = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([beta1]);
+          var _beta2 = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([beta2]);
+          var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
+          var _t = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([t]);
+
+          // Call the C++ function
+          return that._call("algebra", "algebra_adam_optimize", async)([W, b, gW, gb, vW, vb, sW, sb, _learningRate, _beta1, _beta2, _epsilon, _t],
+          // Inputs
+          [updatedW, updatedB, updatedVW, updatedVB, updatedSW, updatedSB] // Outputs
+          )({
+            // Return object mapping
+            W: updatedW,
+            b: updatedB,
+            vW: updatedVW,
+            vb: updatedVB,
+            sW: updatedSW,
+            sb: updatedSB
+          });
         }
       });
     }
@@ -1579,6 +1611,16 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       var clone = new CalcMatrix2D(this.rows(), this.cols());
       clone.copyFrom(this);
       return clone;
+    }
+  }], [{
+    key: "runAdamOptimizer",
+    value: function runAdamOptimizer(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t) {
+      // Create a dummy CalcMatrix2D instance to access calcSync
+      var dummy = new CalcMatrix2D(1, 1);
+      return dummy.calcSync(function (calc) {
+        // Call the sandbox version of adamOptimize
+        return calc.adamOptimize(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t);
+      });
     }
   }]);
 }(_CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcElement);
@@ -2892,13 +2934,13 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
           var output = outputDataset.getBatch(offset, this._batchSize);
           var predictions = this.network.forward(input);
           var sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
-          this.network.backward(X, this.regularization, sigma);
+          this.network.backward(input, this.regularization, sigma);
           this.optimizer.setT(++t);
           this.network.getLayers().forEach(function (layer) {
             _this2.optimizer.optimize(layer);
           });
           if (this.verbose && (i + 1) % this.verboseStep === 0) {
-            var currentResult = this.cost(predictions, Y);
+            var currentResult = this.cost(predictions, output);
             var endTime = new Date().getTime();
             console.log("Iteration: ".concat(i + 1, " | Cost: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.cost, 5), " | Accuracy: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.accuracy, 2), "% | Time: ").concat((endTime - startTime) / 1000, " s."));
           }
@@ -3175,6 +3217,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   OptimizerAdam: () => (/* binding */ OptimizerAdam)
 /* harmony export */ });
 /* harmony import */ var _AbstractOptimizer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractOptimizer */ "./src/typescript/Network/Trainer/Optimizer/AbstractOptimizer.ts");
+/* harmony import */ var _Math___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Math/ */ "./src/typescript/Math/index.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -3189,6 +3232,7 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
 
 var OptimizerAdam = /*#__PURE__*/function (_AbstractOptimizer) {
   function OptimizerAdam() {
@@ -3207,31 +3251,26 @@ var OptimizerAdam = /*#__PURE__*/function (_AbstractOptimizer) {
   return _createClass(OptimizerAdam, [{
     key: "optimize",
     value: function optimize(layer) {
-      //console.log(`\n--- OptimizerAdam: Layer ${layer.getType()} ---`);
-      //console.log("gW received by optimizer:", layer.gW.get());
-      //console.log("gb received by optimizer:", layer.gb.get());
-
-      // v (momentum) update
-      layer.vW = layer.vW.multiply(this.beta1).add(layer.gW.multiply(1 - this.beta1));
-      layer.vb = layer.vb.multiply(this.beta1).add(layer.gb.multiply(1 - this.beta1));
-
-      // s (RMSprop) update
-      layer.sW = layer.sW.multiply(this.beta2).add(layer.gW.pow(2).multiply(1 - this.beta2));
-      layer.sb = layer.sb.multiply(this.beta2).add(layer.gb.pow(2).multiply(1 - this.beta2));
-
-      // Bias correction
-      var vW_corrected = layer.vW.divide(1 - Math.pow(this.beta1, this.t));
-      var vb_corrected = layer.vb.divide(1 - Math.pow(this.beta1, this.t));
-      var sW_corrected = layer.sW.divide(1 - Math.pow(this.beta2, this.t));
-      var sb_corrected = layer.sb.divide(1 - Math.pow(this.beta2, this.t));
-
-      // Adam update step
-      var W_update = vW_corrected.divide(sW_corrected.sqrt().add(this.epsilon)).multiply(this.learningRate);
-      var b_update = vb_corrected.divide(sb_corrected.sqrt().add(this.epsilon)).multiply(this.learningRate);
-
-      // Apply the Adam update
-      layer.W = layer.W.subtract(W_update);
-      layer.b = layer.b.subtract(b_update);
+      var W = layer.W,
+        b = layer.b,
+        gW = layer.gW,
+        gb = layer.gb,
+        vW = layer.vW,
+        vb = layer.vb,
+        sW = layer.sW,
+        sb = layer.sb;
+      var learningRate = this.learningRate,
+        beta1 = this.beta1,
+        beta2 = this.beta2,
+        epsilon = this.epsilon,
+        t = this.t;
+      var updatedMatrices = _Math___WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D.runAdamOptimizer(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t);
+      layer.W.replace(updatedMatrices.W);
+      layer.b.replace(updatedMatrices.b);
+      layer.vW.replace(updatedMatrices.vW);
+      layer.vb.replace(updatedMatrices.vb);
+      layer.sW.replace(updatedMatrices.sW);
+      layer.sb.replace(updatedMatrices.sb);
     }
   }]);
 }(_AbstractOptimizer__WEBPACK_IMPORTED_MODULE_0__.AbstractOptimizer);
