@@ -36,7 +36,7 @@ abstract class AbstractLayer1D extends AbstractLayer {
 
   configure(): void {
     this.W.resize(this.getHeight(), this.getWidth());
-    this.W.setRandom(this.previousLayer ? (this.previousLayer.getHeight() as number) : this.getHeight());
+    this.W.setRandom(Math.sqrt(1 / (this.previousLayer ? (this.previousLayer.getHeight() as number) : this.getHeight())));
 
     this.b.resize(this.getHeight(), 1);
     this.b.setZeros();
@@ -66,8 +66,8 @@ abstract class AbstractLayer1D extends AbstractLayer {
     this.db.setZeros();
   }
 
-  forward(input: CalcMatrix2D): Promise<CalcMatrix2D> {
-    this.Z = this.W.dot(input).add(this.b.replicate(1, input.cols()));
+  forward(input: CalcMatrix2D): CalcMatrix2D {
+    this.Z = input.forwardPropagation(this.W, this.b);
     this.A = this.activation(this.Z);
     return this.A;
   }

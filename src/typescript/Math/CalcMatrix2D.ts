@@ -47,9 +47,9 @@ export class CalcMatrix2D extends CalcElement {
     });
   }
 
-  public replicate(rows: number, cols: number) {
+  public forwardPropagation(w: CalcMatrix2D, b: CalcMatrix2D): CalcMatrix2D {
     return this.calcSync((calc) => {
-      return calc.replicate(rows, cols);
+      return calc.forwardPropagation(w, b);
     });
   }
 
@@ -181,6 +181,10 @@ export class CalcMatrix2D extends CalcElement {
         const _end = new CalcScalar().allocate().set([end]);
         return this._call("matrix", "matrix_block", async)([this, _offset, _batch, _start, _end, result])(result);
       },
+      forwardPropagation: (w: CalcMatrix2D, b: CalcMatrix2D) => {
+        const result = new CalcMatrix2D(w.rows(), this.cols()).allocate();
+        return this._call("algebra", "algebra_forward_propagation", async)([w, this, b, result])(result);
+      },
       pow: (number: number) => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
         return this._call("algebra", "algebra_pow", async)([this, new CalcScalar().allocate().set([number]), result])(
@@ -272,14 +276,6 @@ export class CalcMatrix2D extends CalcElement {
       minusOne: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate(); // Corrected dimensions for dot product result
         return this._call("algebra", "algebra_minus_one", async)([this, result])(result);
-      },
-      replicate: (rows: number, cols: number) => {
-        const _rows = this.rows() * rows;
-        const _cols = this.cols() * cols;
-        const result = new CalcMatrix2D(_rows, _cols).allocate();
-        const __rows = new CalcScalar().allocate().set([rows]);
-        const __cols = new CalcScalar().allocate().set([cols]);
-        return this._call("algebra", "algebra_replicate_matrix", async)([this, __rows, __cols, result])(result);
       },
       logisticForwardPropagation: () => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();

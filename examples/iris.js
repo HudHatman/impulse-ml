@@ -12,13 +12,13 @@ const path = require("path");
 
 const builder = new NetworkBuilder1D([4]);
 builder
-  .createLayer(ReluLayer, (layer) => {
+  .createLayer(LogisticLayer, (layer) => {
     layer.setSize(8);
   })
-  .createLayer(ReluLayer, (layer) => {
+  .createLayer(LogisticLayer, (layer) => {
     layer.setSize(6);
   })
-  .createLayer(SoftmaxLayer, (layer) => {
+  .createLayer(LogisticLayer, (layer) => {
     layer.setSize(3);
   });
 
@@ -35,15 +35,14 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
     console.log("Loaded iris_x.csv");
     DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__dirname, "../data/iris_y.csv"))).then(
       async (outputDataset) => {
-        const x = inputDataset.exampleAt(0);
+        console.log(network.forward(inputDataset.exampleAt(0)).get())
         inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
         
-        // --- HYPERPARAMETER CHANGE ---
         const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
-        trainer.setIterations(1000);
+        trainer.setIterations(300);
         trainer.setLearningRate(0.001);
         trainer.setRegularization(0.01);
-        // --- END HYPERPARAMETER CHANGE ---
+        trainer.setVerboseStep(10);
 
         trainer.setStepCallback(() => {
           //console.log("forward", network.forward(x).get(), outputDataset.data.get());

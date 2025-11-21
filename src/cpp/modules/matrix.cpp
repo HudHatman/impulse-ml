@@ -47,7 +47,7 @@ void matrix_set_random(MEMORY * inputs, MEMORY * outputs) {
     double parameter = inputs[1].memory[0];
     m.setRandom();
     m = m.unaryExpr([parameter](double x) {
-        return x * sqrt(1.0 / parameter);
+        return x * parameter;
     });
 }
 

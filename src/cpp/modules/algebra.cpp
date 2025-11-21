@@ -15,6 +15,16 @@
 #define EIGEN_USE_BLAS
 #define EIGEN_USE_THREADS
 
+void algebra_forward_propagation(MEMORY * inputs, MEMORY * outputs) {
+    Eigen::Map<Eigen::MatrixXd> w(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> x(inputs[1].memory, inputs[1].rows, inputs[1].cols);
+    Eigen::Map<Eigen::MatrixXd> b(inputs[2].memory, inputs[2].rows, inputs[2].cols);
+    Eigen::Map<Eigen::MatrixXd> result(inputs[3].memory, inputs[3].rows, inputs[3].cols);
+
+    result = w * x;
+    result.colwise() += b.col(0);
+}
+
 void algebra_pow(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -256,14 +266,15 @@ void algebra_log_minus_one(MEMORY * inputs, MEMORY * outputs) {
         return log(1.0 - x);
     });
 }
+
 void algebra_softmax(MEMORY * inputs, MEMORY * outputs) {
-    Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
-    Eigen::MatrixXd stabilized = m1.rowwise() - m1.colwise().maxCoeff();
-    Eigen::MatrixXd exponentials = stabilized.array().exp();
-
-    result = (exponentials.array() / (exponentials.colwise().sum()).replicate(exponentials.rows(), 1).array());
+    Eigen::MatrixXd stabilized = m.rowwise() - m.colwise().maxCoeff();
+    result = stabilized.array().exp();
+    Eigen::MatrixXd divider = result.colwise().sum().replicate(result.rows(), 1);
+    result = result.array() / divider.array();
 }
 
 void algebra_fraction(MEMORY * inputs, MEMORY * outputs) {

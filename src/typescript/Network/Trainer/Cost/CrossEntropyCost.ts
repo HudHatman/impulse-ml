@@ -1,7 +1,7 @@
 import { AbstractCost } from "./AbstractCost";
 import { CalcMatrix2D } from "../../../Math";
-import { LayerType } from "../../../types";
-import { AbstractLayer } from "../../Layer/AbstractLayer";
+import { AbstractLayer } from "../../Layer";
+import { LayerType} from "../../../types";
 
 export class CrossEntropyCost extends AbstractCost {
   private readonly epsilon = 1e-8;
@@ -15,11 +15,14 @@ export class CrossEntropyCost extends AbstractCost {
 
   derivative(correctOutput: CalcMatrix2D, predictions: CalcMatrix2D, lastLayer: AbstractLayer): CalcMatrix2D {
     if (lastLayer.getType() === LayerType.softmax) {
+      // For Softmax, we compute dZ directly
       return predictions.subtract(correctOutput);
     }
 
-    const denominator = predictions.multiply(predictions.minusOne().multiply(-1)).add(this.epsilon);
-    const dA = predictions.subtract(correctOutput).divide(denominator);
-    return dA.multiply(lastLayer.derivative(lastLayer.Z));
+    // For other layers (like Sigmoid), we calculate dA
+    const denominator = predictions.multiply(predictions.minusOne()).add(this.epsilon);
+    const dA = predictions.subtract(correctOutput).divide(denominator).multiply(-1);
+    
+    return dA;
   }
 }

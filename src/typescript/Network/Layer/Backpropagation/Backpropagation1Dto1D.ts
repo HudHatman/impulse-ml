@@ -1,6 +1,7 @@
 import { AbstractBackPropagation } from "./AbstractBackpropagation";
 import { CalcMatrix2D } from "../../../Math";
 import { Layers } from "../../../types";
+import { LayerType } from "../../../types";
 
 export class Backpropagation1Dto1D extends AbstractBackPropagation {
   propagate(
@@ -8,18 +9,31 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
     numberOfExamples: number,
     regularization: number,
     layer: Layers,
-    sigma: CalcMatrix2D
+    sigma: CalcMatrix2D,
+    isLastLayer: boolean,
   ): CalcMatrix2D {
-    const previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
-    const delta = sigma.dot(previousActivations.transpose().conjugate());
-    this.layer.gW = delta.divide(numberOfExamples).add(layer.W.multiply(regularization / numberOfExamples));
-    this.layer.gb = sigma.rowwiseSum().divide(numberOfExamples);
+    let dZ: CalcMatrix2D;
 
-    if (this.previousLayer !== null) {
-      const result = this.layer.W.transpose().dot(sigma);
-      return result.multiply(this.layer.previousLayer.derivative(this.layer.previousLayer.Z));
+    // If this is the last layer and it's Softmax, then sigma is already dZ
+    if (isLastLayer && layer.getType() === LayerType.softmax) {
+      dZ = sigma;
+    } else {
+      // Otherwise, sigma is dA, and we need to compute dZ
+      dZ = sigma.multiply(layer.derivative(layer.Z));
     }
-    
-    return new CalcMatrix2D();
+
+    const previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
+
+    // Calculate gradients for weights and biases
+    this.layer.gW = dZ
+      .dot(previousActivations.transpose())
+      .divide(numberOfExamples)
+      .add(this.layer.W.multiply(regularization / numberOfExamples));
+    this.layer.gb = dZ.rowwiseSum().divide(numberOfExamples);
+
+    // Calculate dA for the previous layer to continue the chain
+    const dA_prev = this.layer.W.transpose().dot(dZ);
+
+    return dA_prev;
   }
 }

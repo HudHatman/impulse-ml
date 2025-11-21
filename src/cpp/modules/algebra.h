@@ -36,6 +36,7 @@ extern "C" {
     void algebra_min(MEMORY * inputs, MEMORY * outputs);
     void algebra_max(MEMORY * inputs, MEMORY * outputs);
     void algebra_min_max(MEMORY * inputs, MEMORY * outputs);
+    void algebra_forward_propagation(MEMORY * inputs, MEMORY * outputs);
     //void algebra_img2col(MEMORY * inputs, MEMORY * outputs);
 }
 

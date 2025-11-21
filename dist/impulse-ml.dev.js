@@ -1227,10 +1227,10 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       });
     }
   }, {
-    key: "replicate",
-    value: function replicate(rows, cols) {
+    key: "forwardPropagation",
+    value: function forwardPropagation(w, b) {
       return this.calcSync(function (calc) {
-        return calc.replicate(rows, cols);
+        return calc.forwardPropagation(w, b);
       });
     }
   }, {
@@ -1402,6 +1402,10 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           var _end = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([end]);
           return this._call("matrix", "matrix_block", async)([this, _offset, _batch, _start, _end, result])(result);
         },
+        forwardPropagation: function forwardPropagation(w, b) {
+          var result = new CalcMatrix2D(w.rows(), _this.cols()).allocate();
+          return _this._call("algebra", "algebra_forward_propagation", async)([w, _this, b, result])(result);
+        },
         pow: function pow(number) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
           return _this._call("algebra", "algebra_pow", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]), result])(result);
@@ -1487,14 +1491,6 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
         minusOne: function minusOne() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
           return _this._call("algebra", "algebra_minus_one", async)([_this, result])(result);
-        },
-        replicate: function replicate(rows, cols) {
-          var _rows = _this.rows() * rows;
-          var _cols = _this.cols() * cols;
-          var result = new CalcMatrix2D(_rows, _cols).allocate();
-          var __rows = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([rows]);
-          var __cols = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([cols]);
-          return _this._call("algebra", "algebra_replicate_matrix", async)([_this, __rows, __cols, result])(result);
         },
         logisticForwardPropagation: function logisticForwardPropagation() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
@@ -2091,7 +2087,7 @@ var AbstractLayer1D = /*#__PURE__*/function (_AbstractLayer) {
     key: "configure",
     value: function configure() {
       this.W.resize(this.getHeight(), this.getWidth());
-      this.W.setRandom(this.previousLayer ? this.previousLayer.getHeight() : this.getHeight());
+      this.W.setRandom(Math.sqrt(1 / (this.previousLayer ? this.previousLayer.getHeight() : this.getHeight())));
       this.b.resize(this.getHeight(), 1);
       this.b.setZeros();
       this.gW.resize(this.getHeight(), this.getWidth());
@@ -2114,7 +2110,7 @@ var AbstractLayer1D = /*#__PURE__*/function (_AbstractLayer) {
   }, {
     key: "forward",
     value: function forward(input) {
-      this.Z = this.W.dot(input).add(this.b.replicate(1, input.cols()));
+      this.Z = input.forwardPropagation(this.W, this.b);
       this.A = this.activation(this.Z);
       return this.A;
     }
@@ -2216,7 +2212,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Backpropagation1Dto1D: () => (/* binding */ Backpropagation1Dto1D)
 /* harmony export */ });
 /* harmony import */ var _AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractBackpropagation */ "./src/typescript/Network/Layer/Backpropagation/AbstractBackpropagation.ts");
-/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Math */ "./src/typescript/Math/index.ts");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../types */ "./src/typescript/types.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -2240,16 +2236,25 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
   _inherits(Backpropagation1Dto1D, _AbstractBackPropagat);
   return _createClass(Backpropagation1Dto1D, [{
     key: "propagate",
-    value: function propagate(input, numberOfExamples, regularization, layer, sigma) {
-      var previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
-      var delta = sigma.dot(previousActivations.transpose().conjugate());
-      this.layer.gW = delta.divide(numberOfExamples).add(layer.W.multiply(regularization / numberOfExamples));
-      this.layer.gb = sigma.rowwiseSum().divide(numberOfExamples);
-      if (this.previousLayer !== null) {
-        var result = this.layer.W.transpose().dot(sigma);
-        return result.multiply(this.layer.previousLayer.derivative(this.layer.previousLayer.Z));
+    value: function propagate(input, numberOfExamples, regularization, layer, sigma, isLastLayer) {
+      var dZ;
+
+      // If this is the last layer and it's Softmax, then sigma is already dZ
+      if (isLastLayer && layer.getType() === _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax) {
+        dZ = sigma;
+      } else {
+        // Otherwise, sigma is dA, and we need to compute dZ
+        dZ = sigma.multiply(layer.derivative(layer.Z));
       }
-      return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D();
+      var previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
+
+      // Calculate gradients for weights and biases
+      this.layer.gW = dZ.dot(previousActivations.transpose()).divide(numberOfExamples).add(this.layer.W.multiply(regularization / numberOfExamples));
+      this.layer.gb = dZ.rowwiseSum().divide(numberOfExamples);
+
+      // Calculate dA for the previous layer to continue the chain
+      var dA_prev = this.layer.W.transpose().dot(dZ);
+      return dA_prev;
     }
   }]);
 }(_AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__.AbstractBackPropagation);
@@ -2609,35 +2614,14 @@ var Network = /*#__PURE__*/function () {
       return output;
     }
   }, {
-    key: "forwardAsync",
-    value: function forwardAsync(input) {
-      var _this = this;
-      return new Promise(function (resolve) {
-        var output = input.clone();
-        var l = 0;
-        var _next = function next() {
-          return _this.layers[l].forwardAsync(output).then(function (out) {
-            output.destroy();
-            output = out;
-            if (l < _this.layers.length - 1) {
-              l++;
-              _next();
-            } else {
-              resolve(output);
-            }
-          });
-        };
-        _next();
-      });
-    }
-  }, {
     key: "backward",
     value: function backward(X, regularization, sigma) {
       var m = X.cols();
       var currentSigma = sigma;
       for (var i = this.layers.length - 1; i >= 0; i -= 1) {
         var layer = this.layers[i];
-        currentSigma = layer.getBackPropagation().propagate(X, m, regularization, layer, currentSigma);
+        var isLastLayer = i === this.layers.length - 1;
+        currentSigma = layer.getBackPropagation().propagate(X, m, regularization, layer, currentSigma, isLastLayer);
       }
     }
   }, {
@@ -2687,7 +2671,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   AbstractTrainer: () => (/* binding */ AbstractTrainer)
 /* harmony export */ });
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _readOnlyError(r) { throw new TypeError('"' + r + '" is read-only'); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -2749,13 +2732,14 @@ var AbstractTrainer = /*#__PURE__*/function () {
     key: "cost",
     value: function cost(predictions, correctOutput) {
       var miniBatchSize = correctOutput.cols();
-      var dataLoss = this.costFunction.loss(correctOutput, predictions);
-      var regularizationPenalty = 0;
-      this.network.getLayers().forEach(function (layer) {
-        regularizationPenalty += layer.penalty().get()[0];
-      });
-      var regularizationLoss = this.regularization * regularizationPenalty / (2.0 * miniBatchSize);
-      var cost = dataLoss + regularizationLoss;
+      var cost = this.costFunction.loss(correctOutput, predictions);
+      if (this.regularization > 0) {
+        var penalty = 0;
+        this.network.getLayers().forEach(function (layer) {
+          penalty += layer.penalty().get()[0];
+        });
+        cost += this.regularization / (2 * miniBatchSize) * penalty;
+      }
       var correctPredictions = 0;
       for (var i = 0; i < miniBatchSize; i += 1) {
         var predictionIndex = predictions.col(i).maxCoeff();
@@ -2920,11 +2904,14 @@ var CrossEntropyCost = /*#__PURE__*/function (_AbstractCost) {
     key: "derivative",
     value: function derivative(correctOutput, predictions, lastLayer) {
       if (lastLayer.getType() === _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax) {
+        // For Softmax, we compute dZ directly
         return predictions.subtract(correctOutput);
       }
-      var denominator = predictions.multiply(predictions.minusOne().multiply(-1)).add(this.epsilon);
-      var dA = predictions.subtract(correctOutput).divide(denominator);
-      return dA.multiply(lastLayer.derivative(lastLayer.Z));
+
+      // For other layers (like Sigmoid), we calculate dA
+      var denominator = predictions.multiply(predictions.minusOne()).add(this.epsilon);
+      var dA = predictions.subtract(correctOutput).divide(denominator).multiply(-1);
+      return dA;
     }
   }]);
 }(_AbstractCost__WEBPACK_IMPORTED_MODULE_0__.AbstractCost);
@@ -3123,39 +3110,34 @@ var OptimizerAdam = /*#__PURE__*/function (_AbstractOptimizer) {
     _this = _callSuper(this, OptimizerAdam, [].concat(args));
     _defineProperty(_this, "beta1", 0.9);
     _defineProperty(_this, "beta2", 0.999);
+    _defineProperty(_this, "epsilon", 1e-8);
     return _this;
   }
   _inherits(OptimizerAdam, _AbstractOptimizer);
   return _createClass(OptimizerAdam, [{
-    key: "setBeta1",
-    value: function setBeta1(beta1) {
-      this.beta1 = beta1;
-      return this;
-    }
-  }, {
-    key: "setBeta2",
-    value: function setBeta2(beta2) {
-      this.beta2 = beta2;
-      return this;
-    }
-  }, {
     key: "optimize",
     value: function optimize(layer) {
-      this.adam(layer, this.learningRate, this.t);
-    }
-  }, {
-    key: "adam",
-    value: function adam(layer, learningRate, t) {
+      // v (momentum) update
       layer.vW = layer.vW.multiply(this.beta1).add(layer.gW.multiply(1 - this.beta1));
       layer.vb = layer.vb.multiply(this.beta1).add(layer.gb.multiply(1 - this.beta1));
-      layer.sW = layer.sW.multiply(this.beta2).add(layer.sW.pow(2).multiply(1 - this.beta2));
-      layer.sb = layer.sb.multiply(this.beta2).add(layer.sb.pow(2).multiply(1 - this.beta2));
-      var vWCorrected = layer.vW.divide(1 - Math.pow(this.beta1, 2));
-      var vbCorrected = layer.vb.divide(1 - Math.pow(this.beta1, 2));
-      var sWCorrected = layer.sW.add(1e-8).sqrt();
-      var sbCorrected = layer.sb.add(1e-8).sqrt();
-      layer.W = layer.W.subtract(vWCorrected.divide(sWCorrected).multiply(learningRate));
-      layer.b = layer.b.subtract(vbCorrected.divide(sbCorrected).multiply(learningRate));
+
+      // s (RMSprop) update
+      layer.sW = layer.sW.multiply(this.beta2).add(layer.gW.pow(2).multiply(1 - this.beta2));
+      layer.sb = layer.sb.multiply(this.beta2).add(layer.gb.pow(2).multiply(1 - this.beta2));
+
+      // Bias correction
+      var vW_corrected = layer.vW.divide(1 - Math.pow(this.beta1, this.t));
+      var vb_corrected = layer.vb.divide(1 - Math.pow(this.beta1, this.t));
+      var sW_corrected = layer.sW.divide(1 - Math.pow(this.beta2, this.t));
+      var sb_corrected = layer.sb.divide(1 - Math.pow(this.beta2, this.t));
+
+      // Adam update step
+      var W_update = vW_corrected.divide(sW_corrected.sqrt().add(this.epsilon)).multiply(this.learningRate);
+      var b_update = vb_corrected.divide(sb_corrected.sqrt().add(this.epsilon)).multiply(this.learningRate);
+
+      // Apply the Adam update
+      layer.W = layer.W.subtract(W_update);
+      layer.b = layer.b.subtract(b_update);
     }
   }]);
 }(_AbstractOptimizer__WEBPACK_IMPORTED_MODULE_0__.AbstractOptimizer);

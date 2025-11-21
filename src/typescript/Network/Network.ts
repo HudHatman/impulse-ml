@@ -36,34 +36,14 @@ class Network {
     return output;
   }
 
-  forwardAsync(input: CalcMatrix2D): Promise<CalcMatrix2D> {
-    return new Promise((resolve) => {
-      let output = input.clone();
-      let l = 0;
-      const next = () => {
-        return this.layers[l].forwardAsync(output).then((out) => {
-          output.destroy();
-          output = out;
-          if (l < this.layers.length - 1) {
-            l++;
-            next();
-          } else {
-            resolve(output);
-          }
-        });
-      };
-
-      next();
-    });
-  }
-
   backward(X: CalcMatrix2D, regularization: number, sigma: CalcMatrix2D): void {
     const m = X.cols();
     let currentSigma = sigma;
 
     for (let i = this.layers.length - 1; i >= 0; i -= 1) {
       const layer = this.layers[i];
-      currentSigma = layer.getBackPropagation().propagate(X, m, regularization, layer, currentSigma);
+      const isLastLayer = i === this.layers.length - 1;
+      currentSigma = layer.getBackPropagation().propagate(X, m, regularization, layer, currentSigma, isLastLayer);
     }
   }
 
