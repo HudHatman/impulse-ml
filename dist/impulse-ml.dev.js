@@ -400,8 +400,7 @@ var Dataset = /*#__PURE__*/function () {
   }, {
     key: "getBatch",
     value: function getBatch(offset, batchSize) {
-      var data = this.data.block(0, offset, this.data.rows, batchSize);
-      return Dataset.fromMatrix(data);
+      return Dataset.fromMatrix(this.data.block(0, offset, this.data.rows(), batchSize));
     }
 
     /*insertColumnAfter(column, size = 1) {
@@ -423,9 +422,7 @@ var Dataset = /*#__PURE__*/function () {
   }], [{
     key: "fromMatrix",
     value: function fromMatrix(m) {
-      var instance = new Dataset();
-      instance.exampleSize = m.rows;
-      instance.numberOfExamples = m.cols;
+      var instance = new Dataset(m.rows(), m.cols());
       instance.data = m;
       return instance;
     }
@@ -1415,6 +1412,7 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       var _this = this;
       var async = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
       var baseSandbox = _superPropGet(CalcMatrix2D, "getCalcSandbox", this, 3)([async]);
+      var that = this;
       return _objectSpread(_objectSpread({}, baseSandbox), {}, {
         block: function block(offset, batch, start, end) {
           var result = new CalcMatrix2D(end - start, batch).allocate();
@@ -1422,11 +1420,11 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           var _batch = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([batch]);
           var _start = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([start]);
           var _end = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([end]);
-          return this._call("matrix", "matrix_block", async)([this, _offset, _batch, _start, _end, result])(result);
+          return that._call("matrix", "matrix_block", async)([this, _offset, _batch, _start, _end, result])(result);
         },
         forwardPropagation: function forwardPropagation(w, b) {
           var result = new CalcMatrix2D(w.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_forward_propagation", async)([w, _this, b, result])(result);
+          return that._call("algebra", "algebra_forward_propagation", async)([w, _this, b, result])(result);
         },
         backwardPropagation: function backwardPropagation(w, a_prev, regularization, num_examples) {
           var gW = new CalcMatrix2D(w.rows(), w.cols()).allocate();
@@ -1434,144 +1432,144 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           var dA_prev = new CalcMatrix2D(a_prev.rows(), a_prev.cols()).allocate();
           var _regularization = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([regularization]);
           var _num_examples = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([num_examples]);
-          return _this._call("algebra", "algebra_backward_propagation", async)([_this, w, a_prev, _regularization, _num_examples, gW, gb, dA_prev])([gW, gb, dA_prev]);
+          return that._call("algebra", "algebra_backward_propagation", async)([_this, w, a_prev, _regularization, _num_examples, gW, gb, dA_prev])([gW, gb, dA_prev]);
         },
         pow: function pow(number) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_pow", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]), result])(result);
+          return that._call("algebra", "algebra_pow", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]), result])(result);
         },
         fraction: function fraction(number) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_fraction", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]), result])(result);
+          return that._call("algebra", "algebra_fraction", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]), result])(result);
         },
         softmax: function softmax() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_softmax", async)([_this, result])(result);
+          return that._call("algebra", "algebra_softmax", async)([_this, result])(result);
         },
         sqrt: function sqrt() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_sqrt", async)([_this, result])(result);
+          return that._call("algebra", "algebra_sqrt", async)([_this, result])(result);
         },
         tanh: function tanh() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_tanh", async)([_this, result])(result);
+          return that._call("algebra", "algebra_tanh", async)([_this, result])(result);
         },
         tanhDerivative: function tanhDerivative() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_tanh_derivative", async)([_this, result])(result);
+          return that._call("algebra", "algebra_tanh_derivative", async)([_this, result])(result);
         },
         softmaxDerivative: function softmaxDerivative() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_softmax_derivative", async)([_this, result])(result);
+          return that._call("algebra", "algebra_softmax_derivative", async)([_this, result])(result);
         },
         rowwiseSum: function rowwiseSum() {
           var result = new CalcMatrix2D(_this.rows(), 1).allocate();
-          return _this._call("algebra", "algebra_rowwise_sum", async)([_this, result])(result);
+          return that._call("algebra", "algebra_rowwise_sum", async)([_this, result])(result);
         },
         multiply: function multiply(m) {
           if (typeof m === "number") {
             var _m = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([m]);
             var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-            return _this._call("algebra", "algebra_multiply_number", async)([_this, _m, result])(result);
+            return that._call("algebra", "algebra_multiply_number", async)([_this, _m, result])(result);
           } else {
             var _result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-            return _this._call("algebra", "algebra_multiply", async)([_this, m, _result])(_result);
+            return that._call("algebra", "algebra_multiply", async)([_this, m, _result])(_result);
           }
         },
         log: function log() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_log", async)([_this, result])(result);
+          return that._call("algebra", "algebra_log", async)([_this, result])(result);
         },
         divide: function divide(mOrNumber) {
           if (typeof mOrNumber === "number") {
             var num = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([mOrNumber]);
             var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-            return _this._call("algebra", "algebra_divide_number", async)([_this, num, result])(result);
+            return that._call("algebra", "algebra_divide_number", async)([_this, num, result])(result);
           } else {
             var _result2 = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-            return _this._call("algebra", "algebra_divide_matrix", async)([_this, mOrNumber, _result2])(_result2);
+            return that._call("algebra", "algebra_divide_matrix", async)([_this, mOrNumber, _result2])(_result2);
           }
         },
         dot: function dot(m) {
           var result = new CalcMatrix2D(_this.rows(), m.cols()).allocate();
-          return _this._call("algebra", "algebra_dot", async)([_this, m, result])(result);
+          return that._call("algebra", "algebra_dot", async)([_this, m, result])(result);
         },
         add: function add(m) {
           if (typeof m === "number") {
             var num = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([m]);
             var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
-            return _this._call("algebra", "algebra_add_number", async)([_this, num, result])(result);
+            return that._call("algebra", "algebra_add_number", async)([_this, num, result])(result);
           } else {
             var _result3 = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
-            return _this._call("algebra", "algebra_add_matrix", async)([_this, m, _result3])(_result3);
+            return that._call("algebra", "algebra_add_matrix", async)([_this, m, _result3])(_result3);
           }
         },
         subtract: function subtract(m) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
-          return _this._call("algebra", "algebra_subtract", async)([_this, m, result])(result);
+          return that._call("algebra", "algebra_subtract", async)([_this, m, result])(result);
         },
         transpose: function transpose() {
           var result = new CalcMatrix2D(_this.cols(), _this.rows()).allocate(); // Corrected dimensions for dot product result
-          return _this._call("matrix", "matrix_transpose", async)([_this, result])(result);
+          return that._call("matrix", "matrix_transpose", async)([_this, result])(result);
         },
         logMinusOne: function logMinusOne() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
-          return _this._call("algebra", "algebra_log_minus_one", async)([_this, result])(result);
+          return that._call("algebra", "algebra_log_minus_one", async)([_this, result])(result);
         },
         minusOne: function minusOne() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
-          return _this._call("algebra", "algebra_minus_one", async)([_this, result])(result);
+          return that._call("algebra", "algebra_minus_one", async)([_this, result])(result);
         },
         logisticForwardPropagation: function logisticForwardPropagation() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_logistic_forward_propagation", async)([_this, result])(result);
+          return that._call("algebra", "algebra_logistic_forward_propagation", async)([_this, result])(result);
         },
         conjugate: function conjugate() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_conjugate", async)([_this, result])(result);
+          return that._call("algebra", "algebra_conjugate", async)([_this, result])(result);
         },
         logisticBackwardPropagation: function logisticBackwardPropagation() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_logistic_backward_propagation", async)([_this, result])(result);
+          return that._call("algebra", "algebra_logistic_backward_propagation", async)([_this, result])(result);
         },
         leakyRelu: function leakyRelu(alpha) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_leaky_relu", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([alpha]), result])(result);
+          return that._call("algebra", "algebra_leaky_relu", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([alpha]), result])(result);
         },
         leakyReluBackpropagation: function leakyReluBackpropagation(alpha) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_leaky_reluBackpropagation", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([alpha]), result])(result);
+          return that._call("algebra", "algebra_leaky_reluBackpropagation", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([alpha]), result])(result);
         },
         maxCoeff: function maxCoeff() {
           var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
-          return _this._call("algebra", "algebra_max_coeff", async)([_this, result])(result);
+          return that._call("algebra", "algebra_max_coeff", async)([_this, result])(result);
         },
         setMin: function setMin(number) {
           var nb = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]);
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("matrix", "matrix_set_min", async)([_this, nb, result])(result);
+          return that._call("matrix", "matrix_set_min", async)([_this, nb, result])(result);
         },
         setMax: function setMax(number) {
           var nb = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]);
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("matrix", "matrix_set_max", async)([_this, nb, result])(result);
+          return that._call("matrix", "matrix_set_max", async)([_this, nb, result])(result);
         },
         min: function min() {
           var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
-          return _this._call("matrix", "matrix_min", async)([_this, result])(result);
+          return that._call("matrix", "matrix_min", async)([_this, result])(result);
         },
         max: function max() {
           var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
-          return _this._call("matrix", "matrix_max", async)([_this, result])(result);
+          return that._call("matrix", "matrix_max", async)([_this, result])(result);
         },
         minMax: function minMax() {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return _this._call("algebra", "algebra_min_max", async)([_this, result])(result);
+          return that._call("algebra", "algebra_min_max", async)([_this, result])(result);
         },
         img2col: function img2col(filterSize, stride, padding) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
           var params = new _CalcRowVector__WEBPACK_IMPORTED_MODULE_1__.CalcRowVector(3).allocate().set([filterSize, stride, padding]);
-          return _this._call("algebra", "algebra_img2col", async)([_this, params, result])(result);
+          return that._call("algebra", "algebra_img2col", async)([_this, params, result])(result);
         }
       });
     }
@@ -2122,9 +2120,9 @@ var AbstractLayer1D = /*#__PURE__*/function (_AbstractLayer) {
     value: function configure() {
       this.W.resize(this.getHeight(), this.getWidth());
       var fanIn = this.getWidth();
-      this.W.setRandom(Math.sqrt(2 / fanIn)); // Changed to He initialization
-
-      this.b.resize(this.getHeight(), 1).setRandom(Math.sqrt(1 / fanIn));
+      // Corrected He initialization for uniform distribution
+      this.W.setRandom(Math.sqrt(6 / fanIn));
+      this.b.resize(this.getHeight(), 1).setZeros().add(1.0);
       this.gW.resize(this.getHeight(), this.getWidth());
       this.gW.setZeros();
       this.gb.resize(this.getHeight(), 1);
@@ -2281,23 +2279,27 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
       var dZ;
       if (isLastLayer && layer.getType() === _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax) {
         dZ = sigma;
-        console.log("\n--- Backpropagation: Last Layer (".concat(layer.getType(), ") ---"));
-        console.log("sigma (A - Y):", sigma.get());
+        //console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
+        //console.log("sigma (A - Y):", sigma.get());
       } else {
-        console.log("\n--- Backpropagation: Hidden Layer (".concat(layer.getType(), ") ---"));
-        console.log("sigma (dA_prev from next layer):", sigma.get());
+        //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
+        //console.log("sigma (dA_prev from next layer):", sigma.get());
         dZ = sigma.multiply(layer.derivative(layer.Z));
       }
-      console.log("dZ (gradient of linear output):", dZ.get());
+
+      //console.log("dZ (gradient of linear output):", dZ.get());
+
       var previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
       var _dZ$backwardPropagati = dZ.backwardPropagation(layer.W, previousActivations, regularization, numberOfExamples),
         _dZ$backwardPropagati2 = _slicedToArray(_dZ$backwardPropagati, 3),
         gW = _dZ$backwardPropagati2[0],
         gb = _dZ$backwardPropagati2[1],
         dA_prev = _dZ$backwardPropagati2[2];
-      console.log("gW (weight gradients):", gW.get());
-      console.log("gb (bias gradients):", gb.get());
-      console.log("dA_prev (propagating to previous layer):", dA_prev.get());
+
+      //console.log("gW (weight gradients):", gW.get());
+      //console.log("gb (bias gradients):", gb.get());
+      //console.log("dA_prev (propagating to previous layer):", dA_prev.get());
+
       layer.gW.replace(gW);
       layer.gb.replace(gb);
       return dA_prev;
@@ -2846,8 +2848,6 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
@@ -2855,37 +2855,53 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
 var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
   function BatchTrainer(network, optimizer, costFunction) {
+    var _this;
     _classCallCheck(this, BatchTrainer);
-    return _callSuper(this, BatchTrainer, [network, optimizer, costFunction]);
+    _this = _callSuper(this, BatchTrainer, [network, optimizer, costFunction]);
+    _defineProperty(_this, "_batchSize", 100);
+    return _this;
   }
   _inherits(BatchTrainer, _AbstractTrainer);
   return _createClass(BatchTrainer, [{
+    key: "setBatchSize",
+    value: function setBatchSize(size) {
+      this._batchSize = size;
+      return this;
+    }
+  }, {
     key: "train",
     value: function train(inputDataset, outputDataset) {
-      var _this = this;
-      var numberOfExamples = inputDataset.getNumberOfExamples();
+      var _this2 = this;
+      var numberOfExamples = inputDataset.data.cols();
       var X = inputDataset.data.transpose();
       var Y = outputDataset.data.transpose();
       var t = 0;
-      this.optimizer.setBatchSize(numberOfExamples);
+      this.optimizer.setBatchSize(this._batchSize);
       this.optimizer.setLearningRate(this.learningRate);
       for (var i = 0; i < this.iterations; i += 1) {
         var startTime = new Date().getTime();
-        var predictions = this.network.forward(X);
-        var sigma = this.costFunction.derivative(Y, predictions, this.network.getLastLayer());
-        this.network.backward(X, this.regularization, sigma);
-        this.optimizer.setT(++t);
-        this.network.getLayers().forEach(function (layer) {
-          _this.optimizer.optimize(layer);
-        });
-        if (this.verbose && (i + 1) % this.verboseStep === 0) {
-          var currentResult = this.cost(predictions, Y);
-          var endTime = new Date().getTime();
-          console.log("Iteration: ".concat(i + 1, " | Cost: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.cost, 5), " | Accuracy: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.accuracy, 2), "% | Time: ").concat((endTime - startTime) / 1000, " s."));
+        for (var batch = 0, offset = 0; batch < numberOfExamples; batch += this._batchSize, offset += this._batchSize) {
+          var input = inputDataset.getBatch(offset, this._batchSize);
+          var output = outputDataset.getBatch(offset, this._batchSize);
+          var predictions = this.network.forward(input);
+          var sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
+          this.network.backward(X, this.regularization, sigma);
+          this.optimizer.setT(++t);
+          this.network.getLayers().forEach(function (layer) {
+            _this2.optimizer.optimize(layer);
+          });
+          if (this.verbose && (i + 1) % this.verboseStep === 0) {
+            var currentResult = this.cost(predictions, Y);
+            var endTime = new Date().getTime();
+            console.log("Iteration: ".concat(i + 1, " | Cost: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.cost, 5), " | Accuracy: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.accuracy, 2), "% | Time: ").concat((endTime - startTime) / 1000, " s."));
+          }
         }
         this.stepCallback({
           iteration: i
@@ -3191,9 +3207,9 @@ var OptimizerAdam = /*#__PURE__*/function (_AbstractOptimizer) {
   return _createClass(OptimizerAdam, [{
     key: "optimize",
     value: function optimize(layer) {
-      console.log("\n--- OptimizerAdam: Layer ".concat(layer.getType(), " ---"));
-      console.log("gW received by optimizer:", layer.gW.get());
-      console.log("gb received by optimizer:", layer.gb.get());
+      //console.log(`\n--- OptimizerAdam: Layer ${layer.getType()} ---`);
+      //console.log("gW received by optimizer:", layer.gW.get());
+      //console.log("gb received by optimizer:", layer.gb.get());
 
       // v (momentum) update
       layer.vW = layer.vW.multiply(this.beta1).add(layer.gW.multiply(1 - this.beta1));

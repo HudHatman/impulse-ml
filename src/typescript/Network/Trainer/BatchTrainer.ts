@@ -6,45 +6,56 @@ import { Network } from "../index";
 import { AbstractCost } from "./Cost/AbstractCost";
 
 export class BatchTrainer extends AbstractTrainer {
+  private _batchSize: number = 100;
   constructor(network: Network, optimizer: AbstractOptimizer, costFunction: AbstractCost) {
     super(network, optimizer, costFunction);
   }
 
+  public setBatchSize(size: number) {
+    this._batchSize = size;
+    return this;
+  }
+
   train(inputDataset: Dataset, outputDataset: Dataset): AbstractTrainer {
-    const numberOfExamples = inputDataset.getNumberOfExamples();
+    const numberOfExamples = inputDataset.data.cols();
     const X = inputDataset.data.transpose();
     const Y = outputDataset.data.transpose();
 
     let t = 0;
 
-    this.optimizer.setBatchSize(numberOfExamples);
+    this.optimizer.setBatchSize(this._batchSize);
     this.optimizer.setLearningRate(this.learningRate);
 
     for (let i = 0; i < this.iterations; i += 1) {
       const startTime = new Date().getTime();
 
-      const predictions = this.network.forward(X);
+      for (let batch = 0, offset = 0; batch < numberOfExamples; batch += this._batchSize, offset += this._batchSize) {
+        const input = inputDataset.getBatch(offset, this._batchSize);
+        const output = outputDataset.getBatch(offset, this._batchSize);
 
-      const sigma = this.costFunction.derivative(Y, predictions, this.network.getLastLayer());
+        const predictions = this.network.forward(input);
 
-      this.network.backward(X, this.regularization, sigma);
+        const sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
 
-      this.optimizer.setT(++t);
+        this.network.backward(X, this.regularization, sigma);
 
-      this.network.getLayers().forEach((layer) => {
-        this.optimizer.optimize(layer);
-      });
+        this.optimizer.setT(++t);
 
-      if (this.verbose && (i + 1) % this.verboseStep === 0) {
-        const currentResult = this.cost(predictions, Y);
-        const endTime = new Date().getTime();
+        this.network.getLayers().forEach((layer) => {
+          this.optimizer.optimize(layer);
+        })
 
-        console.log(
-          `Iteration: ${i + 1} | Cost: ${round(currentResult.cost, 5)} | Accuracy: ${round(
-            currentResult.accuracy,
-            2
-          )}% | Time: ${(endTime - startTime) / 1000} s.`
-        );
+        if (this.verbose && (i + 1) % this.verboseStep === 0) {
+          const currentResult = this.cost(predictions, Y);
+          const endTime = new Date().getTime();
+
+          console.log(
+            `Iteration: ${i + 1} | Cost: ${round(currentResult.cost, 5)} | Accuracy: ${round(
+              currentResult.accuracy,
+              2
+            )}% | Time: ${(endTime - startTime) / 1000} s.`
+          );
+        }
       }
 
       this.stepCallback({

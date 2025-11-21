@@ -26,8 +26,9 @@ void algebra_backward_propagation(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> gb_map(inputs[6].memory, inputs[6].rows, inputs[6].cols);
     Eigen::Map<Eigen::MatrixXd> dA_prev_map(inputs[7].memory, inputs[7].rows, inputs[7].cols);
 
-    Eigen::MatrixXd gW_temp = (1.0 / num_examples) * (dZ * A_prev.transpose()) + (regularization / num_examples) * W;
-    Eigen::MatrixXd gb_temp = (1.0 / num_examples) * dZ.rowwise().sum();
+    Eigen::MatrixXd gW_temp = (1.0 / num_examples) * (dZ * A_prev.transpose()); // Changed calculation
+    gW_temp += (regularization / num_examples) * W;
+    Eigen::MatrixXd gb_temp = dZ.rowwise().sum() / num_examples;
     Eigen::MatrixXd dA_prev_temp = W.transpose() * dZ;
 
     gW_map = gW_temp;

@@ -15,9 +15,7 @@ export class Dataset {
   }
 
   static fromMatrix(m: CalcMatrix2D): Dataset {
-    const instance = new Dataset();
-    instance.exampleSize = m.rows;
-    instance.numberOfExamples = m.cols;
+    const instance = new Dataset(m.rows(), m.cols());
     instance.data = m;
 
     return instance;
@@ -36,8 +34,7 @@ export class Dataset {
   }
 
   getBatch(offset: number, batchSize: number): Dataset {
-    const data = this.data.block(0, offset, this.data.rows, batchSize);
-    return Dataset.fromMatrix(data);
+    return this.data.block(0, offset, this.data.rows(), batchSize);
   }
 
   /*insertColumnAfter(column, size = 1) {

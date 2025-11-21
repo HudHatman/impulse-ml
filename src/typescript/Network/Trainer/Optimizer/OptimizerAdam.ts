@@ -7,9 +7,9 @@ export class OptimizerAdam extends AbstractOptimizer {
   private readonly epsilon = 1e-8;
 
   optimize(layer: Layers): void {
-    console.log(`\n--- OptimizerAdam: Layer ${layer.getType()} ---`);
-    console.log("gW received by optimizer:", layer.gW.get());
-    console.log("gb received by optimizer:", layer.gb.get());
+    //console.log(`\n--- OptimizerAdam: Layer ${layer.getType()} ---`);
+    //console.log("gW received by optimizer:", layer.gW.get());
+    //console.log("gb received by optimizer:", layer.gb.get());
     
     // v (momentum) update
     layer.vW = layer.vW.multiply(this.beta1).add(layer.gW.multiply(1 - this.beta1));

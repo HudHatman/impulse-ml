@@ -38,9 +38,10 @@ abstract class AbstractLayer1D extends AbstractLayer {
     this.W.resize(this.getHeight(), this.getWidth());
 
     const fanIn = this.getWidth();
-    this.W.setRandom(Math.sqrt(2 / fanIn)); // Changed to He initialization
+    // Corrected He initialization for uniform distribution
+    this.W.setRandom(Math.sqrt(6 / fanIn)); 
 
-    this.b.resize(this.getHeight(), 1).setRandom(Math.sqrt(1 / fanIn));
+    this.b.resize(this.getHeight(), 1).setZeros().add(1.0);
 
     this.gW.resize(this.getHeight(), this.getWidth());
     this.gW.setZeros();
