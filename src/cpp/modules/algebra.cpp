@@ -15,6 +15,32 @@
 #define EIGEN_USE_BLAS
 #define EIGEN_USE_THREADS
 
+void algebra_cross_entropy_loss(MEMORY * inputs, MEMORY * outputs) {
+    Eigen::Map<Eigen::MatrixXd> correctOutput(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> predictions(inputs[1].memory, inputs[1].rows, inputs[1].cols);
+    double epsilon = inputs[2].memory[0];
+
+    double miniBatchSize = correctOutput.cols();
+    Eigen::MatrixXd logPredictions = (predictions.array().cwiseMax(epsilon)).log();
+    double cost = (correctOutput.array() * logPredictions.array()).sum();
+
+    outputs[0].memory[0] = -cost / miniBatchSize;
+}
+
+void algebra_cross_entropy_derivative(MEMORY * inputs, MEMORY * outputs) {
+    Eigen::Map<Eigen::MatrixXd> correctOutput(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> predictions(inputs[1].memory, inputs[1].rows, inputs[1].cols);
+    double epsilon = inputs[2].memory[0];
+    Eigen::Map<Eigen::MatrixXd> result(outputs[0].memory, outputs[0].rows, outputs[0].cols);
+
+    Eigen::MatrixXd term1 = correctOutput.array() / (predictions.array() + epsilon);
+    Eigen::MatrixXd oneMinusY = 1.0 - correctOutput.array();
+    Eigen::MatrixXd oneMinusA = 1.0 - predictions.array();
+    Eigen::MatrixXd term2 = oneMinusY.array() / (oneMinusA.array() + epsilon);
+
+    result = term2 - term1;
+}
+
 void algebra_backward_propagation(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> dZ(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> W(inputs[1].memory, inputs[1].rows, inputs[1].cols);

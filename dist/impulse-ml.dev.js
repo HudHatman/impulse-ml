@@ -1330,6 +1330,20 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       });
     }
   }, {
+    key: "crossEntropyLoss",
+    value: function crossEntropyLoss(correctOutput, predictions, epsilon) {
+      return this.calcSync(function (calc) {
+        return calc.crossEntropyLoss(correctOutput, predictions, epsilon);
+      });
+    }
+  }, {
+    key: "crossEntropyDerivative",
+    value: function crossEntropyDerivative(correctOutput, predictions, epsilon) {
+      return this.calcSync(function (calc) {
+        return calc.crossEntropyDerivative(correctOutput, predictions, epsilon);
+      });
+    }
+  }, {
     key: "softmax",
     value: function softmax() {
       return this.calcSync(function (calc) {
@@ -1416,6 +1430,16 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       var baseSandbox = _superPropGet(CalcMatrix2D, "getCalcSandbox", this, 3)([async]);
       var that = this;
       return _objectSpread(_objectSpread({}, baseSandbox), {}, {
+        crossEntropyLoss: function crossEntropyLoss(correctOutput, predictions, epsilon) {
+          var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
+          var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
+          return that._call("algebra", "algebra_cross_entropy_loss", async)([correctOutput, predictions, _epsilon], [result])(result);
+        },
+        crossEntropyDerivative: function crossEntropyDerivative(correctOutput, predictions, epsilon) {
+          var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
+          var result = new CalcMatrix2D(correctOutput.rows(), correctOutput.cols()).allocate();
+          return that._call("algebra", "algebra_cross_entropy_derivative", async)([correctOutput, predictions, _epsilon], [result])(result);
+        },
         block: function block(rowOffset, colOffset, numRows, numCols) {
           var result = new CalcMatrix2D(numRows, numCols).allocate();
           var _rowOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([rowOffset]);
@@ -2950,6 +2974,10 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
             var endTime = new Date().getTime();
             console.log("Iteration: ".concat(i + 1, " | Cost: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.cost, 5), " | Accuracy: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.accuracy, 2), "% | Time: ").concat((endTime - startTime) / 1000, " s."));
           }
+          input.destroy();
+          output.destroy();
+          predictions.destroy();
+          sigma.destroy();
         }
         this.stepCallback({
           iteration: i
@@ -2997,7 +3025,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   CrossEntropyCost: () => (/* binding */ CrossEntropyCost)
 /* harmony export */ });
 /* harmony import */ var _AbstractCost__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractCost */ "./src/typescript/Network/Trainer/Cost/AbstractCost.ts");
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../types */ "./src/typescript/types.ts");
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Math */ "./src/typescript/Math/index.ts");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../types */ "./src/typescript/types.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -3012,6 +3041,7 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
 
 
 var CrossEntropyCost = /*#__PURE__*/function (_AbstractCost) {
@@ -3029,27 +3059,18 @@ var CrossEntropyCost = /*#__PURE__*/function (_AbstractCost) {
   return _createClass(CrossEntropyCost, [{
     key: "loss",
     value: function loss(correctOutput, predictions) {
-      var miniBatchSize = correctOutput.cols();
-      var logPredictions = predictions.add(this.epsilon).log();
-      var cost = correctOutput.multiply(logPredictions).sum().get()[0];
-      return -cost / miniBatchSize;
+      return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D().crossEntropyLoss(correctOutput, predictions, this.epsilon);
     }
   }, {
     key: "derivative",
     value: function derivative(correctOutput, predictions, lastLayer) {
-      if (lastLayer.getType() === _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax) {
+      if (lastLayer.getType() === _types__WEBPACK_IMPORTED_MODULE_2__.LayerType.softmax) {
         // For Softmax, we compute dZ directly
         return predictions.subtract(correctOutput);
       }
 
       // For other layers (like Sigmoid), we calculate dA
-      // dA = - (Y / A) + ((1 - Y) / (1 - A))
-      var term1 = correctOutput.divide(predictions.add(this.epsilon));
-      var oneMinusY = correctOutput.minusOne(); // This calculates 1 - Y
-      var oneMinusA = predictions.minusOne(); // This calculates 1 - A
-      var term2 = oneMinusY.divide(oneMinusA.add(this.epsilon));
-      var dA = term2.subtract(term1);
-      return dA;
+      return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D().crossEntropyDerivative(correctOutput, predictions, this.epsilon);
     }
   }]);
 }(_AbstractCost__WEBPACK_IMPORTED_MODULE_0__.AbstractCost);

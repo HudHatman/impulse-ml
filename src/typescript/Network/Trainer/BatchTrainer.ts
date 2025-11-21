@@ -55,6 +55,11 @@ export class BatchTrainer extends AbstractTrainer {
             )}% | Time: ${(endTime - startTime) / 1000} s.`
           );
         }
+
+        input.destroy();
+        output.destroy();
+        predictions.destroy()
+        sigma.destroy();
       }
 
       this.stepCallback({
