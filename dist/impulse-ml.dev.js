@@ -169,7 +169,6 @@ var SourceCSV = /*#__PURE__*/function (_AbstractSource) {
       var _this$data$;
       var numberOfExamples = this.data.length;
       var exampleSize = (_this$data$ = this.data[0]) === null || _this$data$ === void 0 ? void 0 : _this$data$.length;
-      console.log(numberOfExamples, exampleSize);
       if (typeof numberOfExamples !== "undefined" && typeof exampleSize !== "undefined") {
         var data = [];
         for (var i = 0; i < numberOfExamples; i += 1) {
@@ -178,9 +177,7 @@ var SourceCSV = /*#__PURE__*/function (_AbstractSource) {
           });
           data.push(newData);
         }
-        console.log(data);
-        process.exit();
-        return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(new Float64Array(data));
+        return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(numberOfExamples, exampleSize).allocate().set(new Float64Array(data));
       }
       return null;
     }
@@ -192,7 +189,6 @@ var SourceCSV = /*#__PURE__*/function (_AbstractSource) {
           noheader: true,
           output: "csv"
         }).fromFile(path).then(function (arr) {
-          console.log(arr);
           resolve(new SourceCSV(arr));
         });
       });
@@ -371,9 +367,7 @@ var Dataset = /*#__PURE__*/function () {
     _defineProperty(this, "data", null);
     this.exampleSize = exampleSize;
     this.numberOfExamples = numberOfExamples;
-    if (data) {
-      this.data = data;
-    }
+    this.data = data;
   }
   return _createClass(Dataset, [{
     key: "exampleAt",
@@ -393,31 +387,13 @@ var Dataset = /*#__PURE__*/function () {
   }, {
     key: "getBatch",
     value: function getBatch(offset, batchSize) {
+      console.log(offset, 0, batchSize, this.data.cols());
       return this.data.block(offset, 0, batchSize, this.data.cols());
     }
-
-    /*insertColumnAfter(column, size = 1) {
-      const oldData = this.data.copy();
-       this.exampleSize = this.data.rows + size;
-      this.data.resize(this.data.rows + size, this.data.cols);
-       for (let row = 0; row < this.data.rows; row += 1) {
-        for (let col = 0; col < this.data.cols; col += 1) {
-          if (row <= column) {
-            this.data.data[row][col] = oldData.data[row][col];
-          } else if (row > column && row <= column + size) {.tran
-            this.data.data[row][col] = undefined;
-          } else if (row > column + size) {
-            this.data.data[row][col] = oldData.data[row - size][col];
-          }
-        }
-      }
-    }*/
   }], [{
     key: "fromMatrix",
     value: function fromMatrix(m) {
-      var instance = new Dataset(m.rows(), m.cols());
-      instance.data = m;
-      return instance;
+      return new Dataset(m.rows(), m.cols(), m);
     }
   }]);
 }();
@@ -508,8 +484,7 @@ var MinMaxScalingDatasetModifier = /*#__PURE__*/function (_AbstractModifier) {
   return _createClass(MinMaxScalingDatasetModifier, [{
     key: "apply",
     value: function apply(dataset) {
-      var newData = dataset.data.minMax();
-      dataset.data = newData;
+      dataset.data.replace(dataset.data.minMax());
       return dataset;
     }
   }]);
@@ -1434,14 +1409,12 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           return that._call("algebra", "algebra_cross_entropy_derivative", async)([correctOutput, predictions, _epsilon], [result])(result);
         },
         block: function block(rowOffset, colOffset, numRows, numCols) {
-          console.log(rowOffset, colOffset, numRows, numCols);
-          process.exit();
-          var result = new CalcMatrix2D(Math.min(numRows, that.rows() - rowOffset), numCols).allocate();
+          var result = new CalcMatrix2D(numRows, numCols).allocate();
           var _rowOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([rowOffset]);
           var _colOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([colOffset]);
           var _numRows = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numRows]);
           var _numCols = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numCols]);
-          return that._call("matrix", "matrix_block", async)([this, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
+          return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
         },
         forwardPropagation: function forwardPropagation(w, b) {
           var result = new CalcMatrix2D(w.rows(), _this.cols()).allocate();
@@ -2953,7 +2926,7 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
       for (var i = 0; i < this.iterations; i += 1) {
         var startTime = new Date().getTime();
         for (var batch = 0, offset = 0; batch < numberOfExamples; offset += this._batchSize) {
-          console.log(offset, this._batchSize);
+          console.log(offset, Math.min(this._batchSize, numberOfExamples - offset));
           var input = inputDataset.getBatch(offset, this._batchSize);
           var output = outputDataset.getBatch(offset, this._batchSize);
           var predictions = this.network.forward(input);
