@@ -1,18 +1,14 @@
 import { CalcMatrix2D } from "../Math";
 
 export class Dataset {
-  public exampleSize: number | null = 0;
-  public numberOfExamples: number | null = 0;
   public data: CalcMatrix2D | null = null;
 
-  constructor(exampleSize: number | null = null, numberOfExamples: number | null = null, data: CalcMatrix2D | null = null) {
-    this.exampleSize = exampleSize;
-    this.numberOfExamples = numberOfExamples;
+  constructor(data: CalcMatrix2D | null = null) {
     this.data = data;
   }
 
   static fromMatrix(m: CalcMatrix2D): Dataset {
-    return new Dataset(m.rows(), m.cols(), m);
+    return new Dataset(m);
   }
 
   exampleAt(index: number): CalcMatrix2D {

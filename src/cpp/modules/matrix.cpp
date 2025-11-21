@@ -71,12 +71,8 @@ void matrix_set_min(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void matrix_block(MEMORY * inputs, MEMORY * outputs) {
-    Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
-    Eigen::Map<Eigen::MatrixXd> xOffset(inputs[1].memory, 1, 1);
-    Eigen::Map<Eigen::MatrixXd> yOffset(inputs[2].memory, 1, 1);
-    Eigen::Map<Eigen::MatrixXd> numRows(inputs[3].memory, 1, 1);
-    Eigen::Map<Eigen::MatrixXd> end(inputs[4].memory, 1, 1);
-    Eigen::Map<Eigen::MatrixXd> result(inputs[5].memory, inputs[5].rows, inputs[5].cols);
+    //Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    //Eigen::Map<Eigen::MatrixXd> result(inputs[5].memory, inputs[5].rows, inputs[5].cols);
 
     long startRow = static_cast<long>(inputs[1].memory[0]);
     long startCol = static_cast<long>(inputs[2].memory[0]);

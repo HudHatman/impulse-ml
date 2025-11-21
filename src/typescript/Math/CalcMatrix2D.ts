@@ -221,6 +221,7 @@ export class CalcMatrix2D extends CalcElement {
           return that._call("algebra", "algebra_cross_entropy_derivative", async)([correctOutput, predictions, _epsilon], [result])(result);
       },
       block(rowOffset: number, colOffset: number, numRows: number, numCols: number): CalcMatrix2D {
+        console.log(numRows, numCols)
         const result = new CalcMatrix2D(numRows, numCols).allocate();
         const _rowOffset = new CalcScalar().allocate().set([rowOffset]);
         const _colOffset = new CalcScalar().allocate().set([colOffset]);

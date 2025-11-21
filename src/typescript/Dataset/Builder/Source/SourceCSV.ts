@@ -1,6 +1,7 @@
 import { AbstractSource } from "./AbstractSource";
 import { CalcMatrix2D } from "../../../Math";
 import * as csvtojson from "csvtojson";
+import { Dataset } from "../../Dataset";
 
 export class SourceCSV extends AbstractSource {
   protected data: number[][] | string[][] | null = null;
@@ -30,14 +31,14 @@ export class SourceCSV extends AbstractSource {
     if (typeof numberOfExamples !== "undefined" && typeof exampleSize !== "undefined") {
       let data = [];
       for (let i = 0; i < numberOfExamples; i += 1) {
-        const newData = this.data[i].map(value => {
+        const newData = this.data[i].map((value) => {
           return Number(value);
-        })
-        data.push(newData)
+        });
+        data.push(newData);
       }
-      return new CalcMatrix2D(numberOfExamples, exampleSize).allocate().set(new Float64Array(data));
+      return Dataset.fromMatrix(new CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(new Float64Array(data)));
     }
 
-   return null;
+    return null;
   }
 }

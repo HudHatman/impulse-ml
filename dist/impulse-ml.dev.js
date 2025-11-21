@@ -136,6 +136,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Math */ "./src/typescript/Math/index.ts");
 /* harmony import */ var csvtojson__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! csvtojson */ "csvtojson");
 /* harmony import */ var csvtojson__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(csvtojson__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _Dataset__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../Dataset */ "./src/typescript/Dataset/Dataset.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -150,6 +151,7 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
 
 
 
@@ -177,7 +179,7 @@ var SourceCSV = /*#__PURE__*/function (_AbstractSource) {
           });
           data.push(newData);
         }
-        return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(numberOfExamples, exampleSize).allocate().set(new Float64Array(data));
+        return _Dataset__WEBPACK_IMPORTED_MODULE_3__.Dataset.fromMatrix(new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(new Float64Array(data)));
       }
       return null;
     }
@@ -358,15 +360,9 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var Dataset = /*#__PURE__*/function () {
   function Dataset() {
-    var exampleSize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var numberOfExamples = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    var data = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     _classCallCheck(this, Dataset);
-    _defineProperty(this, "exampleSize", 0);
-    _defineProperty(this, "numberOfExamples", 0);
     _defineProperty(this, "data", null);
-    this.exampleSize = exampleSize;
-    this.numberOfExamples = numberOfExamples;
     this.data = data;
   }
   return _createClass(Dataset, [{
@@ -393,7 +389,7 @@ var Dataset = /*#__PURE__*/function () {
   }], [{
     key: "fromMatrix",
     value: function fromMatrix(m) {
-      return new Dataset(m.rows(), m.cols(), m);
+      return new Dataset(m);
     }
   }]);
 }();
@@ -1409,6 +1405,7 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           return that._call("algebra", "algebra_cross_entropy_derivative", async)([correctOutput, predictions, _epsilon], [result])(result);
         },
         block: function block(rowOffset, colOffset, numRows, numCols) {
+          console.log(numRows, numCols);
           var result = new CalcMatrix2D(numRows, numCols).allocate();
           var _rowOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([rowOffset]);
           var _colOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([colOffset]);
@@ -2352,12 +2349,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   BackpropagationFactory: () => (/* binding */ BackpropagationFactory)
 /* harmony export */ });
 /* harmony import */ var _Backpropagation1Dto1D__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Backpropagation1Dto1D */ "./src/typescript/Network/Layer/Backpropagation/Backpropagation1Dto1D.ts");
+/* harmony import */ var _LSTM__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../LSTM */ "./src/typescript/Network/Layer/LSTM.ts");
+/* harmony import */ var _BackpropagationLSTM__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BackpropagationLSTM */ "./src/typescript/Network/Layer/Backpropagation/BackpropagationLSTM.ts");
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Math */ "./src/typescript/Math/index.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+
 
 var BackpropagationFactory = /*#__PURE__*/function () {
   function BackpropagationFactory() {
@@ -2366,6 +2369,11 @@ var BackpropagationFactory = /*#__PURE__*/function () {
   return _createClass(BackpropagationFactory, null, [{
     key: "create",
     value: function create(previousLayer, layer) {
+      if (layer instanceof _LSTM__WEBPACK_IMPORTED_MODULE_1__.LSTM) {
+        var dH = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(layer.getHeight(), 1).setZeros();
+        var dC = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(layer.getHeight(), 1).setZeros();
+        return new _BackpropagationLSTM__WEBPACK_IMPORTED_MODULE_2__.BackpropagationLSTM(layer, dH, dC);
+      }
       if (previousLayer) {
         if (previousLayer.is1D()) {
           return new _Backpropagation1Dto1D__WEBPACK_IMPORTED_MODULE_0__.Backpropagation1Dto1D(layer, previousLayer);
@@ -2379,6 +2387,83 @@ var BackpropagationFactory = /*#__PURE__*/function () {
     }
   }]);
 }();
+
+/***/ }),
+
+/***/ "./src/typescript/Network/Layer/Backpropagation/BackpropagationLSTM.ts":
+/*!*****************************************************************************!*\
+  !*** ./src/typescript/Network/Layer/Backpropagation/BackpropagationLSTM.ts ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BackpropagationLSTM: () => (/* binding */ BackpropagationLSTM)
+/* harmony export */ });
+/* harmony import */ var _AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractBackpropagation */ "./src/typescript/Network/Layer/Backpropagation/AbstractBackpropagation.ts");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+
+//import { Sigmoid } from "../../Activation";
+var BackpropagationLSTM = /*#__PURE__*/function (_AbstractBackPropagat) {
+  function BackpropagationLSTM() {
+    _classCallCheck(this, BackpropagationLSTM);
+    return _callSuper(this, BackpropagationLSTM, arguments);
+  }
+  _inherits(BackpropagationLSTM, _AbstractBackPropagat);
+  return _createClass(BackpropagationLSTM);
+}(_AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__.AbstractBackPropagation);
+
+
+/***/ }),
+
+/***/ "./src/typescript/Network/Layer/LSTM.ts":
+/*!**********************************************!*\
+  !*** ./src/typescript/Network/Layer/LSTM.ts ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   LSTM: () => (/* binding */ LSTM)
+/* harmony export */ });
+/* harmony import */ var _AbstractLayer1D__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractLayer1D */ "./src/typescript/Network/Layer/AbstractLayer1D.ts");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+
+var LSTM = /*#__PURE__*/function (_AbstractLayer1D) {
+  function LSTM() {
+    _classCallCheck(this, LSTM);
+    return _callSuper(this, LSTM, arguments);
+  }
+  _inherits(LSTM, _AbstractLayer1D);
+  return _createClass(LSTM);
+}(_AbstractLayer1D__WEBPACK_IMPORTED_MODULE_0__.AbstractLayer1D);
+
 
 /***/ }),
 
@@ -2927,6 +3012,7 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
         var startTime = new Date().getTime();
         for (var batch = 0, offset = 0; batch < numberOfExamples; offset += this._batchSize) {
           console.log(offset, Math.min(this._batchSize, numberOfExamples - offset));
+          process.exit();
           var input = inputDataset.getBatch(offset, this._batchSize);
           var output = outputDataset.getBatch(offset, this._batchSize);
           var predictions = this.network.forward(input);

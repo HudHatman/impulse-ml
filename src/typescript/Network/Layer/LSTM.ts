@@ -1,24 +1,33 @@
 import { AbstractLayer1D } from "./AbstractLayer1D";
 import { CalcMatrix2D } from "../../Math";
-import { Sigmoid } from "../Activation";
 
 class LSTM extends AbstractLayer1D {
-    private readonly activation = new Sigmoid();
+    /*private readonly activation = new Sigmoid();
 
     // Gates
-    private Wf: CalcMatrix2D; // Forget gate weights
-    private Wi: CalcMatrix2D; // Input gate weights
-    private Wc: CalcMatrix2D; // Candidate gate weights
-    private Wo: CalcMatrix2D; // Output gate weights
+    public Wf: CalcMatrix2D; // Forget gate weights
+    public Wi: CalcMatrix2D; // Input gate weights
+    public Wc: CalcMatrix2D; // Candidate gate weights
+    public Wo: CalcMatrix2D; // Output gate weights
 
-    private bf: CalcMatrix2D; // Forget gate biases
-    private bi: CalcMatrix2D; // Input gate biases
-    private bc: CalcMatrix2D; // Candidate gate biases
-    private bo: CalcMatrix2D; // Output gate biases
+    public bf: CalcMatrix2D; // Forget gate biases
+    public bi: CalcMatrix2D; // Input gate biases
+    public bc: CalcMatrix2D; // Candidate gate biases
+    public bo: CalcMatrix2D; // Output gate biases
 
     // Cell state
-    private C: CalcMatrix2D;
-    private H: CalcMatrix2D;
+    public C: CalcMatrix2D;
+    public H: CalcMatrix2D;
+
+    // For backpropagation
+    public combined: CalcMatrix2D;
+    public ft: CalcMatrix2D;
+    public it: CalcMatrix2D;
+    public cct: CalcMatrix2D;
+    public ot: CalcMatrix2D;
+    public C_prev: CalcMatrix2D;
+    public H_prev: CalcMatrix2D;
+
 
     constructor() {
         super();
@@ -54,19 +63,23 @@ class LSTM extends AbstractLayer1D {
     }
 
     forward(input: CalcMatrix2D): CalcMatrix2D {
-        const combined = this.H.concat(input, 'vertical');
+        this.C_prev = this.C.copy();
+        this.H_prev = this.H.copy();
 
-        const ft = this.activation.forward(this.Wf.multiply(combined).add(this.bf));
-        const it = this.activation.forward(this.Wi.multiply(combined).add(this.bi));
-        const cct = this.activation.forward(this.Wc.multiply(combined).add(this.bc));
-        const ot = this.activation.forward(this.Wo.multiply(combined).add(this.bo));
+        this.combined = this.H_prev.concat(input, 'vertical');
 
-        this.C = ft.elementMultiply(this.C).add(it.elementMultiply(cct));
-        this.H = ot.elementMultiply(this.activation.forward(this.C));
+        this.ft = this.activation.forward(this.Wf.multiply(this.combined).add(this.bf));
+        this.it = this.activation.forward(this.Wi.multiply(this.combined).add(this.bi));
+        this.cct = this.activation.forward(this.Wc.multiply(this.combined).add(this.bc));
+        this.ot = this.activation.forward(this.Wo.multiply(this.combined).add(this.bo));
+
+        this.C = this.ft.elementMultiply(this.C_prev).add(this.it.elementMultiply(this.cct));
+        this.H = this.ot.elementMultiply(this.activation.forward(this.C));
 
         this.A = this.H;
         return this.A;
     }
+*/
 }
 
 export { LSTM };
