@@ -906,7 +906,9 @@ var CalcElement = /*#__PURE__*/function () {
     _defineProperty(this, "_dims", []);
     _defineProperty(this, "_allocated", false);
     _defineProperty(this, "_memory", null);
+    _defineProperty(this, "_device", null);
     this._dims = [width, height, depth];
+    this._device = (0,_Computation__WEBPACK_IMPORTED_MODULE_0__.getDevice)();
   }
   return _createClass(CalcElement, [{
     key: "dims",
@@ -950,12 +952,13 @@ var CalcElement = /*#__PURE__*/function () {
   }, {
     key: "allocate",
     value: function allocate() {
-      var device = (0,_Computation__WEBPACK_IMPORTED_MODULE_0__.getDevice)();
-      this._memory = device.alloc(this.count());
-      this._memory.setWidth(this.rows());
-      this._memory.setHeight(this.cols());
-      this._memory.setDepth(this.depth());
-      this._allocated = true;
+      if (!this._allocated) {
+        this._memory = this._device.alloc(this.count());
+        this._memory.setWidth(this.rows());
+        this._memory.setHeight(this.cols());
+        this._memory.setDepth(this.depth());
+        this._allocated = true;
+      }
       return this;
     }
   }, {
@@ -1126,16 +1129,28 @@ var CalcElement = /*#__PURE__*/function () {
   }, {
     key: "copyFrom",
     value: function copyFrom(other) {
-      if (!this._allocated) {
-        var device = (0,_Computation__WEBPACK_IMPORTED_MODULE_0__.getDevice)();
-        this._memory = device.alloc(other.count());
-        this._allocated = true;
+      if (this._allocated) {
+        this.destroy();
       }
+      this._dims = other.dims();
+      this.allocate();
       this._memory.setWidth(other.rows());
       this._memory.setHeight(other.cols());
       this._memory.setDepth(other.depth());
       this._memory.copyFrom(other.getMemory());
       this._dims = other.dims();
+      return this;
+    }
+  }, {
+    key: "replace",
+    value: function replace(other) {
+      if (this.rows() !== other.rows() || this.cols() !== other.cols() || this.depth() !== other.depth()) {
+        this.destroy();
+        this.copyFrom(other);
+      } else {
+        this._memory.copyFrom(other.getMemory());
+      }
+      other.destroy();
       return this;
     }
   }]);
@@ -1231,6 +1246,13 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
     value: function forwardPropagation(w, b) {
       return this.calcSync(function (calc) {
         return calc.forwardPropagation(w, b);
+      });
+    }
+  }, {
+    key: "backwardPropagation",
+    value: function backwardPropagation(w, a_prev, regularization, num_examples) {
+      return this.calcSync(function (calc) {
+        return calc.backwardPropagation(w, a_prev, regularization, num_examples);
       });
     }
   }, {
@@ -1405,6 +1427,14 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
         forwardPropagation: function forwardPropagation(w, b) {
           var result = new CalcMatrix2D(w.rows(), _this.cols()).allocate();
           return _this._call("algebra", "algebra_forward_propagation", async)([w, _this, b, result])(result);
+        },
+        backwardPropagation: function backwardPropagation(w, a_prev, regularization, num_examples) {
+          var gW = new CalcMatrix2D(w.rows(), w.cols()).allocate();
+          var gb = new CalcMatrix2D(w.rows(), 1).allocate();
+          var dA_prev = new CalcMatrix2D(a_prev.rows(), a_prev.cols()).allocate();
+          var _regularization = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([regularization]);
+          var _num_examples = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([num_examples]);
+          return _this._call("algebra", "algebra_backward_propagation", async)([_this, w, a_prev, _regularization, _num_examples, gW, gb, dA_prev])([gW, gb, dA_prev]);
         },
         pow: function pow(number) {
           var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
@@ -2087,7 +2117,8 @@ var AbstractLayer1D = /*#__PURE__*/function (_AbstractLayer) {
     key: "configure",
     value: function configure() {
       this.W.resize(this.getHeight(), this.getWidth());
-      this.W.setRandom(Math.sqrt(1 / (this.previousLayer ? this.previousLayer.getHeight() : this.getHeight())));
+      var fanIn = this.previousLayer ? this.previousLayer.getHeight() : this.getHeight();
+      this.W.setRandom(Math.sqrt(2 / fanIn));
       this.b.resize(this.getHeight(), 1);
       this.b.setZeros();
       this.gW.resize(this.getHeight(), this.getWidth());
@@ -2214,6 +2245,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractBackpropagation */ "./src/typescript/Network/Layer/Backpropagation/AbstractBackpropagation.ts");
 /* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../types */ "./src/typescript/types.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -2238,22 +2275,31 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
     key: "propagate",
     value: function propagate(input, numberOfExamples, regularization, layer, sigma, isLastLayer) {
       var dZ;
-
-      // If this is the last layer and it's Softmax, then sigma is already dZ
       if (isLastLayer && layer.getType() === _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax) {
         dZ = sigma;
+        //console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
+        //console.log("sigma (A - Y):", sigma.get());
       } else {
-        // Otherwise, sigma is dA, and we need to compute dZ
+        //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
+        //console.log("sigma (dA_prev from next layer):", sigma.get());
         dZ = sigma.multiply(layer.derivative(layer.Z));
       }
+
+      //console.log("dZ (gradient of linear output):", dZ.get());
+
       var previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
+      var _dZ$backwardPropagati = dZ.backwardPropagation(layer.W, previousActivations, regularization, numberOfExamples),
+        _dZ$backwardPropagati2 = _slicedToArray(_dZ$backwardPropagati, 3),
+        gW = _dZ$backwardPropagati2[0],
+        gb = _dZ$backwardPropagati2[1],
+        dA_prev = _dZ$backwardPropagati2[2];
 
-      // Calculate gradients for weights and biases
-      this.layer.gW = dZ.dot(previousActivations.transpose()).divide(numberOfExamples).add(this.layer.W.multiply(regularization / numberOfExamples));
-      this.layer.gb = dZ.rowwiseSum().divide(numberOfExamples);
+      //console.log("gW (weight gradients):", gW.get());
+      //console.log("gb (bias gradients):", gb.get());
+      //console.log("dA_prev (propagating to previous layer):", dA_prev.get());
 
-      // Calculate dA for the previous layer to continue the chain
-      var dA_prev = this.layer.W.transpose().dot(dZ);
+      layer.gW.replace(gW);
+      layer.gb.replace(gb);
       return dA_prev;
     }
   }]);
@@ -2460,7 +2506,9 @@ var SoftmaxLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   }, {
     key: "derivative",
     value: function derivative(delta) {
-      return delta.softmaxDerivative();
+      // When CrossEntropyCost is used with Softmax, the cost function's derivative
+      // already computes dZ (A - Y). We should just pass it through.
+      return delta;
     }
   }]);
 }(_AbstractLayer1D__WEBPACK_IMPORTED_MODULE_1__.AbstractLayer1D);
@@ -2742,8 +2790,17 @@ var AbstractTrainer = /*#__PURE__*/function () {
       }
       var correctPredictions = 0;
       for (var i = 0; i < miniBatchSize; i += 1) {
-        var predictionIndex = predictions.col(i).maxCoeff();
-        var outputIndex = correctOutput.col(i).maxCoeff();
+        var predictionCol = predictions.col(i);
+        var outputCol = correctOutput.col(i);
+        var predictionIndex = predictionCol.maxCoeff();
+        var outputIndex = outputCol.maxCoeff();
+        if (i === 0) {
+          console.log("DEBUG ACCURACY:");
+          console.log("  Prediction Col:", predictionCol.get());
+          console.log("  Predicted Index:", predictionIndex.get()[0]);
+          console.log("  Correct Col:", outputCol.get());
+          console.log("  Correct Index:", outputIndex.get()[0]);
+        }
         if (predictionIndex.get()[0] === outputIndex.get()[0]) {
           correctPredictions++;
         }
@@ -2909,8 +2966,12 @@ var CrossEntropyCost = /*#__PURE__*/function (_AbstractCost) {
       }
 
       // For other layers (like Sigmoid), we calculate dA
-      var denominator = predictions.multiply(predictions.minusOne()).add(this.epsilon);
-      var dA = predictions.subtract(correctOutput).divide(denominator).multiply(-1);
+      // dA = - (Y / A) + ((1 - Y) / (1 - A))
+      var term1 = correctOutput.divide(predictions.add(this.epsilon));
+      var oneMinusY = correctOutput.minusOne(); // This calculates 1 - Y
+      var oneMinusA = predictions.minusOne(); // This calculates 1 - A
+      var term2 = oneMinusY.divide(oneMinusA.add(this.epsilon));
+      var dA = term2.subtract(term1);
       return dA;
     }
   }]);
@@ -3117,6 +3178,10 @@ var OptimizerAdam = /*#__PURE__*/function (_AbstractOptimizer) {
   return _createClass(OptimizerAdam, [{
     key: "optimize",
     value: function optimize(layer) {
+      ///console.log(`\n--- OptimizerAdam: Layer ${layer.getType()} ---`);
+      //console.log("gW received by optimizer:", layer.gW.get());
+      //console.log("gb received by optimizer:", layer.gb.get());
+
       // v (momentum) update
       layer.vW = layer.vW.multiply(this.beta1).add(layer.gW.multiply(1 - this.beta1));
       layer.vb = layer.vb.multiply(this.beta1).add(layer.gb.multiply(1 - this.beta1));

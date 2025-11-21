@@ -29,38 +29,6 @@
           }
         ],
       ]
-    },
-    {
-      "target_name": "test",
-      "sources": [ "src/cpp/modules/test.cpp" ],
-      "conditions": [
-        [ 'OS=="linux"', {
-          "cflags_cc": [ "-fPIC", "-fopenmp" ],
-          "ldflags": [ "-shared", "-fopenmp" ]
-        }]
-      ]
-    },
-    {
-      "target_name": "algebra",
-      "sources": [ "src/cpp/modules/algebra.cpp" ],
-      "include_dirs": ["/usr/local/include", "/usr/include/node"],
-      "conditions": [
-        [ 'OS=="linux"', {
-          "cflags_cc": [ "-fPIC", "-fopenmp" ],
-          "ldflags": [ "-shared", "-fopenmp" ]
-        }]
-      ]
-    },
-    {
-      "target_name": "matrix",
-      "sources": [ "src/cpp/modules/matrix.cpp" ],
-      "include_dirs": ["/usr/local/include", "/usr/include/node"],
-      "conditions": [
-        [ 'OS=="linux"', {
-          "cflags_cc": [ "-fPIC", "-fopenmp" ],
-          "ldflags": [ "-shared", "-fopenmp" ]
-        }]
-      ]
     }
   ]
 }

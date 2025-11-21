@@ -12,7 +12,9 @@ class SoftmaxLayer extends AbstractLayer1D {
   }
 
   derivative(delta: CalcMatrix2D): CalcMatrix2D {
-    return delta.softmaxDerivative();
+    // When CrossEntropyCost is used with Softmax, the cost function's derivative
+    // already computes dZ (A - Y). We should just pass it through.
+    return delta;
   }
 }
 

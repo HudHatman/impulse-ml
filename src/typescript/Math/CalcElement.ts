@@ -6,9 +6,11 @@ export class CalcElement {
   private _dims: Array<number> = [];
   protected _allocated = false;
   protected _memory: any = null;
+  protected _device: any = null;
 
   constructor(width = 1, height = 1, depth = 1) {
     this._dims = [width, height, depth];
+    this._device = getDevice();
   }
 
   public dims(): Array<number> {
@@ -40,12 +42,13 @@ export class CalcElement {
   }
 
   public allocate() {
-    const device = getDevice();
-    this._memory = device.alloc(this.count());
-    this._memory.setWidth(this.rows());
-    this._memory.setHeight(this.cols());
-    this._memory.setDepth(this.depth());
-    this._allocated = true;
+    if (!this._allocated) {
+      this._memory = this._device.alloc(this.count());
+      this._memory.setWidth(this.rows());
+      this._memory.setHeight(this.cols());
+      this._memory.setDepth(this.depth());
+      this._allocated = true;
+    }
 
     return this;
   }
@@ -188,16 +191,27 @@ export class CalcElement {
   }
 
   public copyFrom(other: CalcElement) {
-    if (!this._allocated) {
-      const device = getDevice();
-      this._memory = device.alloc(other.count());
-      this._allocated = true;
+    if (this._allocated) {
+      this.destroy();
     }
+    this._dims = other.dims();
+    this.allocate()
     this._memory.setWidth(other.rows());
     this._memory.setHeight(other.cols());
     this._memory.setDepth(other.depth());
     this._memory.copyFrom(other.getMemory());
     this._dims = other.dims();
+    return this;
+  }
+
+  public replace(other: CalcElement) {
+    if (this.rows() !== other.rows() || this.cols() !== other.cols() || this.depth() !== other.depth()) {
+        this.destroy();
+        this.copyFrom(other);
+    } else {
+        this._memory.copyFrom(other.getMemory());
+    }
+    other.destroy();
     return this;
   }
 }

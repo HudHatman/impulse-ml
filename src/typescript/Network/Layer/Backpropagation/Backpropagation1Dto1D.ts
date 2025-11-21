@@ -14,25 +14,27 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
   ): CalcMatrix2D {
     let dZ: CalcMatrix2D;
 
-    // If this is the last layer and it's Softmax, then sigma is already dZ
     if (isLastLayer && layer.getType() === LayerType.softmax) {
       dZ = sigma;
+      //console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
+      //console.log("sigma (A - Y):", sigma.get());
     } else {
-      // Otherwise, sigma is dA, and we need to compute dZ
+      //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
+      //console.log("sigma (dA_prev from next layer):", sigma.get());
       dZ = sigma.multiply(layer.derivative(layer.Z));
     }
 
+    //console.log("dZ (gradient of linear output):", dZ.get());
+
     const previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
+    const [gW, gb, dA_prev] = dZ.backwardPropagation(layer.W, previousActivations, regularization, numberOfExamples);
 
-    // Calculate gradients for weights and biases
-    this.layer.gW = dZ
-      .dot(previousActivations.transpose())
-      .divide(numberOfExamples)
-      .add(this.layer.W.multiply(regularization / numberOfExamples));
-    this.layer.gb = dZ.rowwiseSum().divide(numberOfExamples);
+    //console.log("gW (weight gradients):", gW.get());
+    //console.log("gb (bias gradients):", gb.get());
+    //console.log("dA_prev (propagating to previous layer):", dA_prev.get());
 
-    // Calculate dA for the previous layer to continue the chain
-    const dA_prev = this.layer.W.transpose().dot(dZ);
+    layer.gW.replace(gW);
+    layer.gb.replace(gb);
 
     return dA_prev;
   }

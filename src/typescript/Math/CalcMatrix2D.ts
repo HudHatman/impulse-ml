@@ -53,6 +53,12 @@ export class CalcMatrix2D extends CalcElement {
     });
   }
 
+  public backwardPropagation(w: CalcMatrix2D, a_prev: CalcMatrix2D, regularization: number, num_examples: number): [CalcMatrix2D, CalcMatrix2D, CalcMatrix2D] {
+    return this.calcSync((calc) => {
+      return calc.backwardPropagation(w, a_prev, regularization, num_examples);
+    });
+  }
+
   public transpose(): CalcMatrix2D {
     return this.calcSync((calc) => {
       return calc.transpose();
@@ -184,6 +190,15 @@ export class CalcMatrix2D extends CalcElement {
       forwardPropagation: (w: CalcMatrix2D, b: CalcMatrix2D) => {
         const result = new CalcMatrix2D(w.rows(), this.cols()).allocate();
         return this._call("algebra", "algebra_forward_propagation", async)([w, this, b, result])(result);
+      },
+      backwardPropagation: (w: CalcMatrix2D, a_prev: CalcMatrix2D, regularization: number, num_examples: number) => {
+        const gW = new CalcMatrix2D(w.rows(), w.cols()).allocate();
+        const gb = new CalcMatrix2D(w.rows(), 1).allocate();
+        const dA_prev = new CalcMatrix2D(a_prev.rows(), a_prev.cols()).allocate();
+        const _regularization = new CalcScalar().allocate().set([regularization]);
+        const _num_examples = new CalcScalar().allocate().set([num_examples]);
+
+        return this._call("algebra", "algebra_backward_propagation", async)([this, w, a_prev, _regularization, _num_examples, gW, gb, dA_prev])([gW, gb, dA_prev]);
       },
       pow: (number: number) => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();

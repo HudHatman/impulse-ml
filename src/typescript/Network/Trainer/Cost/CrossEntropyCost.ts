@@ -20,9 +20,12 @@ export class CrossEntropyCost extends AbstractCost {
     }
 
     // For other layers (like Sigmoid), we calculate dA
-    const denominator = predictions.multiply(predictions.minusOne()).add(this.epsilon);
-    const dA = predictions.subtract(correctOutput).divide(denominator).multiply(-1);
-    
+    // dA = - (Y / A) + ((1 - Y) / (1 - A))
+    const term1 = correctOutput.divide(predictions.add(this.epsilon));
+    const oneMinusY = correctOutput.minusOne(); // This calculates 1 - Y
+    const oneMinusA = predictions.minusOne(); // This calculates 1 - A
+    const term2 = oneMinusY.divide(oneMinusA.add(this.epsilon));
+    const dA = term2.subtract(term1);
     return dA;
   }
 }

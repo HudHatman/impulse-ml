@@ -76,8 +76,18 @@ export abstract class AbstractTrainer {
 
     let correctPredictions = 0;
     for (let i = 0; i < miniBatchSize; i += 1) {
-      const predictionIndex = predictions.col(i).maxCoeff();
-      const outputIndex = correctOutput.col(i).maxCoeff();
+      const predictionCol = predictions.col(i);
+      const outputCol = correctOutput.col(i);
+      const predictionIndex = predictionCol.maxCoeff();
+      const outputIndex = outputCol.maxCoeff();
+
+      if (i === 0) {
+        console.log("DEBUG ACCURACY:");
+        console.log("  Prediction Col:", predictionCol.get());
+        console.log("  Predicted Index:", predictionIndex.get()[0]);
+        console.log("  Correct Col:", outputCol.get());
+        console.log("  Correct Index:", outputIndex.get()[0]);
+      }
 
       if (predictionIndex.get()[0] === outputIndex.get()[0]) {
         correctPredictions++;

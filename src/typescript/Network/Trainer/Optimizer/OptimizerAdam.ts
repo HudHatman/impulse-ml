@@ -7,6 +7,10 @@ export class OptimizerAdam extends AbstractOptimizer {
   private readonly epsilon = 1e-8;
 
   optimize(layer: Layers): void {
+    ///console.log(`\n--- OptimizerAdam: Layer ${layer.getType()} ---`);
+    //console.log("gW received by optimizer:", layer.gW.get());
+    //console.log("gb received by optimizer:", layer.gb.get());
+    
     // v (momentum) update
     layer.vW = layer.vW.multiply(this.beta1).add(layer.gW.multiply(1 - this.beta1));
     layer.vb = layer.vb.multiply(this.beta1).add(layer.gb.multiply(1 - this.beta1));
@@ -20,7 +24,7 @@ export class OptimizerAdam extends AbstractOptimizer {
     const vb_corrected = layer.vb.divide(1 - Math.pow(this.beta1, this.t));
     const sW_corrected = layer.sW.divide(1 - Math.pow(this.beta2, this.t));
     const sb_corrected = layer.sb.divide(1 - Math.pow(this.beta2, this.t));
-
+    
     // Adam update step
     const W_update = vW_corrected.divide(sW_corrected.sqrt().add(this.epsilon)).multiply(this.learningRate);
     const b_update = vb_corrected.divide(sb_corrected.sqrt().add(this.epsilon)).multiply(this.learningRate);

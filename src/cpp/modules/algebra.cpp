@@ -15,6 +15,26 @@
 #define EIGEN_USE_BLAS
 #define EIGEN_USE_THREADS
 
+void algebra_backward_propagation(MEMORY * inputs, MEMORY * outputs) {
+    Eigen::Map<Eigen::MatrixXd> dZ(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> W(inputs[1].memory, inputs[1].rows, inputs[1].cols);
+    Eigen::Map<Eigen::MatrixXd> A_prev(inputs[2].memory, inputs[2].rows, inputs[2].cols);
+    double regularization = inputs[3].memory[0];
+    double num_examples = inputs[4].memory[0];
+
+    Eigen::Map<Eigen::MatrixXd> gW_map(inputs[5].memory, inputs[5].rows, inputs[5].cols);
+    Eigen::Map<Eigen::MatrixXd> gb_map(inputs[6].memory, inputs[6].rows, inputs[6].cols);
+    Eigen::Map<Eigen::MatrixXd> dA_prev_map(inputs[7].memory, inputs[7].rows, inputs[7].cols);
+
+    Eigen::MatrixXd gW_temp = (1.0 / num_examples) * (dZ * A_prev.transpose()) + (regularization / num_examples) * W;
+    Eigen::MatrixXd gb_temp = (1.0 / num_examples) * dZ.rowwise().sum();
+    Eigen::MatrixXd dA_prev_temp = W.transpose() * dZ;
+
+    gW_map = gW_temp;
+    gb_map = gb_temp;
+    dA_prev_map = dA_prev_temp;
+}
+
 void algebra_forward_propagation(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> w(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> x(inputs[1].memory, inputs[1].rows, inputs[1].cols);
@@ -240,7 +260,7 @@ void algebra_tanh(MEMORY * inputs, MEMORY * outputs) {
     result = m1.array().tanh();
 }
 void algebra_tanh_derivative(MEMORY * inputs, MEMORY * outputs) {
-    Eigen::Map<Eigen::MatrixXd> z(inputs[0].memory, z.rows(), z.cols());
+    Eigen::Map<Eigen::MatrixXd> z(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
     result = z.unaryExpr([](const double x) {
