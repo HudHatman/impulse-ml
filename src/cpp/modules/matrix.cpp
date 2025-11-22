@@ -76,12 +76,6 @@ void matrix_block(MEMORY * inputs, MEMORY * outputs) {
     long blockRows = static_cast<long>(inputs[3].memory[0]);
     long blockCols = static_cast<long>(inputs[4].memory[0]);
 
-    std::cout << inputs[0].rows << " " << inputs[0].cols << " " << inputs[5].rows << " " << inputs[5].cols << " "
-        << startRow << " " <<
-        startCol << " " <<
-        blockRows << " " <<
-        blockCols << " " << std::endl;
-
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[5].memory, inputs[5].rows, inputs[5].cols);
 

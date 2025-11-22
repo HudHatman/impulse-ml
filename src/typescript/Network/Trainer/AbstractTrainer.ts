@@ -81,14 +81,6 @@ export abstract class AbstractTrainer {
       const predictionIndex = predictionCol.maxCoeff();
       const outputIndex = outputCol.maxCoeff();
 
-      if (i === 0) {
-        console.log("DEBUG ACCURACY:");
-        console.log("  Prediction Col:", predictionCol.get());
-        console.log("  Predicted Index:", predictionIndex.get()[0]);
-        console.log("  Correct Col:", outputCol.get());
-        console.log("  Correct Index:", outputIndex.get()[0]);
-      }
-
       if (predictionIndex.get()[0] === outputIndex.get()[0]) {
         correctPredictions++;
       }

@@ -2924,13 +2924,6 @@ var AbstractTrainer = /*#__PURE__*/function () {
         var outputCol = correctOutput.col(i);
         var predictionIndex = predictionCol.maxCoeff();
         var outputIndex = outputCol.maxCoeff();
-        if (i === 0) {
-          console.log("DEBUG ACCURACY:");
-          console.log("  Prediction Col:", predictionCol.get());
-          console.log("  Predicted Index:", predictionIndex.get()[0]);
-          console.log("  Correct Col:", outputCol.get());
-          console.log("  Correct Index:", outputIndex.get()[0]);
-        }
         if (predictionIndex.get()[0] === outputIndex.get()[0]) {
           correctPredictions++;
         }
@@ -3001,9 +2994,8 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
       for (var i = 0; i < this.iterations; i += 1) {
         var startTime = new Date().getTime();
         for (var offset = 0; offset < numberOfExamples; offset += this._batchSize) {
-          console.log(offset, this._batchSize);
-          var input = inputDataset.getBatch(offset, this._batchSize);
-          var output = outputDataset.getBatch(offset, this._batchSize);
+          var input = inputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
+          var output = outputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
           var predictions = this.network.forward(input);
           var sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
           this.network.backward(input, this.regularization, sigma);

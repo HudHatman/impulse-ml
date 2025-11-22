@@ -27,9 +27,8 @@ export class BatchTrainer extends AbstractTrainer {
       const startTime = new Date().getTime();
 
       for (let offset = 0; offset < numberOfExamples; offset += this._batchSize) {
-        console.log(offset, this._batchSize);
-        const input = inputDataset.getBatch(offset, this._batchSize);
-        const output = outputDataset.getBatch(offset, this._batchSize);
+        const input = inputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
+        const output = outputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
 
         const predictions = this.network.forward(input);
         const sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
