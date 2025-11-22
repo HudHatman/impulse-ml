@@ -65,11 +65,14 @@ export abstract class AbstractTrainer {
   cost(predictions: CalcMatrix2D, correctOutput: CalcMatrix2D): CostResult {
     const miniBatchSize = correctOutput.cols();
     let cost = this.costFunction.loss(correctOutput, predictions);
+    console.log('cost', cost);
 
     if (this.regularization > 0) {
       let penalty = 0;
       this.network.getLayers().forEach(layer => {
-        penalty += layer.penalty().get()[0];
+        const p = layer.penalty();
+        penalty += p.get()[0];
+        p.destroy();
       });
       cost += (this.regularization / (2 * miniBatchSize)) * penalty;
     }
@@ -84,6 +87,11 @@ export abstract class AbstractTrainer {
       if (predictionIndex.get()[0] === outputIndex.get()[0]) {
         correctPredictions++;
       }
+
+      predictionCol.destroy();
+      outputCol.destroy();
+      predictionIndex.destroy();
+      outputIndex.destroy();
     }
 
     const accuracy = (correctPredictions / miniBatchSize) * 100.0;

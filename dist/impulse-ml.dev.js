@@ -2911,10 +2911,13 @@ var AbstractTrainer = /*#__PURE__*/function () {
     value: function cost(predictions, correctOutput) {
       var miniBatchSize = correctOutput.cols();
       var cost = this.costFunction.loss(correctOutput, predictions);
+      console.log('cost', cost);
       if (this.regularization > 0) {
         var penalty = 0;
         this.network.getLayers().forEach(function (layer) {
-          penalty += layer.penalty().get()[0];
+          var p = layer.penalty();
+          penalty += p.get()[0];
+          p.destroy();
         });
         cost += this.regularization / (2 * miniBatchSize) * penalty;
       }
@@ -2927,6 +2930,10 @@ var AbstractTrainer = /*#__PURE__*/function () {
         if (predictionIndex.get()[0] === outputIndex.get()[0]) {
           correctPredictions++;
         }
+        predictionCol.destroy();
+        outputCol.destroy();
+        predictionIndex.destroy();
+        outputIndex.destroy();
       }
       var accuracy = correctPredictions / miniBatchSize * 100.0;
       return {
