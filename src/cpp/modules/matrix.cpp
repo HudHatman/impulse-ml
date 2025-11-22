@@ -11,13 +11,19 @@
 #include <cmath>
 #include <fstream>
 #include <utility>
-
 #include <omp.h>
 
-#define EIGEN_USE_BLAS
+#define EIGEN_USE_MKL_ALL
 #define EIGEN_USE_THREADS
 
+void init() {
+    omp_set_num_threads(6);
+    Eigen::setNbThreads(6);
+}
+
 void matrix_row(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> rowValue(inputs[1].memory, 1, 1);
     Eigen::Map<Eigen::MatrixXd> res(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -25,6 +31,8 @@ void matrix_row(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void matrix_col(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> colValue(inputs[1].memory, 1, 1);
     Eigen::Map<Eigen::MatrixXd> res(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -32,17 +40,23 @@ void matrix_col(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void matrix_transpose(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> m2(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     m2 = m.transpose();
 }
 
 void matrix_set_zeros(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     m.setZero();
 }
 
 void matrix_set_random(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     double parameter = inputs[1].memory[0];
     m.setRandom();
@@ -52,6 +66,8 @@ void matrix_set_random(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void matrix_set_max(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
     double nb = inputs[1].memory[0];
@@ -61,6 +77,8 @@ void matrix_set_max(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void matrix_set_min(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> parameter(inputs[1].memory, 1, 1);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -71,6 +89,8 @@ void matrix_set_min(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void matrix_block(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     long startRow = static_cast<long>(inputs[1].memory[0]);
     long startCol = static_cast<long>(inputs[2].memory[0]);
     long blockRows = static_cast<long>(inputs[3].memory[0]);

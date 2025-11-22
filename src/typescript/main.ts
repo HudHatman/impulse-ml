@@ -11,6 +11,10 @@ import {
 import Trainer from "./Network/Trainer";
 import { MeanSquaredErrorCost } from "./Network/Trainer/Cost/MeanSquaredErrorCost";
 import { CrossEntropyCost } from "./Network/Trainer/Cost/CrossEntropyCost";
+import os from "os";
+import process from "process";
+import path from "path";
+import Module from "module";
 
 const NetworkBuilder = { NetworkBuilder1D };
 const Layer = {
@@ -30,11 +34,6 @@ const Cost = {
   MeanSquaredErrorCost,
   CrossEntropyCost,
 };
-
-import native from "../../build/Release/node_native_memory.node";
-import path from "path";
-
-native.setModulePath(path.resolve(__dirname, "../"));
 
 import { Dataset as DatasetDataset } from "./Dataset";
 import { DatasetBuilder as DatasetBuilderBuilder, DatasetVocabularyBuilder } from "./Dataset/Builder";
@@ -66,6 +65,24 @@ const DatasetBuilderSource = {
   DatasetVocabularyBuilderSourceTextFile: TextFile,
 };
 
+let native = null;
+
+const load = () => {
+  if (native) return native;
+
+  const addonPath = path.resolve(__dirname, "../build/Release/node_native_memory.node");
+
+  const m = new Module(addonPath, null);
+  m.filename = addonPath;
+
+  process.dlopen(m, addonPath, os.constants.dlopen.RTLD_NOW | os.constants.dlopen.RTLD_GLOBAL);
+
+  native = m.exports;
+  native.setModulePath(path.resolve(__dirname, "../"));
+
+  return native;
+};
+
 export {
   NetworkBuilder,
   Layer,
@@ -77,6 +94,7 @@ export {
   Dataset,
   DatasetModifier,
   DatasetBuilderSource,
+  load,
 };
 export default {
   NetworkBuilder,
@@ -89,4 +107,5 @@ export default {
   Dataset,
   DatasetModifier,
   DatasetBuilderSource,
+  load,
 };

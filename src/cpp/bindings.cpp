@@ -1,11 +1,16 @@
 #include <string>
 #include <cstring>
 #include <iostream>
-
+#include <eigen3/Eigen/Core>
+#include <eigen3/Eigen/Dense>
+#include <omp.h>
 #include <v8.h>
 #include <node.h>
 #include <node_buffer.h>
 #include <node_object_wrap.h>
+
+#define EIGEN_USE_MKL_ALL
+#define EIGEN_USE_THREADS
 
 //#include <cuda.h>
 //#include <cuda_runtime.h>
@@ -27,6 +32,9 @@ void SetModulePath(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
     v8::String::Utf8Value path_value(isolate, args[0].As<v8::String>());
     modulePath = *path_value;
+
+    omp_set_num_threads(6);
+    Eigen::setNbThreads(6);
 }
 
 void Addon::GetDriverVersion(const v8::FunctionCallbackInfo <v8::Value> &args) {

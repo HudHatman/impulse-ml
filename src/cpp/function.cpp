@@ -31,7 +31,7 @@ v8::Local<v8::Object> Addon::Function::createInstance(v8::FunctionCallbackInfo <
 
   v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, Addon::Function::New);
   tpl->SetClassName(v8::String::NewFromUtf8(isolate, "NativeFunction").ToLocalChecked());
-  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+  tpl->InstanceTemplate()->SetInternalFieldCount(2);
 
   v8::Local<v8::Function> constructor = tpl->GetFunction(context).ToLocalChecked();
   v8::Local<v8::Object> instance = constructor->NewInstance(context).ToLocalChecked();

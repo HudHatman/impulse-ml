@@ -16,16 +16,18 @@
       'conditions': [
         [ 'OS=="linux"',
           {
-             'libraries': ['-fopenmp', '-lpthread'],
+             'libraries': ['-fopenmp', '-lpthread', "-lgomp"],
              'include_dirs': ['/usr/local/include', "/usr/include/node", "<!@(node -p \"require('node-addon-api').include\")"],
               'library_dirs': ['/usr/local/lib'],
              "defines": [ "NAPI_VERSION=6" ],
              "cflags_cc": [
-                "-fopenmp"
+                "-fopenmp", "-lpthread", "-lgomp"
              ],
              "ldflags": [
-                "-fopenmp"
-             ]
+                "-fopenmp", "-lpthread", "-lgomp"
+             ],
+             "cflags!": [ "-fno-exceptions" ],
+             "cflags_cc!": [ "-fno-exceptions" ],
           }
         ],
       ]

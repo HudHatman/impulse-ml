@@ -12,10 +12,17 @@
 #include <type_traits>
 #include <omp.h>
 
-#define EIGEN_USE_BLAS
+#define EIGEN_USE_MKL_ALL
 #define EIGEN_USE_THREADS
 
+void init() {
+    omp_set_num_threads(6);
+    Eigen::setNbThreads(6);
+}
+
 void algebra_cross_entropy_loss(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> correctOutput(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> predictions(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     double epsilon = inputs[2].memory[0];
@@ -28,6 +35,8 @@ void algebra_cross_entropy_loss(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_cross_entropy_derivative(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> correctOutput(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> predictions(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     double epsilon = inputs[2].memory[0];
@@ -42,6 +51,8 @@ void algebra_cross_entropy_derivative(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_backward_propagation(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> dZ(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> W(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     Eigen::Map<Eigen::MatrixXd> A_prev(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -63,6 +74,8 @@ void algebra_backward_propagation(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_forward_propagation(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> w(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> x(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     Eigen::Map<Eigen::MatrixXd> b(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -73,6 +86,8 @@ void algebra_forward_propagation(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_pow(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
     double number = inputs[1].memory[0];
@@ -83,6 +98,8 @@ void algebra_pow(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_log(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -92,6 +109,8 @@ void algebra_log(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_minus_one(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -101,6 +120,8 @@ void algebra_minus_one(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_softmax_derivative(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -111,6 +132,8 @@ void algebra_softmax_derivative(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_multiply(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> m2(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -119,6 +142,8 @@ void algebra_multiply(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_multiply_number(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> m2(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -127,6 +152,8 @@ void algebra_multiply_number(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_rowwise_sum(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -134,6 +161,8 @@ void algebra_rowwise_sum(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_subtract(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> m2(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -142,6 +171,8 @@ void algebra_subtract(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_divide_number(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> num(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -150,6 +181,8 @@ void algebra_divide_number(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_divide_matrix(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> n(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -158,12 +191,16 @@ void algebra_divide_matrix(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_sum(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     double sum = m.sum();
 	inputs[1].memory[0] = sum;
 }
 
 void algebra_reluBackpropagation(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     result = m.unaryExpr([](const double x) {
@@ -175,6 +212,8 @@ void algebra_reluBackpropagation(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_leaky_relu(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     double alpha = inputs[1].memory[0];
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -185,6 +224,8 @@ void algebra_leaky_relu(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_leaky_reluBackpropagation(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     double alpha = inputs[1].memory[0];
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -195,6 +236,8 @@ void algebra_leaky_reluBackpropagation(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_dot(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> a(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> b(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -203,6 +246,8 @@ void algebra_dot(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_replicate_matrix(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> w(inputs[0].memory, inputs[0].rows, inputs[0].cols);
 
     double num_rows = inputs[1].memory[0];
@@ -217,6 +262,8 @@ void algebra_replicate_matrix(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_add_matrix(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> m2(inputs[1].memory, inputs[1].rows, inputs[1].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -225,6 +272,8 @@ void algebra_add_matrix(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_add_number(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     double num = inputs[1].memory[0];
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -233,6 +282,8 @@ void algebra_add_number(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_logistic_forward_propagation(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -242,6 +293,8 @@ void algebra_logistic_forward_propagation(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_max_coeff(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
 
     int index;
@@ -255,16 +308,22 @@ void algebra_max_coeff(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_min(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     inputs[1].memory[0] = static_cast<double>(m1.minCoeff());
 }
 
 void algebra_max(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     inputs[1].memory[0] = static_cast<double>(m1.maxCoeff());
 }
 
 void algebra_min_max(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -284,6 +343,8 @@ void algebra_min_max(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_logistic_backward_propagation(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> z(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -294,6 +355,8 @@ void algebra_logistic_backward_propagation(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_conjugate(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -301,12 +364,16 @@ void algebra_conjugate(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_tanh(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
     result = m1.array().tanh();
 }
 void algebra_tanh_derivative(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> z(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -316,6 +383,8 @@ void algebra_tanh_derivative(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_sqrt(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -326,6 +395,8 @@ void algebra_sqrt(MEMORY * inputs, MEMORY * outputs) {
     });
 }
 void algebra_log_minus_one(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -335,6 +406,8 @@ void algebra_log_minus_one(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_softmax(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
 
@@ -345,6 +418,8 @@ void algebra_softmax(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_fraction(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     double num = inputs[1].memory[0];
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
@@ -355,6 +430,8 @@ void algebra_fraction(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_adam_optimize(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     // Inputs
     Eigen::Map<Eigen::MatrixXd> W(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> b(inputs[1].memory, inputs[1].rows, inputs[1].cols);
@@ -406,6 +483,8 @@ void algebra_adam_optimize(MEMORY * inputs, MEMORY * outputs) {
 }
 
 void algebra_adagrad_optimize(MEMORY * inputs, MEMORY * outputs) {
+    init();
+
     // Inputs
     Eigen::Map<Eigen::MatrixXd> W(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> b(inputs[1].memory, inputs[1].rows, inputs[1].cols);

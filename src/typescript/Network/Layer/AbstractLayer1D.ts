@@ -16,7 +16,6 @@ abstract class AbstractLayer1D extends AbstractLayer {
   public sb: CalcMatrix2D;
   public dW: CalcMatrix2D;
   public db: CalcMatrix2D;
-  public dZ: CalcMatrix2D;
 
   constructor() {
     super();

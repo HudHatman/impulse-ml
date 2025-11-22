@@ -23,6 +23,8 @@ void Addon::Module::Initialize(v8::Local<v8::Object> exports, v8::Local<v8::Cont
     v8::Local<v8::Object> obj = v8::Object::New(isolate);
 
     v8::Local<v8::FunctionTemplate> loadTemplate = v8::FunctionTemplate::New(isolate, Addon::Module::load);
+    loadTemplate->InstanceTemplate()->SetInternalFieldCount(2);
+
     v8::Local<v8::Function> loadFunction = loadTemplate->GetFunction(context).ToLocalChecked();
 
     v8::Local<v8::FunctionTemplate> getFunctionTemplate = v8::FunctionTemplate::New(isolate, Addon::Module::getFunction);
@@ -75,7 +77,7 @@ void Addon::Module::load(const v8::FunctionCallbackInfo <v8::Value> &args) {
 
     v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, Addon::Module::New);
     tpl->SetClassName(v8::String::NewFromUtf8(isolate, "NativeModule").ToLocalChecked());
-    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->InstanceTemplate()->SetInternalFieldCount(2);
 
     v8::Local<v8::FunctionTemplate> getFunctionTemplate = v8::FunctionTemplate::New(isolate, Addon::Module::getFunction);
     v8::Local<v8::Function> getFunction = getFunctionTemplate->GetFunction(context).ToLocalChecked();

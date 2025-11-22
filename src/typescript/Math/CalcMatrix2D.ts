@@ -36,12 +36,6 @@ export class CalcMatrix2D extends CalcElement {
     });
   }
 
-  public dot(m: CalcMatrix2D) {
-    return this.calcSync((calc) => {
-      return calc.dot(m);
-    });
-  }
-
   public add(m: CalcMatrix2D) {
     return this.calcSync((calc) => {
       return calc.add(m);
@@ -89,25 +83,9 @@ export class CalcMatrix2D extends CalcElement {
     });
   }
 
-  public log(): CalcMatrix2D {
-    return this.calcSync((calc) => {
-      return calc.log();
-    });
-  }
-
   public multiply(number: number | CalcMatrix2D): CalcMatrix2D {
     return this.calcSync((calc) => {
       return calc.multiply(number);
-    });
-  }
-  public minusOne(): CalcMatrix2D {
-    return this.calcSync((calc) => {
-      return calc.minusOne();
-    });
-  }
-  public conjugate(): CalcMatrix2D {
-    return this.calcSync((calc) => {
-      return calc.conjugate();
     });
   }
   public divide(mOrNumber: number | CalcMatrix2D): CalcMatrix2D {
@@ -118,11 +96,6 @@ export class CalcMatrix2D extends CalcElement {
   public subtract(m: CalcMatrix2D): CalcMatrix2D {
     return this.calcSync((calc) => {
       return calc.subtract(m);
-    });
-  }
-  public rowwiseSum(): CalcMatrix2D {
-    return this.calcSync((calc) => {
-      return calc.rowwiseSum();
     });
   }
 
@@ -143,11 +116,6 @@ export class CalcMatrix2D extends CalcElement {
       return calc.softmax();
     });
   }
-  public fraction(num: number): CalcMatrix2D {
-    return this.calcSync((calc) => {
-      return calc.fraction(num);
-    });
-  }
   public tanh(): CalcMatrix2D {
     return this.calcSync((calc) => {
       return calc.tanh();
@@ -158,16 +126,6 @@ export class CalcMatrix2D extends CalcElement {
       return calc.tanhDerivative();
     });
   }
-  public logMinusOne(): CalcMatrix2D {
-    return this.calcSync((calc) => {
-      return calc.logMinusOne();
-    });
-  }
-  public sqrt(): CalcMatrix2D {
-    return this.calcSync((calc) => {
-      return calc.sqrt();
-    });
-  }
   public block(rowOffset: number, colOffset: number, numRows: number, numCols: number): CalcMatrix2D {
     return this.calcSync((calc) => {
       return calc.block(rowOffset, colOffset, numRows, numCols);
@@ -176,16 +134,6 @@ export class CalcMatrix2D extends CalcElement {
   public softmaxDerivative(): CalcMatrix2D {
     return this.calcSync((calc) => {
       return calc.softmaxDerivative();
-    });
-  }
-  public min(): CalcMatrix2D {
-    return this.calcSync((calc) => {
-      return calc.min();
-    });
-  }
-  public max(): CalcMatrix2D {
-    return this.calcSync((calc) => {
-      return calc.max();
     });
   }
   public minMax(): CalcMatrix2D {

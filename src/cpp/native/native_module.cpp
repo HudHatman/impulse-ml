@@ -37,7 +37,7 @@ Native::Module * Native::Module::load(int deviceId, const char * moduleName) {
     strcpy(this->path, path);
     strcpy(this->name, moduleName);
 
-    this->_handle = dlopen(this->path, RTLD_LAZY);
+    this->_handle = dlopen(this->path, RTLD_NOW | RTLD_GLOBAL);
     if (!this->_handle) {
         std::cout << dlerror() << std::endl;
     }

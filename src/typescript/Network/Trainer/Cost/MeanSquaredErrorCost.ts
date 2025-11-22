@@ -1,6 +1,6 @@
 import { AbstractCost } from "./AbstractCost";
 import { CalcMatrix2D } from "../../../Math";
-import { AbstractLayer } from "../../Layer/AbstractLayer";
+import { AbstractLayer } from "../../Layer";
 
 export class MeanSquaredErrorCost extends AbstractCost {
   loss(correctOutput: CalcMatrix2D, predictions: CalcMatrix2D): number {

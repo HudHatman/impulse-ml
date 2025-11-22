@@ -125,7 +125,7 @@ void Addon::Device::alloc(const v8::FunctionCallbackInfo<v8::Value>& args) {
 v8::Local<v8::Function> Addon::Device::InitNewGPUDevice(v8::Local<v8::Context> context, v8::Isolate* isolate) {
   v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, Addon::Device::NewGPUDevice);
   tpl->SetClassName(v8::String::NewFromUtf8(isolate, "GPUDevice").ToLocalChecked());
-  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+  tpl->InstanceTemplate()->SetInternalFieldCount(5);
 
   v8::Local<v8::Signature> signature = v8::Signature::New(isolate, tpl);
 
@@ -152,7 +152,7 @@ v8::Local<v8::Function> Addon::Device::InitNewGPUDevice(v8::Local<v8::Context> c
 v8::Local<v8::Function> Addon::Device::InitNewCPUDevice(v8::Local<v8::Context> context, v8::Isolate* isolate) {
   v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, Addon::Device::NewCPUDevice);
   tpl->SetClassName(v8::String::NewFromUtf8(isolate, "CPUDevice").ToLocalChecked());
-  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+  tpl->InstanceTemplate()->SetInternalFieldCount(3);
 
   v8::Local<v8::Signature> signature = v8::Signature::New(isolate, tpl);
 

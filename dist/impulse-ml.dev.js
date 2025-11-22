@@ -1,22 +1,6 @@
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
-
-/***/ "./build/Release/node_native_memory.node":
-/*!***********************************************!*\
-  !*** ./build/Release/node_native_memory.node ***!
-  \***********************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-/* module decorator */ module = __webpack_require__.nmd(module);
-
-try {
-  process.dlopen(module, (__webpack_require__(/*! path */ "path").join)(__dirname, __webpack_require__.p, "8c0d713d94b87197578f9913475daeeb.node"));
-} catch (error) {
-  throw new Error('node-loader:\n' + error);
-}
-
-
-/***/ }),
 
 /***/ "./src/typescript/Dataset/Builder/DatasetBuilder.ts":
 /*!**********************************************************!*\
@@ -24,7 +8,6 @@ try {
   \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DatasetBuilder: () => (/* binding */ DatasetBuilder)
@@ -61,7 +44,6 @@ var DatasetBuilder = /*#__PURE__*/function () {
   \********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DatasetVocabularyBuilder: () => (/* binding */ DatasetVocabularyBuilder)
@@ -99,7 +81,6 @@ var DatasetVocabularyBuilder = /*#__PURE__*/function () {
   \*****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractSource: () => (/* binding */ AbstractSource)
@@ -122,7 +103,6 @@ var AbstractSource = /*#__PURE__*/_createClass(function AbstractSource() {
   \************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SourceCSV: () => (/* binding */ SourceCSV)
@@ -198,7 +178,6 @@ var SourceCSV = /*#__PURE__*/function (_AbstractSource) {
   \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SourceCSV: () => (/* reexport safe */ _SourceCSV__WEBPACK_IMPORTED_MODULE_0__.SourceCSV)
@@ -215,7 +194,6 @@ __webpack_require__.r(__webpack_exports__);
   \*************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractVocabularySource: () => (/* binding */ AbstractVocabularySource)
@@ -238,7 +216,6 @@ var AbstractVocabularySource = /*#__PURE__*/_createClass(function AbstractVocabu
   \*********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TextFile: () => (/* binding */ TextFile)
@@ -301,7 +278,6 @@ var TextFile = /*#__PURE__*/function (_AbstractVocabularySo) {
   \******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TextFile: () => (/* reexport safe */ _TextFile__WEBPACK_IMPORTED_MODULE_0__.TextFile)
@@ -318,7 +294,6 @@ __webpack_require__.r(__webpack_exports__);
   \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DatasetBuilder: () => (/* reexport safe */ _DatasetBuilder__WEBPACK_IMPORTED_MODULE_0__.DatasetBuilder),
@@ -338,7 +313,6 @@ __webpack_require__.r(__webpack_exports__);
   \*******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Dataset: () => (/* binding */ Dataset)
@@ -393,7 +367,6 @@ var Dataset = /*#__PURE__*/function () {
   \*****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DatasetVocabulary: () => (/* binding */ DatasetVocabulary)
@@ -416,7 +389,6 @@ var DatasetVocabulary = /*#__PURE__*/_createClass(function DatasetVocabulary() {
   \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractModifier: () => (/* binding */ AbstractModifier)
@@ -442,7 +414,6 @@ var AbstractModifier = /*#__PURE__*/_createClass(function AbstractModifier(datas
   \**********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MinMaxScalingDatasetModifier: () => (/* binding */ MinMaxScalingDatasetModifier)
@@ -485,7 +456,6 @@ var MinMaxScalingDatasetModifier = /*#__PURE__*/function (_AbstractModifier) {
   \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MissingDataDatasetModifier: () => (/* binding */ MissingDataDatasetModifier)
@@ -566,7 +536,6 @@ var MissingDataDatasetModifier = /*#__PURE__*/function (_AbstractModifier) {
   \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ShuffleDatasetModifier: () => (/* binding */ ShuffleDatasetModifier)
@@ -603,7 +572,6 @@ var ShuffleDatasetModifier = /*#__PURE__*/function (_AbstractModifier) {
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SplitDatasetModifier: () => (/* binding */ SplitDatasetModifier)
@@ -640,7 +608,6 @@ var SplitDatasetModifier = /*#__PURE__*/function (_AbstractModifier) {
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MinMaxScalingDatasetModifier: () => (/* reexport safe */ _MinMaxScaling__WEBPACK_IMPORTED_MODULE_0__.MinMaxScalingDatasetModifier),
@@ -666,7 +633,6 @@ __webpack_require__.r(__webpack_exports__);
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Dataset: () => (/* reexport safe */ _Dataset__WEBPACK_IMPORTED_MODULE_0__.Dataset)
@@ -683,7 +649,6 @@ __webpack_require__.r(__webpack_exports__);
   \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Calc: () => (/* binding */ Calc)
@@ -774,7 +739,6 @@ var Calc = /*#__PURE__*/function () {
   \**********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CalcColVector: () => (/* binding */ CalcColVector)
@@ -825,7 +789,6 @@ var CalcColVector = /*#__PURE__*/function (_CalcElement) {
   \********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CalcElement: () => (/* binding */ CalcElement)
@@ -1116,7 +1079,6 @@ var CalcElement = /*#__PURE__*/function () {
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CalcMatrix2D: () => (/* binding */ CalcMatrix2D)
@@ -1180,13 +1142,6 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       });
     }
   }, {
-    key: "dot",
-    value: function dot(m) {
-      return this.calcSync(function (calc) {
-        return calc.dot(m);
-      });
-    }
-  }, {
     key: "add",
     value: function add(m) {
       return this.calcSync(function (calc) {
@@ -1236,31 +1191,10 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       });
     }
   }, {
-    key: "log",
-    value: function log() {
-      return this.calcSync(function (calc) {
-        return calc.log();
-      });
-    }
-  }, {
     key: "multiply",
     value: function multiply(number) {
       return this.calcSync(function (calc) {
         return calc.multiply(number);
-      });
-    }
-  }, {
-    key: "minusOne",
-    value: function minusOne() {
-      return this.calcSync(function (calc) {
-        return calc.minusOne();
-      });
-    }
-  }, {
-    key: "conjugate",
-    value: function conjugate() {
-      return this.calcSync(function (calc) {
-        return calc.conjugate();
       });
     }
   }, {
@@ -1275,13 +1209,6 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
     value: function subtract(m) {
       return this.calcSync(function (calc) {
         return calc.subtract(m);
-      });
-    }
-  }, {
-    key: "rowwiseSum",
-    value: function rowwiseSum() {
-      return this.calcSync(function (calc) {
-        return calc.rowwiseSum();
       });
     }
   }, {
@@ -1306,13 +1233,6 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       });
     }
   }, {
-    key: "fraction",
-    value: function fraction(num) {
-      return this.calcSync(function (calc) {
-        return calc.fraction(num);
-      });
-    }
-  }, {
     key: "tanh",
     value: function tanh() {
       return this.calcSync(function (calc) {
@@ -1327,20 +1247,6 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       });
     }
   }, {
-    key: "logMinusOne",
-    value: function logMinusOne() {
-      return this.calcSync(function (calc) {
-        return calc.logMinusOne();
-      });
-    }
-  }, {
-    key: "sqrt",
-    value: function sqrt() {
-      return this.calcSync(function (calc) {
-        return calc.sqrt();
-      });
-    }
-  }, {
     key: "block",
     value: function block(rowOffset, colOffset, numRows, numCols) {
       return this.calcSync(function (calc) {
@@ -1352,20 +1258,6 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
     value: function softmaxDerivative() {
       return this.calcSync(function (calc) {
         return calc.softmaxDerivative();
-      });
-    }
-  }, {
-    key: "min",
-    value: function min() {
-      return this.calcSync(function (calc) {
-        return calc.min();
-      });
-    }
-  }, {
-    key: "max",
-    value: function max() {
-      return this.calcSync(function (calc) {
-        return calc.max();
       });
     }
   }, {
@@ -1612,7 +1504,6 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
   \*********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CalcMatrix3D: () => (/* binding */ CalcMatrix3D)
@@ -1657,7 +1548,6 @@ var CalcMatrix3D = /*#__PURE__*/function (_CalcElement) {
   \**********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CalcRowVector: () => (/* binding */ CalcRowVector)
@@ -1708,7 +1598,6 @@ var CalcRowVector = /*#__PURE__*/function (_CalcElement) {
   \*******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CalcScalar: () => (/* binding */ CalcScalar)
@@ -1750,7 +1639,6 @@ var CalcScalar = /*#__PURE__*/function (_CalcElement) {
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   getDevice: () => (/* reexport safe */ _utils__WEBPACK_IMPORTED_MODULE_0__.getDevice),
@@ -1768,20 +1656,22 @@ __webpack_require__.r(__webpack_exports__);
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   getDevice: () => (/* binding */ getDevice),
 /* harmony export */   setDevice: () => (/* binding */ setDevice)
 /* harmony export */ });
-/* harmony import */ var _build_Release_node_native_memory_node__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../build/Release/node_native_memory.node */ "./build/Release/node_native_memory.node");
-/* harmony import */ var _build_Release_node_native_memory_node__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_build_Release_node_native_memory_node__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _main__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../main */ "./src/typescript/main.ts");
 
-var currentDevice = new (_build_Release_node_native_memory_node__WEBPACK_IMPORTED_MODULE_0___default().Device).CPU();
+var currentDevice = null;
 var setDevice = function setDevice(device) {
   currentDevice = device;
 };
 var getDevice = function getDevice() {
+  if (!currentDevice) {
+    var _native = (0,_main__WEBPACK_IMPORTED_MODULE_0__.load)();
+    currentDevice = new _native.Device.CPU();
+  }
   return currentDevice;
 };
 
@@ -1793,7 +1683,6 @@ var getDevice = function getDevice() {
   \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Calc: () => (/* reexport safe */ _Calc__WEBPACK_IMPORTED_MODULE_0__.Calc),
@@ -1839,7 +1728,6 @@ var round = function round(num, decimalPlaces) {
   \******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractNetworkBuilder: () => (/* binding */ AbstractNetworkBuilder)
@@ -1900,7 +1788,6 @@ var AbstractNetworkBuilder = /*#__PURE__*/function () {
   \************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   NetworkBuilder1D: () => (/* binding */ NetworkBuilder1D)
@@ -1986,7 +1873,6 @@ var NetworkBuilder1D = /*#__PURE__*/function (_AbstractNetworkBuild) {
   \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractNetworkBuilder: () => (/* reexport safe */ _AbstractNetworkBuilder__WEBPACK_IMPORTED_MODULE_0__.AbstractNetworkBuilder),
@@ -2006,7 +1892,6 @@ __webpack_require__.r(__webpack_exports__);
   \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractLayer: () => (/* binding */ AbstractLayer)
@@ -2089,7 +1974,6 @@ var AbstractLayer = /*#__PURE__*/function () {
   \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractLayer1D: () => (/* binding */ AbstractLayer1D)
@@ -2230,7 +2114,6 @@ var AbstractLayer1D = /*#__PURE__*/function (_AbstractLayer) {
   \*********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractBackPropagation: () => (/* binding */ AbstractBackPropagation)
@@ -2258,7 +2141,6 @@ var AbstractBackPropagation = /*#__PURE__*/_createClass(function AbstractBackPro
   \*******************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Backpropagation1Dto1D: () => (/* binding */ Backpropagation1Dto1D)
@@ -2298,26 +2180,13 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
       var dZ = sigma;
       if (isLastLayer && layer.getType() !== _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax) {
         dZ.replace(sigma.multiply(layer.derivative(layer.Z)));
-        //console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
-        //console.log("sigma (A - Y):", sigma.get());
-      } /* else {
-        //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
-        //console.log("sigma (dA_prev from next layer):", sigma.get());
-        }*/
-
-      //console.log("dZ (gradient of linear output):", dZ.get());
-
+      }
       var previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
       var _dZ$backwardPropagati = dZ.backwardPropagation(layer.W, previousActivations, regularization, numberOfExamples),
         _dZ$backwardPropagati2 = _slicedToArray(_dZ$backwardPropagati, 3),
         gW = _dZ$backwardPropagati2[0],
         gb = _dZ$backwardPropagati2[1],
         dA_prev = _dZ$backwardPropagati2[2];
-
-      //console.log("gW (weight gradients):", gW.get());
-      //console.log("gb (bias gradients):", gb.get());
-      //console.log("dA_prev (propagating to previous layer):", dA_prev.get());
-
       layer.gW.replace(gW);
       layer.gb.replace(gb);
       return dA_prev;
@@ -2333,24 +2202,17 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
   \********************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BackpropagationFactory: () => (/* binding */ BackpropagationFactory)
 /* harmony export */ });
 /* harmony import */ var _Backpropagation1Dto1D__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Backpropagation1Dto1D */ "./src/typescript/Network/Layer/Backpropagation/Backpropagation1Dto1D.ts");
-/* harmony import */ var _LSTM__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../LSTM */ "./src/typescript/Network/Layer/LSTM.ts");
-/* harmony import */ var _BackpropagationLSTM__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./BackpropagationLSTM */ "./src/typescript/Network/Layer/Backpropagation/BackpropagationLSTM.ts");
-/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Math */ "./src/typescript/Math/index.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-
-
-
 
 var BackpropagationFactory = /*#__PURE__*/function () {
   function BackpropagationFactory() {
@@ -2359,101 +2221,10 @@ var BackpropagationFactory = /*#__PURE__*/function () {
   return _createClass(BackpropagationFactory, null, [{
     key: "create",
     value: function create(previousLayer, layer) {
-      if (layer instanceof _LSTM__WEBPACK_IMPORTED_MODULE_1__.LSTM) {
-        var dH = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(layer.getHeight(), 1).setZeros();
-        var dC = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(layer.getHeight(), 1).setZeros();
-        return new _BackpropagationLSTM__WEBPACK_IMPORTED_MODULE_2__.BackpropagationLSTM(layer, dH, dC);
-      }
-      if (previousLayer) {
-        if (previousLayer.is1D()) {
-          return new _Backpropagation1Dto1D__WEBPACK_IMPORTED_MODULE_0__.Backpropagation1Dto1D(layer, previousLayer);
-        }
-      } else {
-        if (layer.is1D()) {
-          return new _Backpropagation1Dto1D__WEBPACK_IMPORTED_MODULE_0__.Backpropagation1Dto1D(layer, previousLayer);
-        }
-      }
-      return null;
+      return new _Backpropagation1Dto1D__WEBPACK_IMPORTED_MODULE_0__.Backpropagation1Dto1D(layer, previousLayer);
     }
   }]);
 }();
-
-/***/ }),
-
-/***/ "./src/typescript/Network/Layer/Backpropagation/BackpropagationLSTM.ts":
-/*!*****************************************************************************!*\
-  !*** ./src/typescript/Network/Layer/Backpropagation/BackpropagationLSTM.ts ***!
-  \*****************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   BackpropagationLSTM: () => (/* binding */ BackpropagationLSTM)
-/* harmony export */ });
-/* harmony import */ var _AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractBackpropagation */ "./src/typescript/Network/Layer/Backpropagation/AbstractBackpropagation.ts");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
-
-//import { Sigmoid } from "../../Activation";
-var BackpropagationLSTM = /*#__PURE__*/function (_AbstractBackPropagat) {
-  function BackpropagationLSTM() {
-    _classCallCheck(this, BackpropagationLSTM);
-    return _callSuper(this, BackpropagationLSTM, arguments);
-  }
-  _inherits(BackpropagationLSTM, _AbstractBackPropagat);
-  return _createClass(BackpropagationLSTM);
-}(_AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__.AbstractBackPropagation);
-
-
-/***/ }),
-
-/***/ "./src/typescript/Network/Layer/LSTM.ts":
-/*!**********************************************!*\
-  !*** ./src/typescript/Network/Layer/LSTM.ts ***!
-  \**********************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   LSTM: () => (/* binding */ LSTM)
-/* harmony export */ });
-/* harmony import */ var _AbstractLayer1D__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractLayer1D */ "./src/typescript/Network/Layer/AbstractLayer1D.ts");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
-
-var LSTM = /*#__PURE__*/function (_AbstractLayer1D) {
-  function LSTM() {
-    _classCallCheck(this, LSTM);
-    return _callSuper(this, LSTM, arguments);
-  }
-  _inherits(LSTM, _AbstractLayer1D);
-  return _createClass(LSTM);
-}(_AbstractLayer1D__WEBPACK_IMPORTED_MODULE_0__.AbstractLayer1D);
-
 
 /***/ }),
 
@@ -2463,7 +2234,6 @@ var LSTM = /*#__PURE__*/function (_AbstractLayer1D) {
   \**************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   LogisticLayer: () => (/* binding */ LogisticLayer)
@@ -2518,7 +2288,6 @@ var LogisticLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   \**********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ReluLayer: () => (/* binding */ ReluLayer)
@@ -2586,7 +2355,6 @@ var ReluLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SoftmaxLayer: () => (/* binding */ SoftmaxLayer)
@@ -2643,7 +2411,6 @@ var SoftmaxLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   \**********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   TanhLayer: () => (/* binding */ TanhLayer)
@@ -2698,7 +2465,6 @@ var TanhLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   \***********************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractLayer: () => (/* reexport safe */ _AbstractLayer__WEBPACK_IMPORTED_MODULE_0__.AbstractLayer),
@@ -2727,7 +2493,6 @@ __webpack_require__.r(__webpack_exports__);
   \*******************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Network: () => (/* binding */ Network),
@@ -2843,7 +2608,6 @@ var Network = /*#__PURE__*/function () {
   \***********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractTrainer: () => (/* binding */ AbstractTrainer)
@@ -2951,7 +2715,6 @@ var AbstractTrainer = /*#__PURE__*/function () {
   \********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BatchTrainer: () => (/* binding */ BatchTrainer)
@@ -3037,7 +2800,6 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
   \*************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractCost: () => (/* binding */ AbstractCost)
@@ -3060,7 +2822,6 @@ var AbstractCost = /*#__PURE__*/_createClass(function AbstractCost() {
   \*****************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   CrossEntropyCost: () => (/* binding */ CrossEntropyCost)
@@ -3124,7 +2885,6 @@ var CrossEntropyCost = /*#__PURE__*/function (_AbstractCost) {
   \*********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   MeanSquaredErrorCost: () => (/* binding */ MeanSquaredErrorCost)
@@ -3174,7 +2934,6 @@ var MeanSquaredErrorCost = /*#__PURE__*/function (_AbstractCost) {
   \***********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractOptimizer: () => (/* binding */ AbstractOptimizer)
@@ -3222,7 +2981,6 @@ var AbstractOptimizer = /*#__PURE__*/function () {
   \**********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OptimizerAdagrad: () => (/* binding */ OptimizerAdagrad)
@@ -3279,7 +3037,6 @@ var OptimizerAdagrad = /*#__PURE__*/function (_AbstractOptimizer) {
   \*******************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OptimizerAdam: () => (/* binding */ OptimizerAdam)
@@ -3351,7 +3108,6 @@ var OptimizerAdam = /*#__PURE__*/function (_AbstractOptimizer) {
   \******************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OptimizerGradientDescent: () => (/* binding */ OptimizerGradientDescent)
@@ -3399,7 +3155,6 @@ var OptimizerGradientDescent = /*#__PURE__*/function (_AbstractOptimizer) {
   \***********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OptimizerMomentum: () => (/* binding */ OptimizerMomentum)
@@ -3462,7 +3217,6 @@ var OptimizerMomentum = /*#__PURE__*/function (_AbstractOptimizer) {
   \**********************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OptimizerRMSProp: () => (/* binding */ OptimizerRMSProp)
@@ -3532,7 +3286,6 @@ var OptimizerRMSProp = /*#__PURE__*/function (_AbstractOptimizer) {
   \***********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   OptimizerAdagrad: () => (/* reexport safe */ _OptimizerAdagrad__WEBPACK_IMPORTED_MODULE_2__.OptimizerAdagrad),
@@ -3561,7 +3314,6 @@ __webpack_require__.r(__webpack_exports__);
   \*************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BatchTrainer: () => (/* reexport safe */ _BatchTrainer__WEBPACK_IMPORTED_MODULE_0__.BatchTrainer),
@@ -3582,7 +3334,6 @@ __webpack_require__.r(__webpack_exports__);
   \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Network: () => (/* reexport safe */ _Network__WEBPACK_IMPORTED_MODULE_0__.Network)
@@ -3593,13 +3344,134 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/typescript/main.ts":
+/*!********************************!*\
+  !*** ./src/typescript/main.ts ***!
+  \********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Cost: () => (/* binding */ Cost),
+/* harmony export */   Dataset: () => (/* binding */ Dataset),
+/* harmony export */   DatasetBuilder: () => (/* binding */ DatasetBuilder),
+/* harmony export */   DatasetBuilderSource: () => (/* binding */ DatasetBuilderSource),
+/* harmony export */   DatasetModifier: () => (/* binding */ DatasetModifier),
+/* harmony export */   Layer: () => (/* binding */ Layer),
+/* harmony export */   Math: () => (/* reexport safe */ _Math__WEBPACK_IMPORTED_MODULE_0__["default"]),
+/* harmony export */   NetworkBuilder: () => (/* binding */ NetworkBuilder),
+/* harmony export */   Optimizer: () => (/* binding */ Optimizer),
+/* harmony export */   Trainer: () => (/* reexport safe */ _Network_Trainer__WEBPACK_IMPORTED_MODULE_4__["default"]),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   load: () => (/* binding */ load)
+/* harmony export */ });
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Math */ "./src/typescript/Math/index.ts");
+/* harmony import */ var _Network_Builder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Network/Builder */ "./src/typescript/Network/Builder/index.ts");
+/* harmony import */ var _Network_Layer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Network/Layer */ "./src/typescript/Network/Layer/index.ts");
+/* harmony import */ var _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Network/Trainer/Optimizer */ "./src/typescript/Network/Trainer/Optimizer/index.ts");
+/* harmony import */ var _Network_Trainer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Network/Trainer */ "./src/typescript/Network/Trainer/index.ts");
+/* harmony import */ var _Network_Trainer_Cost_MeanSquaredErrorCost__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Network/Trainer/Cost/MeanSquaredErrorCost */ "./src/typescript/Network/Trainer/Cost/MeanSquaredErrorCost.ts");
+/* harmony import */ var _Network_Trainer_Cost_CrossEntropyCost__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Network/Trainer/Cost/CrossEntropyCost */ "./src/typescript/Network/Trainer/Cost/CrossEntropyCost.ts");
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! os */ "os");
+/* harmony import */ var os__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(os__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var process__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! process */ "process");
+/* harmony import */ var process__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(process__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! path */ "path");
+/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var module__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! module */ "module");
+/* harmony import */ var module__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(module__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _Dataset__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./Dataset */ "./src/typescript/Dataset/index.ts");
+/* harmony import */ var _Dataset_Builder__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Dataset/Builder */ "./src/typescript/Dataset/Builder/index.ts");
+/* harmony import */ var _Dataset_Builder_Source__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Dataset/Builder/Source */ "./src/typescript/Dataset/Builder/Source/index.ts");
+/* harmony import */ var _Dataset_Builder_VocabularySource__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Dataset/Builder/VocabularySource */ "./src/typescript/Dataset/Builder/VocabularySource/index.ts");
+/* harmony import */ var _Dataset_Modifier__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Dataset/Modifier */ "./src/typescript/Dataset/Modifier/index.ts");
+
+
+
+
+
+
+
+
+
+
+
+var NetworkBuilder = {
+  NetworkBuilder1D: _Network_Builder__WEBPACK_IMPORTED_MODULE_1__.NetworkBuilder1D
+};
+var Layer = {
+  SoftmaxLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.SoftmaxLayer,
+  LogisticLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.LogisticLayer,
+  ReluLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.ReluLayer,
+  TanhLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.TanhLayer
+};
+var Optimizer = {
+  OptimizerAdam: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerAdam,
+  OptimizerGradientDescent: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerGradientDescent,
+  OptimizerAdagrad: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerAdagrad,
+  OptimizerMomentum: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerMomentum,
+  OptimizerRMSProp: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerRMSProp
+};
+var Cost = {
+  MeanSquaredErrorCost: _Network_Trainer_Cost_MeanSquaredErrorCost__WEBPACK_IMPORTED_MODULE_5__.MeanSquaredErrorCost,
+  CrossEntropyCost: _Network_Trainer_Cost_CrossEntropyCost__WEBPACK_IMPORTED_MODULE_6__.CrossEntropyCost
+};
+
+
+
+
+
+var DatasetBuilder = {
+  DatasetBuilder: _Dataset_Builder__WEBPACK_IMPORTED_MODULE_12__.DatasetBuilder,
+  DatasetVocabularyBuilder: _Dataset_Builder__WEBPACK_IMPORTED_MODULE_12__.DatasetVocabularyBuilder
+};
+var Dataset = {
+  Dataset: _Dataset__WEBPACK_IMPORTED_MODULE_11__.Dataset
+};
+var DatasetModifier = {
+  MinMaxScalingDatasetModifier: _Dataset_Modifier__WEBPACK_IMPORTED_MODULE_15__.MinMaxScalingDatasetModifier,
+  MissingDataDatasetModifier: _Dataset_Modifier__WEBPACK_IMPORTED_MODULE_15__.MissingDataDatasetModifier,
+  ShuffleDatasetModifier: _Dataset_Modifier__WEBPACK_IMPORTED_MODULE_15__.ShuffleDatasetModifier,
+  SplitDatasetModifier: _Dataset_Modifier__WEBPACK_IMPORTED_MODULE_15__.SplitDatasetModifier
+};
+var DatasetBuilderSource = {
+  DatasetBuilderSourceCSV: _Dataset_Builder_Source__WEBPACK_IMPORTED_MODULE_13__.SourceCSV,
+  DatasetVocabularyBuilderSourceTextFile: _Dataset_Builder_VocabularySource__WEBPACK_IMPORTED_MODULE_14__.TextFile
+};
+var _native = null;
+var load = function load() {
+  if (_native) return _native;
+  var addonPath = path__WEBPACK_IMPORTED_MODULE_9___default().resolve(__dirname, "../build/Release/node_native_memory.node");
+  var m = new (module__WEBPACK_IMPORTED_MODULE_10___default())(addonPath, null);
+  m.filename = addonPath;
+  process__WEBPACK_IMPORTED_MODULE_8___default().dlopen(m, addonPath, (os__WEBPACK_IMPORTED_MODULE_7___default().constants).dlopen.RTLD_NOW | (os__WEBPACK_IMPORTED_MODULE_7___default().constants).dlopen.RTLD_GLOBAL);
+  _native = m.exports;
+  _native.setModulePath(path__WEBPACK_IMPORTED_MODULE_9___default().resolve(__dirname, "../"));
+  return _native;
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  NetworkBuilder: NetworkBuilder,
+  Layer: Layer,
+  Optimizer: Optimizer,
+  Trainer: _Network_Trainer__WEBPACK_IMPORTED_MODULE_4__["default"],
+  Cost: Cost,
+  Math: _Math__WEBPACK_IMPORTED_MODULE_0__["default"],
+  DatasetBuilder: DatasetBuilder,
+  Dataset: Dataset,
+  DatasetModifier: DatasetModifier,
+  DatasetBuilderSource: DatasetBuilderSource,
+  load: load
+});
+
+/***/ }),
+
 /***/ "./src/typescript/types.ts":
 /*!*********************************!*\
   !*** ./src/typescript/types.ts ***!
   \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-"use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   LayerType: () => (/* binding */ LayerType)
@@ -3609,6 +3481,7 @@ var LayerType = /*#__PURE__*/function (LayerType) {
   LayerType["softmax"] = "softmax";
   LayerType["tanh"] = "tanh";
   LayerType["relu"] = "relu";
+  LayerType["purelin"] = "purelin";
   return LayerType;
 }({});
 
@@ -3620,7 +3493,6 @@ var LayerType = /*#__PURE__*/function (LayerType) {
   \****************************/
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("csvtojson");
 
 /***/ }),
@@ -3631,8 +3503,27 @@ module.exports = require("csvtojson");
   \*********************/
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("fs");
+
+/***/ }),
+
+/***/ "module":
+/*!*************************!*\
+  !*** external "module" ***!
+  \*************************/
+/***/ ((module) => {
+
+module.exports = require("module");
+
+/***/ }),
+
+/***/ "os":
+/*!*********************!*\
+  !*** external "os" ***!
+  \*********************/
+/***/ ((module) => {
+
+module.exports = require("os");
 
 /***/ }),
 
@@ -3642,8 +3533,17 @@ module.exports = require("fs");
   \***********************/
 /***/ ((module) => {
 
-"use strict";
 module.exports = require("path");
+
+/***/ }),
+
+/***/ "process":
+/*!**************************!*\
+  !*** external "process" ***!
+  \**************************/
+/***/ ((module) => {
+
+module.exports = require("process");
 
 /***/ })
 
@@ -3661,16 +3561,13 @@ module.exports = require("path");
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			id: moduleId,
-/******/ 			loaded: false,
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
 /******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
@@ -3717,126 +3614,14 @@ module.exports = require("path");
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/node module decorator */
-/******/ 	(() => {
-/******/ 		__webpack_require__.nmd = (module) => {
-/******/ 			module.paths = [];
-/******/ 			if (!module.children) module.children = [];
-/******/ 			return module;
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/publicPath */
-/******/ 	(() => {
-/******/ 		__webpack_require__.p = "";
-/******/ 	})();
-/******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
-(() => {
-"use strict";
-/*!********************************!*\
-  !*** ./src/typescript/main.ts ***!
-  \********************************/
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   Cost: () => (/* binding */ Cost),
-/* harmony export */   Dataset: () => (/* binding */ Dataset),
-/* harmony export */   DatasetBuilder: () => (/* binding */ DatasetBuilder),
-/* harmony export */   DatasetBuilderSource: () => (/* binding */ DatasetBuilderSource),
-/* harmony export */   DatasetModifier: () => (/* binding */ DatasetModifier),
-/* harmony export */   Layer: () => (/* binding */ Layer),
-/* harmony export */   Math: () => (/* reexport safe */ _Math__WEBPACK_IMPORTED_MODULE_0__["default"]),
-/* harmony export */   NetworkBuilder: () => (/* binding */ NetworkBuilder),
-/* harmony export */   Optimizer: () => (/* binding */ Optimizer),
-/* harmony export */   Trainer: () => (/* reexport safe */ _Network_Trainer__WEBPACK_IMPORTED_MODULE_4__["default"]),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Math */ "./src/typescript/Math/index.ts");
-/* harmony import */ var _Network_Builder__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Network/Builder */ "./src/typescript/Network/Builder/index.ts");
-/* harmony import */ var _Network_Layer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Network/Layer */ "./src/typescript/Network/Layer/index.ts");
-/* harmony import */ var _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Network/Trainer/Optimizer */ "./src/typescript/Network/Trainer/Optimizer/index.ts");
-/* harmony import */ var _Network_Trainer__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Network/Trainer */ "./src/typescript/Network/Trainer/index.ts");
-/* harmony import */ var _Network_Trainer_Cost_MeanSquaredErrorCost__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Network/Trainer/Cost/MeanSquaredErrorCost */ "./src/typescript/Network/Trainer/Cost/MeanSquaredErrorCost.ts");
-/* harmony import */ var _Network_Trainer_Cost_CrossEntropyCost__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./Network/Trainer/Cost/CrossEntropyCost */ "./src/typescript/Network/Trainer/Cost/CrossEntropyCost.ts");
-/* harmony import */ var _build_Release_node_native_memory_node__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../build/Release/node_native_memory.node */ "./build/Release/node_native_memory.node");
-/* harmony import */ var _build_Release_node_native_memory_node__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_build_Release_node_native_memory_node__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! path */ "path");
-/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _Dataset__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Dataset */ "./src/typescript/Dataset/index.ts");
-/* harmony import */ var _Dataset_Builder__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./Dataset/Builder */ "./src/typescript/Dataset/Builder/index.ts");
-/* harmony import */ var _Dataset_Builder_Source__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./Dataset/Builder/Source */ "./src/typescript/Dataset/Builder/Source/index.ts");
-/* harmony import */ var _Dataset_Builder_VocabularySource__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Dataset/Builder/VocabularySource */ "./src/typescript/Dataset/Builder/VocabularySource/index.ts");
-/* harmony import */ var _Dataset_Modifier__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Dataset/Modifier */ "./src/typescript/Dataset/Modifier/index.ts");
-
-
-
-
-
-
-
-var NetworkBuilder = {
-  NetworkBuilder1D: _Network_Builder__WEBPACK_IMPORTED_MODULE_1__.NetworkBuilder1D
-};
-var Layer = {
-  SoftmaxLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.SoftmaxLayer,
-  LogisticLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.LogisticLayer,
-  ReluLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.ReluLayer,
-  TanhLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.TanhLayer
-};
-var Optimizer = {
-  OptimizerAdam: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerAdam,
-  OptimizerGradientDescent: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerGradientDescent,
-  OptimizerAdagrad: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerAdagrad,
-  OptimizerMomentum: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerMomentum,
-  OptimizerRMSProp: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerRMSProp
-};
-var Cost = {
-  MeanSquaredErrorCost: _Network_Trainer_Cost_MeanSquaredErrorCost__WEBPACK_IMPORTED_MODULE_5__.MeanSquaredErrorCost,
-  CrossEntropyCost: _Network_Trainer_Cost_CrossEntropyCost__WEBPACK_IMPORTED_MODULE_6__.CrossEntropyCost
-};
-
-
-_build_Release_node_native_memory_node__WEBPACK_IMPORTED_MODULE_7___default().setModulePath(path__WEBPACK_IMPORTED_MODULE_8___default().resolve(__dirname, "../"));
-
-
-
-
-
-var DatasetBuilder = {
-  DatasetBuilder: _Dataset_Builder__WEBPACK_IMPORTED_MODULE_10__.DatasetBuilder,
-  DatasetVocabularyBuilder: _Dataset_Builder__WEBPACK_IMPORTED_MODULE_10__.DatasetVocabularyBuilder
-};
-var Dataset = {
-  Dataset: _Dataset__WEBPACK_IMPORTED_MODULE_9__.Dataset
-};
-var DatasetModifier = {
-  MinMaxScalingDatasetModifier: _Dataset_Modifier__WEBPACK_IMPORTED_MODULE_13__.MinMaxScalingDatasetModifier,
-  MissingDataDatasetModifier: _Dataset_Modifier__WEBPACK_IMPORTED_MODULE_13__.MissingDataDatasetModifier,
-  ShuffleDatasetModifier: _Dataset_Modifier__WEBPACK_IMPORTED_MODULE_13__.ShuffleDatasetModifier,
-  SplitDatasetModifier: _Dataset_Modifier__WEBPACK_IMPORTED_MODULE_13__.SplitDatasetModifier
-};
-var DatasetBuilderSource = {
-  DatasetBuilderSourceCSV: _Dataset_Builder_Source__WEBPACK_IMPORTED_MODULE_11__.SourceCSV,
-  DatasetVocabularyBuilderSourceTextFile: _Dataset_Builder_VocabularySource__WEBPACK_IMPORTED_MODULE_12__.TextFile
-};
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  NetworkBuilder: NetworkBuilder,
-  Layer: Layer,
-  Optimizer: Optimizer,
-  Trainer: _Network_Trainer__WEBPACK_IMPORTED_MODULE_4__["default"],
-  Cost: Cost,
-  Math: _Math__WEBPACK_IMPORTED_MODULE_0__["default"],
-  DatasetBuilder: DatasetBuilder,
-  Dataset: Dataset,
-  DatasetModifier: DatasetModifier,
-  DatasetBuilderSource: DatasetBuilderSource
-});
-})();
-
-module.exports = __webpack_exports__;
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/typescript/main.ts");
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;
 //# sourceMappingURL=impulse-ml.dev.js.map

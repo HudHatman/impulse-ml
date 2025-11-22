@@ -8,6 +8,7 @@ export enum LayerType {
   softmax = "softmax",
   tanh = "tanh",
   relu = "relu",
+  purelin = "purelin",
 }
 
 export type Layers = LogisticLayer | SoftmaxLayer | TanhLayer | ReluLayer | AbstractLayer1D;
