@@ -12,11 +12,11 @@ const path = require("path");
 
 const builder = new NetworkBuilder1D([4]);
 builder
-  .createLayer(LogisticLayer, (layer) => {
-    layer.setSize(8);
+  .createLayer(ReluLayer, (layer) => {
+    layer.setSize(12);
   })
-  .createLayer(LogisticLayer, (layer) => {
-    layer.setSize(6);
+  .createLayer(ReluLayer, (layer) => {
+    layer.setSize(8);
   })
   .createLayer(SoftmaxLayer, (layer) => {
     layer.setSize(3);
@@ -39,10 +39,10 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
       inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
 
       const trainer = new BatchTrainer(network, new OptimizerGradientDescent(), new CrossEntropyCost());
-      trainer.setIterations(300);
+      trainer.setIterations(1000);
       trainer.setBatchSize(16);
-      trainer.setLearningRate(0.01);
-      trainer.setRegularization(0.001);
+      trainer.setLearningRate(0.05);
+      trainer.setRegularization(0.01);
       trainer.setVerboseStep(10);
 
       trainer.setStepCallback(() => {});
