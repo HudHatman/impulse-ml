@@ -41,6 +41,11 @@ export class BatchTrainer extends AbstractTrainer {
         this.network.getLayers().forEach((layer) => {
           this.optimizer.optimize(layer);
         })
+
+        input.destroy();
+        output.destroy();
+        predictions.destroy();
+        sigma.destroy();
       }
 
       if (this.verbose && (i + 1) % this.verboseStep === 0) {
@@ -53,11 +58,13 @@ export class BatchTrainer extends AbstractTrainer {
             2
           )}% | Time: ${(endTime - startTime) / 1000} s.`
         );
-      }
 
-      this.stepCallback({
-        iteration: i,
-      });
+        this.stepCallback({
+          iteration: i,
+        });
+
+        startTime = new Date().getTime();
+      }
     }
 
     return this;

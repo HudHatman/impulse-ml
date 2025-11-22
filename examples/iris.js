@@ -38,25 +38,25 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
         inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
 
         end = new Date().getTime();
-        const y = network.forward(inputDataset.exampleAt(0));
-        console.log(end - start, y, y.get()); mem();
 
         const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
-        trainer.setIterations(30);
+        trainer.setIterations(300);
         trainer.setBatchSize(16);
         trainer.setLearningRate(0.01);
         trainer.setRegularization(0.0001);
-        trainer.setVerboseStep(1);
+        trainer.setVerboseStep(10);/*
 
         trainer.setStepCallback(() => {
-          //console.log("forward", network.forward(x).get(), outputDataset.data.get());
-        });
+
+        });*/
         start = new Date().getTime();
         trainer.train(inputDataset, outputDataset);
         end = new Date().getTime();
         console.log(end - start);
         mem();
         network.save(path.resolve(__dirname, 'iris.json'))
+
+        console.log("forward", network.forward(inputDataset.exampleAt(0)).get(), outputDataset.exampleAt(0).get());
       }
     );
   }

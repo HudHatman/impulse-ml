@@ -3003,15 +3003,20 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
           this.network.getLayers().forEach(function (layer) {
             _this2.optimizer.optimize(layer);
           });
+          input.destroy();
+          output.destroy();
+          predictions.destroy();
+          sigma.destroy();
         }
         if (this.verbose && (i + 1) % this.verboseStep === 0) {
           var currentResult = this.cost(this.network.forward(inputDataset.data), outputDataset.data);
           var endTime = new Date().getTime();
           console.log("Iteration: ".concat(i + 1, " | Cost: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.cost, 5), " | Accuracy: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.accuracy, 2), "% | Time: ").concat((endTime - startTime) / 1000, " s."));
+          this.stepCallback({
+            iteration: i
+          });
+          startTime = new Date().getTime();
         }
-        this.stepCallback({
-          iteration: i
-        });
       }
       return this;
     }
