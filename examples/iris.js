@@ -42,11 +42,11 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
         console.log(end - start, y, y.get()); mem();
 
         const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
-        trainer.setIterations(3);
+        trainer.setIterations(30);
         trainer.setBatchSize(16);
         trainer.setLearningRate(0.01);
         trainer.setRegularization(0.0001);
-        trainer.setVerboseStep(100);
+        trainer.setVerboseStep(1);
 
         trainer.setStepCallback(() => {
           //console.log("forward", network.forward(x).get(), outputDataset.data.get());
