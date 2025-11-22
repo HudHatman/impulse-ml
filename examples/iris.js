@@ -25,10 +25,11 @@ builder
 const network = builder.getNetwork();
 
 const mem = () => {
-  for (const [key,value] of Object.entries(process.memoryUsage())){
-    console.log(`Memory usage by ${key}, ${value/1000000}MB `)
-  }
+  console.log((process.memoryUsage().rss / 1000000) + " MB");
 }
+
+let start = new Date().getTime();
+let end;
 
 DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__dirname, "../data/iris_x.csv"))).then(
   async (inputDataset) => {
@@ -36,8 +37,12 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
       async (outputDataset) => {
         inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
 
+        end = new Date().getTime();
+        const y = network.forward(inputDataset.exampleAt(0));
+        console.log(end - start, y, y.get()); mem();
+
         const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
-        trainer.setIterations(300);
+        trainer.setIterations(3);
         trainer.setBatchSize(16);
         trainer.setLearningRate(0.01);
         trainer.setRegularization(0.0001);
@@ -46,9 +51,9 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
         trainer.setStepCallback(() => {
           //console.log("forward", network.forward(x).get(), outputDataset.data.get());
         });
-        const start = new Date().getTime();
+        start = new Date().getTime();
         trainer.train(inputDataset, outputDataset);
-        const end = new Date().getTime();
+        end = new Date().getTime();
         console.log(end - start);
         mem();
         network.save(path.resolve(__dirname, 'iris.json'))

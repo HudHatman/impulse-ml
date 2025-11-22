@@ -23,8 +23,9 @@ export class BatchTrainer extends AbstractTrainer {
     this.optimizer.setBatchSize(this._batchSize);
     this.optimizer.setLearningRate(this.learningRate);
 
+    let startTime = new Date().getTime();
+
     for (let i = 0; i < this.iterations; i += 1) {
-      const startTime = new Date().getTime();
 
       for (let offset = 0; offset < numberOfExamples; offset += this._batchSize) {
         const input = inputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
@@ -40,18 +41,18 @@ export class BatchTrainer extends AbstractTrainer {
         this.network.getLayers().forEach((layer) => {
           this.optimizer.optimize(layer);
         })
+      }
 
-        if (this.verbose && (i + 1) % this.verboseStep === 0) {
-          const currentResult = this.cost(predictions, output);
-          const endTime = new Date().getTime();
+      if (this.verbose && (i + 1) % this.verboseStep === 0) {
+        const currentResult = this.cost(this.network.forward(inputDataset.data), outputDataset.data);
+        const endTime = new Date().getTime();
 
-          console.log(
-            `Iteration: ${i + 1} | Cost: ${round(currentResult.cost, 5)} | Accuracy: ${round(
-              currentResult.accuracy,
-              2
-            )}% | Time: ${(endTime - startTime) / 1000} s.`
-          );
-        }
+        console.log(
+          `Iteration: ${i + 1} | Cost: ${round(currentResult.cost, 5)} | Accuracy: ${round(
+            currentResult.accuracy,
+            2
+          )}% | Time: ${(endTime - startTime) / 1000} s.`
+        );
       }
 
       this.stepCallback({

@@ -2991,8 +2991,8 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
       var t = 0;
       this.optimizer.setBatchSize(this._batchSize);
       this.optimizer.setLearningRate(this.learningRate);
+      var startTime = new Date().getTime();
       for (var i = 0; i < this.iterations; i += 1) {
-        var startTime = new Date().getTime();
         for (var offset = 0; offset < numberOfExamples; offset += this._batchSize) {
           var input = inputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
           var output = outputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
@@ -3003,11 +3003,11 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
           this.network.getLayers().forEach(function (layer) {
             _this2.optimizer.optimize(layer);
           });
-          if (this.verbose && (i + 1) % this.verboseStep === 0) {
-            var currentResult = this.cost(predictions, output);
-            var endTime = new Date().getTime();
-            console.log("Iteration: ".concat(i + 1, " | Cost: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.cost, 5), " | Accuracy: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.accuracy, 2), "% | Time: ").concat((endTime - startTime) / 1000, " s."));
-          }
+        }
+        if (this.verbose && (i + 1) % this.verboseStep === 0) {
+          var currentResult = this.cost(this.network.forward(inputDataset.data), outputDataset.data);
+          var endTime = new Date().getTime();
+          console.log("Iteration: ".concat(i + 1, " | Cost: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.cost, 5), " | Accuracy: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.accuracy, 2), "% | Time: ").concat((endTime - startTime) / 1000, " s."));
         }
         this.stepCallback({
           iteration: i
