@@ -41,6 +41,7 @@ extern "C" {
     void algebra_leaky_relu(MEMORY * inputs, MEMORY * outputs);
     void algebra_leaky_reluBackpropagation(MEMORY * inputs, MEMORY * outputs);
     void algebra_adam_optimize(MEMORY * inputs, MEMORY * outputs);
+    void algebra_adagrad_optimize(MEMORY * inputs, MEMORY * outputs);
     void algebra_cross_entropy_loss(MEMORY * inputs, MEMORY * outputs);
     void algebra_cross_entropy_derivative(MEMORY * inputs, MEMORY * outputs);
     //void algebra_img2col(MEMORY * inputs, MEMORY * outputs);

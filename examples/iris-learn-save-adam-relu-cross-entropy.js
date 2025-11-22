@@ -45,7 +45,9 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
       trainer.setRegularization(0.001);
       trainer.setVerboseStep(10);
 
-      trainer.setStepCallback(() => {});
+      trainer.setStepCallback(() => {
+        mem();
+      });
 
       start = new Date().getTime();
       trainer.train(inputDataset, outputDataset);

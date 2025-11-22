@@ -404,3 +404,30 @@ void algebra_adam_optimize(MEMORY * inputs, MEMORY * outputs) {
     W_out = W.array() - W_update.array();
     b_out = b.array() - b_update.array();
 }
+
+void algebra_adagrad_optimize(MEMORY * inputs, MEMORY * outputs) {
+    // Inputs
+    Eigen::Map<Eigen::MatrixXd> W(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> b(inputs[1].memory, inputs[1].rows, inputs[1].cols);
+    Eigen::Map<Eigen::MatrixXd> gW(inputs[2].memory, inputs[2].rows, inputs[2].cols);
+    Eigen::Map<Eigen::MatrixXd> gb(inputs[3].memory, inputs[3].rows, inputs[3].cols);
+    Eigen::Map<Eigen::MatrixXd> dW(inputs[4].memory, inputs[4].rows, inputs[4].cols);
+    Eigen::Map<Eigen::MatrixXd> db(inputs[5].memory, inputs[5].rows, inputs[5].cols);
+
+    double learningRate = inputs[6].memory[0];
+    double epsilon = inputs[7].memory[0];
+
+    // Outputs
+    Eigen::Map<Eigen::MatrixXd> W_out(outputs[0].memory, outputs[0].rows, outputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> b_out(outputs[1].memory, outputs[1].rows, outputs[1].cols);
+    Eigen::Map<Eigen::MatrixXd> dW_out(outputs[2].memory, outputs[2].rows, outputs[2].cols);
+    Eigen::Map<Eigen::MatrixXd> db_out(outputs[3].memory, outputs[3].rows, outputs[3].cols);
+
+    // Update accumulated squared gradients
+    dW_out = dW.array() + gW.array().pow(2);
+    db_out = db.array() + gb.array().pow(2);
+
+    // Update weights and biases
+    W_out = W.array() - (gW.array() * learningRate) / (dW_out.array().sqrt() + epsilon);
+    b_out = b.array() - (gb.array() * learningRate) / (db_out.array().sqrt() + epsilon);
+}
