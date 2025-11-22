@@ -195,7 +195,7 @@ export class CalcElement {
       this.destroy();
     }
     this._dims = other.dims();
-    this.allocate()
+    this.allocate();
     this._memory.setWidth(other.rows());
     this._memory.setHeight(other.cols());
     this._memory.setDepth(other.depth());
@@ -206,10 +206,10 @@ export class CalcElement {
 
   public replace(other: CalcElement) {
     if (this.rows() !== other.rows() || this.cols() !== other.cols() || this.depth() !== other.depth()) {
-        this.destroy();
-        this.copyFrom(other);
+      this.destroy();
+      this.copyFrom(other);
     } else {
-        this._memory.copyFrom(other.getMemory());
+      this._memory.copyFrom(other.getMemory());
     }
     other.destroy();
     return this;

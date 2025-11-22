@@ -44,14 +44,12 @@ class NetworkBuilder1D extends AbstractNetworkBuilder {
         const network = builder.getNetwork();
 
         network.getLayers().forEach((layer, i) => {
-          layer.W = new CalcMatrix2D(
-            json["layers"][i]["weights"]["W"].rows,
-            json["layers"][i]["weights"]["W"].cols
-          ).allocate().set(json["layers"][i]["weights"]["W"].data);
-          layer.b = new CalcMatrix2D(
-            json["layers"][i]["weights"]["b"].rows,
-            json["layers"][i]["weights"]["b"].cols
-          ).allocate().set(json["layers"][i]["weights"]["b"].data);
+          layer.W = new CalcMatrix2D(json["layers"][i]["weights"]["W"].rows, json["layers"][i]["weights"]["W"].cols)
+            .allocate()
+            .set(json["layers"][i]["weights"]["W"].data);
+          layer.b = new CalcMatrix2D(json["layers"][i]["weights"]["b"].rows, json["layers"][i]["weights"]["b"].cols)
+            .allocate()
+            .set(json["layers"][i]["weights"]["b"].data);
         });
 
         resolve(network);

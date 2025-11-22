@@ -18,7 +18,7 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
       dZ.replace(sigma.multiply(layer.derivative(layer.Z)));
       //console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
       //console.log("sigma (A - Y):", sigma.get());
-    }/* else {
+    } /* else {
       //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
       //console.log("sigma (dA_prev from next layer):", sigma.get());
     }*/

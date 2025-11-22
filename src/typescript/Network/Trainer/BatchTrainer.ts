@@ -26,7 +26,6 @@ export class BatchTrainer extends AbstractTrainer {
     let startTime = new Date().getTime();
 
     for (let i = 0; i < this.iterations; i += 1) {
-
       for (let offset = 0; offset < numberOfExamples; offset += this._batchSize) {
         const input = inputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
         const output = outputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
@@ -40,7 +39,7 @@ export class BatchTrainer extends AbstractTrainer {
 
         this.network.getLayers().forEach((layer) => {
           this.optimizer.optimize(layer);
-        })
+        });
 
         input.destroy();
         output.destroy();
@@ -55,8 +54,8 @@ export class BatchTrainer extends AbstractTrainer {
         console.log(
           `Iteration: ${i + 1} | Cost: ${round(currentResult.cost, 5)} | Accuracy: ${round(
             currentResult.accuracy,
-            2
-          )}% | Time: ${(endTime - startTime) / 1000} s.`
+            2,
+          )}% | Time: ${(endTime - startTime) / 1000} s.`,
         );
 
         this.stepCallback({

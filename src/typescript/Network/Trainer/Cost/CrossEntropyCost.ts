@@ -1,7 +1,7 @@
 import { AbstractCost } from "./AbstractCost";
 import { CalcMatrix2D } from "../../../Math";
 import { AbstractLayer } from "../../Layer";
-import { LayerType} from "../../../types";
+import { LayerType } from "../../../types";
 
 export class CrossEntropyCost extends AbstractCost {
   private readonly epsilon = 1e-8;

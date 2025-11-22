@@ -32,7 +32,7 @@ export class SourceCSV extends AbstractSource {
     let data = [];
     for (let i = 0; i < numberOfExamples; i += 1) {
       this.data[i].forEach((value) => {
-        data.push(Number(value))
+        data.push(Number(value));
       });
     }
     return Dataset.fromMatrix(new CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(data));

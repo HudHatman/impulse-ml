@@ -68,7 +68,7 @@ export abstract class AbstractTrainer {
 
     if (this.regularization > 0) {
       let penalty = 0;
-      this.network.getLayers().forEach(layer => {
+      this.network.getLayers().forEach((layer) => {
         const p = layer.penalty();
         penalty += p.get()[0];
         p.destroy();

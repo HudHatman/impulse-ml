@@ -54,7 +54,12 @@ export class CalcMatrix2D extends CalcElement {
     });
   }
 
-  public backwardPropagation(w: CalcMatrix2D, a_prev: CalcMatrix2D, regularization: number, num_examples: number): [CalcMatrix2D, CalcMatrix2D, CalcMatrix2D] {
+  public backwardPropagation(
+    w: CalcMatrix2D,
+    a_prev: CalcMatrix2D,
+    regularization: number,
+    num_examples: number,
+  ): [CalcMatrix2D, CalcMatrix2D, CalcMatrix2D] {
     return this.calcSync((calc) => {
       return calc.backwardPropagation(w, a_prev, regularization, num_examples);
     });
@@ -122,15 +127,15 @@ export class CalcMatrix2D extends CalcElement {
   }
 
   public crossEntropyLoss(correctOutput: CalcMatrix2D, predictions: CalcMatrix2D, epsilon: number): number {
-      return this.calcSync((calc) => {
-          return calc.crossEntropyLoss(correctOutput, predictions, epsilon);
-      });
+    return this.calcSync((calc) => {
+      return calc.crossEntropyLoss(correctOutput, predictions, epsilon);
+    });
   }
 
   public crossEntropyDerivative(correctOutput: CalcMatrix2D, predictions: CalcMatrix2D, epsilon: number): CalcMatrix2D {
-      return this.calcSync((calc) => {
-          return calc.crossEntropyDerivative(correctOutput, predictions, epsilon);
-      });
+    return this.calcSync((calc) => {
+      return calc.crossEntropyDerivative(correctOutput, predictions, epsilon);
+    });
   }
 
   public softmax(): CalcMatrix2D {
@@ -191,12 +196,20 @@ export class CalcMatrix2D extends CalcElement {
 
   // Static method to run Adam optimizer
   public static runAdamOptimizer(
-    W: CalcMatrix2D, b: CalcMatrix2D,
-    gW: CalcMatrix2D, gb: CalcMatrix2D,
-    vW: CalcMatrix2D, vb: CalcMatrix2D,
-    sW: CalcMatrix2D, sb: CalcMatrix2D,
-    learningRate: number, beta1: number, beta2: number, epsilon: number, t: number
-  ): { W: CalcMatrix2D, b: CalcMatrix2D, vW: CalcMatrix2D, vb: CalcMatrix2D, sW: CalcMatrix2D, sb: CalcMatrix2D } {
+    W: CalcMatrix2D,
+    b: CalcMatrix2D,
+    gW: CalcMatrix2D,
+    gb: CalcMatrix2D,
+    vW: CalcMatrix2D,
+    vb: CalcMatrix2D,
+    sW: CalcMatrix2D,
+    sb: CalcMatrix2D,
+    learningRate: number,
+    beta1: number,
+    beta2: number,
+    epsilon: number,
+    t: number,
+  ): { W: CalcMatrix2D; b: CalcMatrix2D; vW: CalcMatrix2D; vb: CalcMatrix2D; sW: CalcMatrix2D; sb: CalcMatrix2D } {
     // Create a dummy CalcMatrix2D instance to access calcSync
     const dummy = new CalcMatrix2D(1, 1);
     return dummy.calcSync((calc) => {
@@ -213,12 +226,26 @@ export class CalcMatrix2D extends CalcElement {
       crossEntropyLoss: (correctOutput: CalcMatrix2D, predictions: CalcMatrix2D, epsilon: number) => {
         const _epsilon = new CalcScalar().allocate().set([epsilon]);
         const result = new CalcScalar().allocate();
-        return that._call("algebra", "algebra_cross_entropy_loss", async)([correctOutput, predictions, _epsilon], [result])(result);
+        return that._call(
+          "algebra",
+          "algebra_cross_entropy_loss",
+          async,
+        )(
+          [correctOutput, predictions, _epsilon],
+          [result],
+        )(result);
       },
       crossEntropyDerivative: (correctOutput: CalcMatrix2D, predictions: CalcMatrix2D, epsilon: number) => {
-          const _epsilon = new CalcScalar().allocate().set([epsilon]);
-          const result = new CalcMatrix2D(correctOutput.rows(), correctOutput.cols()).allocate();
-          return that._call("algebra", "algebra_cross_entropy_derivative", async)([correctOutput, predictions, _epsilon], [result])(result);
+        const _epsilon = new CalcScalar().allocate().set([epsilon]);
+        const result = new CalcMatrix2D(correctOutput.rows(), correctOutput.cols()).allocate();
+        return that._call(
+          "algebra",
+          "algebra_cross_entropy_derivative",
+          async,
+        )(
+          [correctOutput, predictions, _epsilon],
+          [result],
+        )(result);
       },
       block(rowOffset: number, colOffset: number, numRows: number, numCols: number): CalcMatrix2D {
         const result = new CalcMatrix2D(numRows, numCols).allocate();
@@ -226,7 +253,9 @@ export class CalcMatrix2D extends CalcElement {
         const _colOffset = new CalcScalar().allocate().set([colOffset]);
         const _numRows = new CalcScalar().allocate().set([numRows]);
         const _numCols = new CalcScalar().allocate().set([numCols]);
-        return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
+        return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(
+          result,
+        );
       },
       forwardPropagation: (w: CalcMatrix2D, b: CalcMatrix2D) => {
         const result = new CalcMatrix2D(w.rows(), this.cols()).allocate();
@@ -239,7 +268,11 @@ export class CalcMatrix2D extends CalcElement {
         const _regularization = new CalcScalar().allocate().set([regularization]);
         const _num_examples = new CalcScalar().allocate().set([num_examples]);
 
-        return that._call("algebra", "algebra_backward_propagation", async)([this, w, a_prev, _regularization, _num_examples, gW, gb, dA_prev])([gW, gb, dA_prev]);
+        return that._call(
+          "algebra",
+          "algebra_backward_propagation",
+          async,
+        )([this, w, a_prev, _regularization, _num_examples, gW, gb, dA_prev])([gW, gb, dA_prev]);
       },
       pow: (number: number) => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
@@ -347,11 +380,19 @@ export class CalcMatrix2D extends CalcElement {
       },
       leakyRelu: (alpha: number) => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_leaky_relu", async)([this, new CalcScalar().allocate().set([alpha]), result])(result);
+        return that._call(
+          "algebra",
+          "algebra_leaky_relu",
+          async,
+        )([this, new CalcScalar().allocate().set([alpha]), result])(result);
       },
       leakyReluBackpropagation: (alpha: number) => {
         const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
-        return that._call("algebra", "algebra_leaky_reluBackpropagation", async)([this, new CalcScalar().allocate().set([alpha]),  result])(result);
+        return that._call(
+          "algebra",
+          "algebra_leaky_reluBackpropagation",
+          async,
+        )([this, new CalcScalar().allocate().set([alpha]), result])(result);
       },
       maxCoeff: () => {
         const result = new CalcScalar().allocate();
@@ -385,12 +426,27 @@ export class CalcMatrix2D extends CalcElement {
         return that._call("algebra", "algebra_img2col", async)([this, params, result])(result);
       },
       adamOptimize: (
-        W: CalcMatrix2D, b: CalcMatrix2D,
-        gW: CalcMatrix2D, gb: CalcMatrix2D,
-        vW: CalcMatrix2D, vb: CalcMatrix2D,
-        sW: CalcMatrix2D, sb: CalcMatrix2D,
-        learningRate: number, beta1: number, beta2: number, epsilon: number, t: number
-      ): { W: CalcMatrix2D, b: CalcMatrix2D, vW: CalcMatrix2D, vb: CalcMatrix2D, sW: CalcMatrix2D, sb: CalcMatrix2D } => {
+        W: CalcMatrix2D,
+        b: CalcMatrix2D,
+        gW: CalcMatrix2D,
+        gb: CalcMatrix2D,
+        vW: CalcMatrix2D,
+        vb: CalcMatrix2D,
+        sW: CalcMatrix2D,
+        sb: CalcMatrix2D,
+        learningRate: number,
+        beta1: number,
+        beta2: number,
+        epsilon: number,
+        t: number,
+      ): {
+        W: CalcMatrix2D;
+        b: CalcMatrix2D;
+        vW: CalcMatrix2D;
+        vb: CalcMatrix2D;
+        sW: CalcMatrix2D;
+        sb: CalcMatrix2D;
+      } => {
         // Allocate memory for the results
         const updatedW = new CalcMatrix2D(W.rows(), W.cols()).allocate();
         const updatedB = new CalcMatrix2D(b.rows(), b.cols()).allocate();
@@ -407,13 +463,21 @@ export class CalcMatrix2D extends CalcElement {
         const _t = new CalcScalar().allocate().set([t]);
 
         // Call the C++ function
-        return that._call("algebra", "algebra_adam_optimize", async)(
+        return that._call(
+          "algebra",
+          "algebra_adam_optimize",
+          async,
+        )(
           [W, b, gW, gb, vW, vb, sW, sb, _learningRate, _beta1, _beta2, _epsilon, _t], // Inputs
-          [updatedW, updatedB, updatedVW, updatedVB, updatedSW, updatedSB] // Outputs
-        )({ // Return object mapping
-          W: updatedW, b: updatedB,
-          vW: updatedVW, vb: updatedVB,
-          sW: updatedSW, sb: updatedSB
+          [updatedW, updatedB, updatedVW, updatedVB, updatedSW, updatedSB], // Outputs
+        )({
+          // Return object mapping
+          W: updatedW,
+          b: updatedB,
+          vW: updatedVW,
+          vb: updatedVB,
+          sW: updatedSW,
+          sb: updatedSB,
         });
       },
     };

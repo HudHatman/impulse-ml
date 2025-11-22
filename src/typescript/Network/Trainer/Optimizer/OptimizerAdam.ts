@@ -12,10 +12,20 @@ export class OptimizerAdam extends AbstractOptimizer {
     const { learningRate, beta1, beta2, epsilon, t } = this;
 
     const updatedMatrices = CalcMatrix2D.runAdamOptimizer(
-      W, b, gW, gb, vW, vb, sW, sb,
-      learningRate, beta1, beta2, epsilon, t
+      W,
+      b,
+      gW,
+      gb,
+      vW,
+      vb,
+      sW,
+      sb,
+      learningRate,
+      beta1,
+      beta2,
+      epsilon,
+      t,
     );
-
 
     layer.W.replace(updatedMatrices.W);
     layer.b.replace(updatedMatrices.b);

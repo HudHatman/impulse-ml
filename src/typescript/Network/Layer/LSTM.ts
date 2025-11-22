@@ -2,7 +2,7 @@ import { AbstractLayer1D } from "./AbstractLayer1D";
 import { CalcMatrix2D } from "../../Math";
 
 class LSTM extends AbstractLayer1D {
-    /*private readonly activation = new Sigmoid();
+  /*private readonly activation = new Sigmoid();
 
     // Gates
     public Wf: CalcMatrix2D; // Forget gate weights

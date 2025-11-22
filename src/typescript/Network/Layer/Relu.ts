@@ -8,7 +8,7 @@ class ReluLayer extends AbstractLayer1D {
   activation(m: CalcMatrix2D): CalcMatrix2D {
     return m.calcSync((calc) => {
       return calc.leakyRelu(this.alpha);
-    })
+    });
   }
 
   getType(): LayerType {
@@ -18,7 +18,7 @@ class ReluLayer extends AbstractLayer1D {
   derivative(delta: CalcMatrix2D) {
     return delta.calcSync((calc) => {
       return calc.leakyReluBackpropagation(this.alpha);
-    })
+    });
   }
 }
 

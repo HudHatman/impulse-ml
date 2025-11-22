@@ -4,7 +4,7 @@ import { CalcMatrix2D } from "../../../Math";
 //import { Sigmoid } from "../../Activation";
 
 class BackpropagationLSTM extends AbstractBackPropagation {
-    /*private readonly activation = new Sigmoid();
+  /*private readonly activation = new Sigmoid();
 
     constructor(layer: LSTM, private dH: CalcMatrix2D, private dC: CalcMatrix2D) {
         super(layer, null);
