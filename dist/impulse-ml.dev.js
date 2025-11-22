@@ -2301,8 +2301,8 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
         //console.log(`\n--- Backpropagation: Last Layer (${layer.getType()}) ---`);
         //console.log("sigma (A - Y):", sigma.get());
       } /* else {
-         //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
-         //console.log("sigma (dA_prev from next layer):", sigma.get());
+        //console.log(`\n--- Backpropagation: Hidden Layer (${layer.getType()}) ---`);
+        //console.log("sigma (dA_prev from next layer):", sigma.get());
         }*/
 
       //console.log("dZ (gradient of linear output):", dZ.get());
