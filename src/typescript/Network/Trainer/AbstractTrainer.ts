@@ -64,8 +64,7 @@ export abstract class AbstractTrainer {
 
   cost(predictions: CalcMatrix2D, correctOutput: CalcMatrix2D): CostResult {
     const miniBatchSize = correctOutput.cols();
-    let cost = this.costFunction.loss(correctOutput, predictions);
-    console.log('cost', cost);
+    let cost = this.costFunction.loss(correctOutput, predictions).get()[0];
 
     if (this.regularization > 0) {
       let penalty = 0;

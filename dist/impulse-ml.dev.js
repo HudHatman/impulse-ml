@@ -1388,7 +1388,7 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
         crossEntropyLoss: function crossEntropyLoss(correctOutput, predictions, epsilon) {
           var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
           var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
-          return that._call("algebra", "algebra_cross_entropy_loss", async)([correctOutput, predictions, _epsilon], [result])(result.get()[0]);
+          return that._call("algebra", "algebra_cross_entropy_loss", async)([correctOutput, predictions, _epsilon], [result])(result);
         },
         crossEntropyDerivative: function crossEntropyDerivative(correctOutput, predictions, epsilon) {
           var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
@@ -2910,8 +2910,7 @@ var AbstractTrainer = /*#__PURE__*/function () {
     key: "cost",
     value: function cost(predictions, correctOutput) {
       var miniBatchSize = correctOutput.cols();
-      var cost = this.costFunction.loss(correctOutput, predictions);
-      console.log('cost', cost);
+      var cost = this.costFunction.loss(correctOutput, predictions).get()[0];
       if (this.regularization > 0) {
         var penalty = 0;
         this.network.getLayers().forEach(function (layer) {

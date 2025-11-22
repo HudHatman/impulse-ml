@@ -213,7 +213,7 @@ export class CalcMatrix2D extends CalcElement {
       crossEntropyLoss: (correctOutput: CalcMatrix2D, predictions: CalcMatrix2D, epsilon: number) => {
         const _epsilon = new CalcScalar().allocate().set([epsilon]);
         const result = new CalcScalar().allocate();
-        return that._call("algebra", "algebra_cross_entropy_loss", async)([correctOutput, predictions, _epsilon], [result])(result.get()[0]);
+        return that._call("algebra", "algebra_cross_entropy_loss", async)([correctOutput, predictions, _epsilon], [result])(result);
       },
       crossEntropyDerivative: (correctOutput: CalcMatrix2D, predictions: CalcMatrix2D, epsilon: number) => {
           const _epsilon = new CalcScalar().allocate().set([epsilon]);
