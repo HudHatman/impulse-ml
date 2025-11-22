@@ -23,9 +23,8 @@
   "scripts": {
     "preinstall": "node-gyp clean || true; node-gyp configure build",
     "install": "node-gyp rebuild",
-    "prepare": "npm run build-dev && npm run build-prod",
     "build": "npm run build-prod && npm run build-dev",
-    "build-dev": "node-gyp rebuild && webpack --config ./configs/dev.js",
+    "build-dev": "webpack --config ./configs/dev.js",
     "build-prod": "webpack --config ./configs/prod.js",
     "prettier-write": "prettier --write \"src/typescript/**/*.ts\"",
     "lint": "eslint . --ext .ts",

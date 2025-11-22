@@ -27,6 +27,7 @@ export class BatchTrainer extends AbstractTrainer {
       const startTime = new Date().getTime();
 
       for (let offset = 0; offset < numberOfExamples; offset += this._batchSize) {
+        console.log(offset, this._batchSize);
         const input = inputDataset.getBatch(offset, this._batchSize);
         const output = outputDataset.getBatch(offset, this._batchSize);
 
@@ -52,11 +53,6 @@ export class BatchTrainer extends AbstractTrainer {
             )}% | Time: ${(endTime - startTime) / 1000} s.`
           );
         }
-
-        input.destroy();
-        output.destroy();
-        predictions.destroy()
-        sigma.destroy();
       }
 
       this.stepCallback({

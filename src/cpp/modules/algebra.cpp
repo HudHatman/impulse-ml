@@ -15,6 +15,32 @@
 #define EIGEN_USE_BLAS
 #define EIGEN_USE_THREADS
 
+void algebra_cross_entropy_loss(MEMORY * inputs, MEMORY * outputs) {
+    Eigen::Map<Eigen::MatrixXd> correctOutput(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> predictions(inputs[1].memory, inputs[1].rows, inputs[1].cols);
+    double epsilon = inputs[2].memory[0];
+
+    double miniBatchSize = correctOutput.cols();
+    Eigen::MatrixXd logPredictions = (predictions.array().cwiseMax(epsilon)).log();
+    double cost = (correctOutput.array() * logPredictions.array()).sum();
+
+    outputs[0].memory[0] = -cost / miniBatchSize;
+}
+
+void algebra_cross_entropy_derivative(MEMORY * inputs, MEMORY * outputs) {
+    Eigen::Map<Eigen::MatrixXd> correctOutput(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> predictions(inputs[1].memory, inputs[1].rows, inputs[1].cols);
+    double epsilon = inputs[2].memory[0];
+    Eigen::Map<Eigen::MatrixXd> result(outputs[0].memory, outputs[0].rows, outputs[0].cols);
+
+    Eigen::MatrixXd term1 = correctOutput.array() / (predictions.array() + epsilon);
+    Eigen::MatrixXd oneMinusY = 1.0 - correctOutput.array();
+    Eigen::MatrixXd oneMinusA = 1.0 - predictions.array();
+    Eigen::MatrixXd term2 = oneMinusY.array() / (oneMinusA.array() + epsilon);
+
+    result = term2 - term1;
+}
+
 void algebra_backward_propagation(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> dZ(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> W(inputs[1].memory, inputs[1].rows, inputs[1].cols);
@@ -327,71 +353,54 @@ void algebra_fraction(MEMORY * inputs, MEMORY * outputs) {
         return num / x;
     });
 }
-/*
 
-void algebra_img2col(MEMORY * inputs, MEMORY * outputs) {
-    Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
-    int k_size = inputs[1].memory[0];
-    int stride = inputs[2].memory[2];
-    int padding = inputs[3].memory[0];
-    Eigen::Map<Eigen::MatrixXd> result(inputs[4].memory, inputs[4].rows, inputs[4].cols);
+void algebra_adam_optimize(MEMORY * inputs, MEMORY * outputs) {
+    // Inputs
+    Eigen::Map<Eigen::MatrixXd> W(inputs[0].memory, inputs[0].rows, inputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> b(inputs[1].memory, inputs[1].rows, inputs[1].cols);
+    Eigen::Map<Eigen::MatrixXd> gW(inputs[2].memory, inputs[2].rows, inputs[2].cols);
+    Eigen::Map<Eigen::MatrixXd> gb(inputs[3].memory, inputs[3].rows, inputs[3].cols);
+    Eigen::Map<Eigen::MatrixXd> vW(inputs[4].memory, inputs[4].rows, inputs[4].cols);
+    Eigen::Map<Eigen::MatrixXd> vb(inputs[5].memory, inputs[5].rows, inputs[5].cols);
+    Eigen::Map<Eigen::MatrixXd> sW(inputs[6].memory, inputs[6].rows, inputs[6].cols);
+    Eigen::Map<Eigen::MatrixXd> sb(inputs[7].memory, inputs[7].rows, inputs[7].cols);
 
-    result = img2col_3d(m1, k_size, stride, padding);
+    double learningRate = inputs[8].memory[0];
+    double beta1 = inputs[9].memory[0];
+    double beta2 = inputs[10].memory[0];
+    double epsilon = inputs[11].memory[0];
+    double t = inputs[12].memory[0]; // iteration count
+
+    // Outputs (updated in place)
+    Eigen::Map<Eigen::MatrixXd> W_out(outputs[0].memory, outputs[0].rows, outputs[0].cols);
+    Eigen::Map<Eigen::MatrixXd> b_out(outputs[1].memory, outputs[1].rows, outputs[1].cols);
+    Eigen::Map<Eigen::MatrixXd> vW_out(outputs[2].memory, outputs[2].rows, outputs[2].cols);
+    Eigen::Map<Eigen::MatrixXd> vb_out(outputs[3].memory, outputs[3].rows, outputs[3].cols);
+    Eigen::Map<Eigen::MatrixXd> sW_out(outputs[4].memory, outputs[4].rows, outputs[4].cols);
+    Eigen::Map<Eigen::MatrixXd> sb_out(outputs[5].memory, outputs[5].rows, outputs[5].cols);
+
+    // v (momentum) update
+    vW_out = vW.array() * beta1 + gW.array() * (1.0 - beta1);
+    vb_out = vb.array() * beta1 + gb.array() * (1.0 - beta1);
+
+    // s (RMSprop) update
+    sW_out = sW.array() * beta2 + gW.array().pow(2) * (1.0 - beta2);
+    sb_out = sb.array() * beta2 + gb.array().pow(2) * (1.0 - beta2);
+
+    // Bias correction
+    double beta1_pow_t = std::pow(beta1, t);
+    double beta2_pow_t = std::pow(beta2, t);
+
+    Eigen::MatrixXd vW_corrected = vW_out.array() / (1.0 - beta1_pow_t);
+    Eigen::MatrixXd vb_corrected = vb_out.array() / (1.0 - beta1_pow_t);
+    Eigen::MatrixXd sW_corrected = sW_out.array() / (1.0 - beta2_pow_t);
+    Eigen::MatrixXd sb_corrected = sb_out.array() / (1.0 - beta2_pow_t);
+
+    // Adam update step
+    Eigen::MatrixXd W_update = vW_corrected.array() / (sW_corrected.array().sqrt() + epsilon) * learningRate;
+    Eigen::MatrixXd b_update = vb_corrected.array() / (sb_corrected.array().sqrt() + epsilon) * learningRate;
+
+    // Apply the Adam update
+    W_out = W.array() - W_update.array();
+    b_out = b.array() - b_update.array();
 }
-
-Eigen::MatrixXd img2col_3d(const std::vector<Eigen::MatrixXd>& input_channels, int k_size, int stride, int padding) {
-
-    if (input_channels.empty()) return Eigen::MatrixXd();
-
-    int channels = input_channels.size();
-    int in_rows = input_channels[0].rows();
-    int in_cols = input_channels[0].cols();
-
-    // 1. Obliczanie wymiarów wyjściowych (bazując na pierwszym kanale)
-    int out_h = (in_rows + 2 * padding - k_size) / stride + 1;
-    int out_w = (in_cols + 2 * padding - k_size) / stride + 1;
-
-    // Rozmiar pojedynczego spłaszczonego patcha 2D
-    int patch_area_2d = k_size * k_size;
-    // Całkowita wysokość kolumny w macierzy wynikowej (C * K * K)
-    int col_height = channels * patch_area_2d;
-    // Całkowita liczba kolumn (okien)
-    int total_patches = out_h * out_w;
-
-    Eigen::MatrixXd result(col_height, total_patches);
-
-    // 2. Przygotowanie kanałów z paddingiem
-    // Robimy to wcześniej, aby nie robić if-ów w głównej pętli
-    std::vector<Eigen::MatrixXd> padded_channels(channels);
-    for (int c = 0; c < channels; ++c) {
-        padded_channels[c].resize(in_rows + 2 * padding, in_cols + 2 * padding);
-        padded_channels[c].setZero();
-        padded_channels[c].block(padding, padding, in_rows, in_cols) = input_channels[c];
-    }
-
-    // 3. Główna pętla
-    int col_idx = 0;
-    for (int y = 0; y < out_h; ++y) {
-        for (int x = 0; x < out_w; ++x) {
-
-            // Dla każdego okna, iterujemy przez WSZYSTKIE kanały
-            for (int c = 0; c < channels; ++c) {
-                // Wycinamy patch z obecnego kanału
-                Eigen::MatrixXd patch = padded_channels[c].block(y * stride, x * stride, k_size, k_size);
-
-                // Obliczamy gdzie zapisać ten patch w kolumnie wynikowej
-                // Przesunięcie (offset) zależy od numeru kanału
-                int start_row = c * patch_area_2d;
-
-                // Wpisujemy spłaszczony patch do odpowiedniego segmentu kolumny
-                // .segment(start_index, length) działa na wektorach/kolumnach
-                result.col(col_idx).segment(start_row, patch_area_2d) =
-                    Eigen::Map<Eigen::VectorXd>(patch.data(), patch_area_2d);
-            }
-
-            col_idx++;
-        }
-    }
-
-    return result;
-}*/

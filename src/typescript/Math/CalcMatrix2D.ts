@@ -226,8 +226,7 @@ export class CalcMatrix2D extends CalcElement {
         const _colOffset = new CalcScalar().allocate().set([colOffset]);
         const _numRows = new CalcScalar().allocate().set([numRows]);
         const _numCols = new CalcScalar().allocate().set([numCols]);
-        process.exit();
-        return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols], [result])(result);
+        return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
       },
       forwardPropagation: (w: CalcMatrix2D, b: CalcMatrix2D) => {
         const result = new CalcMatrix2D(w.rows(), this.cols()).allocate();

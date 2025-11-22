@@ -29,16 +29,12 @@ export class SourceCSV extends AbstractSource {
     const numberOfExamples = this.data.length;
     const exampleSize = this.data[0]?.length;
 
-    if (typeof numberOfExamples !== "undefined" && typeof exampleSize !== "undefined") {
-      let data = [];
-      for (let i = 0; i < numberOfExamples; i += 1) {
-        this.data[i].forEach((value) => {
-          data.push(Number(value))
-        });
-      }
-      return Dataset.fromMatrix(new CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(new Float64Array(data)));
+    let data = [];
+    for (let i = 0; i < numberOfExamples; i += 1) {
+      this.data[i].forEach((value) => {
+        data.push(Number(value))
+      });
     }
-
-    return null;
+    return Dataset.fromMatrix(new CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(data));
   }
 }

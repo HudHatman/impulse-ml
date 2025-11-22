@@ -16,6 +16,7 @@ export class OptimizerAdam extends AbstractOptimizer {
       learningRate, beta1, beta2, epsilon, t
     );
 
+
     layer.W.replace(updatedMatrices.W);
     layer.b.replace(updatedMatrices.b);
     layer.vW.replace(updatedMatrices.vW);

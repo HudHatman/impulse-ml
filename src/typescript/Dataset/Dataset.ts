@@ -24,6 +24,6 @@ export class Dataset {
   }
 
   getBatch(offset: number, batchSize: number): CalcMatrix2D {
-    return this.data.block(0, offset, this.getExampleSize(), this.getNumberOfExamples(), batchSize);
+    return this.data.block(0, offset, this.getExampleSize(), batchSize);
   }
 }

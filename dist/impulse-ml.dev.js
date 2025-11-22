@@ -166,16 +166,13 @@ var SourceCSV = /*#__PURE__*/function (_AbstractSource) {
       var _this$data$;
       var numberOfExamples = this.data.length;
       var exampleSize = (_this$data$ = this.data[0]) === null || _this$data$ === void 0 ? void 0 : _this$data$.length;
-      if (typeof numberOfExamples !== "undefined" && typeof exampleSize !== "undefined") {
-        var data = [];
-        for (var i = 0; i < numberOfExamples; i += 1) {
-          this.data[i].forEach(function (value) {
-            data.push(Number(value));
-          });
-        }
-        return _Dataset__WEBPACK_IMPORTED_MODULE_3__.Dataset.fromMatrix(new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(new Float64Array(data)));
+      var data = [];
+      for (var i = 0; i < numberOfExamples; i += 1) {
+        this.data[i].forEach(function (value) {
+          data.push(Number(value));
+        });
       }
-      return null;
+      return _Dataset__WEBPACK_IMPORTED_MODULE_3__.Dataset.fromMatrix(new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(exampleSize, numberOfExamples).allocate().set(data));
     }
   }], [{
     key: "fromLocalFile",
@@ -1404,7 +1401,7 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           var _colOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([colOffset]);
           var _numRows = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numRows]);
           var _numCols = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numCols]);
-          return result._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
+          return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
         },
         forwardPropagation: function forwardPropagation(w, b) {
           var result = new CalcMatrix2D(w.rows(), _this.cols()).allocate();
@@ -3004,6 +3001,7 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
       for (var i = 0; i < this.iterations; i += 1) {
         var startTime = new Date().getTime();
         for (var offset = 0; offset < numberOfExamples; offset += this._batchSize) {
+          console.log(offset, this._batchSize);
           var input = inputDataset.getBatch(offset, this._batchSize);
           var output = outputDataset.getBatch(offset, this._batchSize);
           var predictions = this.network.forward(input);
@@ -3018,10 +3016,6 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
             var endTime = new Date().getTime();
             console.log("Iteration: ".concat(i + 1, " | Cost: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.cost, 5), " | Accuracy: ").concat((0,_Math__WEBPACK_IMPORTED_MODULE_1__.round)(currentResult.accuracy, 2), "% | Time: ").concat((endTime - startTime) / 1000, " s."));
           }
-          input.destroy();
-          output.destroy();
-          predictions.destroy();
-          sigma.destroy();
         }
         this.stepCallback({
           iteration: i

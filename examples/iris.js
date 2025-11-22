@@ -32,10 +32,8 @@ const mem = () => {
 
 DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__dirname, "../data/iris_x.csv"))).then(
   async (inputDataset) => {
-    console.log("Loaded iris_x.csv");
     DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__dirname, "../data/iris_y.csv"))).then(
       async (outputDataset) => {
-        console.log("Loaded iris_y.csv", inputDataset.data, inputDataset.getNumberOfExamples(), inputDataset.getExampleSize());
         inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
 
         const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
