@@ -12,8 +12,11 @@ const path = require("path");
 
 const builder = new NetworkBuilder1D([4]);
 builder
-  .createLayer(ReluLayer, (layer) => {
-    layer.setSize(12);
+  .createLayer(LogisticLayer, (layer) => {
+    layer.setSize(8);
+  })
+  .createLayer(LogisticLayer, (layer) => {
+    layer.setSize(6);
   })
   .createLayer(SoftmaxLayer, (layer) => {
     layer.setSize(3);
@@ -35,11 +38,11 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
     ).then(async (outputDataset) => {
       inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
 
-      const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
-      trainer.setIterations(500);
+      const trainer = new BatchTrainer(network, new OptimizerGradientDescent(), new CrossEntropyCost());
+      trainer.setIterations(300);
       trainer.setBatchSize(16);
-      trainer.setLearningRate(0.001);
-      trainer.setRegularization(0.0001);
+      trainer.setLearningRate(0.01);
+      trainer.setRegularization(0.001);
       trainer.setVerboseStep(10);
 
       trainer.setStepCallback(() => {});
@@ -49,7 +52,7 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
       end = new Date().getTime();
       console.log(end - start);
       mem();
-      network.save(path.resolve(__dirname, "iris.json"));
+      network.save(path.resolve(__dirname, "iris-gc.json"));
 
       console.log("forward", network.forward(inputDataset.exampleAt(0)).get(), outputDataset.exampleAt(0).get());
     });
