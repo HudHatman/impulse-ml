@@ -1,7 +1,6 @@
 import { AbstractBackPropagation } from "./AbstractBackpropagation";
 import { CalcMatrix2D } from "../../../Math";
-import { Layers } from "../../../types";
-import { LayerType } from "../../../types";
+import { Layers, LayerType } from "../../../types";
 
 export class Backpropagation1Dto1D extends AbstractBackPropagation {
   propagate(

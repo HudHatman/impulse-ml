@@ -1,4 +1,5 @@
 import { load } from "../../main";
+
 type Device = any;
 
 let currentDevice: Device = null;

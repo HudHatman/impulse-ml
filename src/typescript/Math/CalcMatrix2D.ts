@@ -1,7 +1,6 @@
 import { CalcElement } from "./CalcElement";
 import { CalcRowVector } from "./CalcRowVector";
 import { CalcScalar } from "./CalcScalar";
-import { Calc } from "./Calc";
 
 export class CalcMatrix2D extends CalcElement {
   constructor(rows = 1, cols = 1) {

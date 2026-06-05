@@ -1,6 +1,4 @@
 import { AbstractModifier } from "./AbstractModifier";
-import { Dataset } from "../Dataset";
-import { CalcMatrix2D } from "../../Math/CalcMatrix2D";
 
 export class ShuffleDatasetModifier extends AbstractModifier {
   /*public sortList: number[] = [];

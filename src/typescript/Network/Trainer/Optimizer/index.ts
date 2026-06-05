@@ -4,4 +4,10 @@ import { OptimizerAdagrad } from "./OptimizerAdagrad";
 import { OptimizerMomentum } from "./OptimizerMomentum";
 import { OptimizerRMSProp } from "./OptimizerRMSProp";
 
-export { OptimizerAdam, OptimizerGradientDescent, OptimizerAdagrad, OptimizerMomentum, OptimizerRMSProp };
+export {
+  OptimizerAdam,
+  OptimizerGradientDescent,
+  OptimizerAdagrad,
+  OptimizerMomentum,
+  OptimizerRMSProp,
+};

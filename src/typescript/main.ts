@@ -1,10 +1,10 @@
 import Math from "./Math";
 import { NetworkBuilder1D } from "./Network/Builder";
-import { SoftmaxLayer, LogisticLayer, ReluLayer, TanhLayer } from "./Network/Layer";
+import { LogisticLayer, ReluLayer, SoftmaxLayer, TanhLayer } from "./Network/Layer";
 import {
+  OptimizerAdagrad,
   OptimizerAdam,
   OptimizerGradientDescent,
-  OptimizerAdagrad,
   OptimizerMomentum,
   OptimizerRMSProp,
 } from "./Network/Trainer/Optimizer";
@@ -15,6 +15,17 @@ import os from "os";
 import process from "process";
 import path from "path";
 import Module from "module";
+import { Dataset as DatasetDataset } from "./Dataset";
+import { DatasetBuilder as DatasetBuilderBuilder, DatasetVocabularyBuilder } from "./Dataset/Builder";
+import { SourceCSV } from "./Dataset/Builder/Source";
+import { TextFile } from "./Dataset/Builder/VocabularySource";
+
+import {
+  MinMaxScalingDatasetModifier,
+  MissingDataDatasetModifier,
+  ShuffleDatasetModifier,
+  SplitDatasetModifier,
+} from "./Dataset/Modifier";
 
 const NetworkBuilder = { NetworkBuilder1D };
 const Layer = {
@@ -34,18 +45,6 @@ const Cost = {
   MeanSquaredErrorCost,
   CrossEntropyCost,
 };
-
-import { Dataset as DatasetDataset } from "./Dataset";
-import { DatasetBuilder as DatasetBuilderBuilder, DatasetVocabularyBuilder } from "./Dataset/Builder";
-import { SourceCSV } from "./Dataset/Builder/Source";
-import { TextFile } from "./Dataset/Builder/VocabularySource";
-
-import {
-  MinMaxScalingDatasetModifier,
-  MissingDataDatasetModifier,
-  ShuffleDatasetModifier,
-  SplitDatasetModifier,
-} from "./Dataset/Modifier";
 
 const DatasetBuilder = {
   DatasetBuilder: DatasetBuilderBuilder,

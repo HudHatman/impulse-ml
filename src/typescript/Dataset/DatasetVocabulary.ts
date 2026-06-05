@@ -1,5 +1,3 @@
-import { CalcMatrix2D } from "../Math/CalcMatrix2D";
-
 export class DatasetVocabulary {
   /*public vocabularySize = 0;
 public dataSize = 0;

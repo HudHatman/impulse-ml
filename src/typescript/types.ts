@@ -1,4 +1,4 @@
-import { SoftmaxLayer, LogisticLayer, TanhLayer, ReluLayer } from "./Network/Layer";
+import { LogisticLayer, ReluLayer, SoftmaxLayer, TanhLayer } from "./Network/Layer";
 import { AbstractLayer1D } from "./Network/Layer/AbstractLayer1D";
 
 export type Dimension = [number] | [number, number, number];
