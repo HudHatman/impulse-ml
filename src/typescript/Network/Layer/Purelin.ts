@@ -12,7 +12,9 @@ class PurelinLayer extends AbstractLayer1D {
   }
 
   derivative(delta: CalcMatrix2D): CalcMatrix2D {
-    return delta.setOnes();
+    return delta.calcSync((calc: any) => {
+      return calc.setZeros().add(1.0);
+    });
   }
 }
 

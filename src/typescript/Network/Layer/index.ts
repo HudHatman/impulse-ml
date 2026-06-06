@@ -4,4 +4,7 @@ import { LogisticLayer } from "./Logistic";
 import { TanhLayer } from "./Tanh";
 import { ReluLayer } from "./Relu";
 
-export { AbstractLayer, SoftmaxLayer, LogisticLayer, TanhLayer, ReluLayer };
+import { PurelinLayer } from "./Purelin";
+import { RNNLayer } from "./RNN";
+
+export { AbstractLayer, SoftmaxLayer, LogisticLayer, TanhLayer, ReluLayer, PurelinLayer, RNNLayer };
