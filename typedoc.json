@@ -1,0 +1,11 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPointStrategy": "expand",
+  "entryPoints": ["src"],
+  "out": "docs",
+  "cleanOutputDir": true,
+  "exclude": ["**/*.test.ts", "**/*.spec.ts", "node_modules"],
+  "includeVersion": true,
+  "theme": "default",
+  "skipErrorChecking": true
+}

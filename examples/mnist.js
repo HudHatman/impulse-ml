@@ -46,8 +46,8 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
       inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
 
       const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
-      trainer.setIterations(10);
-      trainer.setBatchSize(64);
+      trainer.setIterations(20);
+      trainer.setBatchSize(128);
       trainer.setLearningRate(0.001);
       trainer.setRegularization(0.01);
       trainer.setVerboseStep(1);
