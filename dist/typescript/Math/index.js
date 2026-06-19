@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.round = exports.CalcMatrix3D = exports.CalcRowVector = exports.CalcColVector = exports.CalcMatrix2D = exports.CalcScalar = exports.Calc = void 0;
+const Calc_1 = require("./Calc");
+Object.defineProperty(exports, "Calc", { enumerable: true, get: function () { return Calc_1.Calc; } });
+const CalcScalar_1 = require("./CalcScalar");
+Object.defineProperty(exports, "CalcScalar", { enumerable: true, get: function () { return CalcScalar_1.CalcScalar; } });
+const CalcColVector_1 = require("./CalcColVector");
+Object.defineProperty(exports, "CalcColVector", { enumerable: true, get: function () { return CalcColVector_1.CalcColVector; } });
+const CalcRowVector_1 = require("./CalcRowVector");
+Object.defineProperty(exports, "CalcRowVector", { enumerable: true, get: function () { return CalcRowVector_1.CalcRowVector; } });
+const CalcMatrix2D_1 = require("./CalcMatrix2D");
+Object.defineProperty(exports, "CalcMatrix2D", { enumerable: true, get: function () { return CalcMatrix2D_1.CalcMatrix2D; } });
+const CalcMatrix3D_1 = require("./CalcMatrix3D");
+Object.defineProperty(exports, "CalcMatrix3D", { enumerable: true, get: function () { return CalcMatrix3D_1.CalcMatrix3D; } });
+const round = (num, decimalPlaces) => {
+    return Math.round((num + 2.23e-16) * Math.pow(10, decimalPlaces)) / Math.pow(10, decimalPlaces);
+};
+exports.round = round;
+exports.default = { Calc: Calc_1.Calc, CalcScalar: CalcScalar_1.CalcScalar, CalcMatrix2D: CalcMatrix2D_1.CalcMatrix2D, CalcColVector: CalcColVector_1.CalcColVector, CalcRowVector: CalcRowVector_1.CalcRowVector, CalcMatrix3D: CalcMatrix3D_1.CalcMatrix3D, round };

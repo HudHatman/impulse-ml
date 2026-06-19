@@ -1,3 +1,6 @@
+#define EIGEN_USE_THREADS
+#define EIGEN_NO_DEBUG
+
 #include "algebra.h"
 #include <iostream>
 #include <eigen3/Eigen/Core>
@@ -12,10 +15,11 @@
 #include <type_traits>
 #include <omp.h>
 
-#define EIGEN_USE_MKL_ALL
-#define EIGEN_USE_THREADS
+static bool initialized = false;
 
 void init() {
+    if (initialized) return;
+    initialized = true;
     omp_set_num_threads(6);
     Eigen::setNbThreads(6);
 }
@@ -63,14 +67,11 @@ void algebra_backward_propagation(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> gb_map(inputs[6].memory, inputs[6].rows, inputs[6].cols);
     Eigen::Map<Eigen::MatrixXd> dA_prev_map(inputs[7].memory, inputs[7].rows, inputs[7].cols);
 
-    Eigen::MatrixXd gW_temp = (1.0 / num_examples) * (dZ * A_prev.transpose());
-    gW_temp += (regularization / num_examples) * W;
-    Eigen::MatrixXd gb_temp = dZ.rowwise().sum() / num_examples;
-    Eigen::MatrixXd dA_prev_temp = W.transpose() * dZ;
-
-    gW_map = gW_temp;
-    gb_map = gb_temp;
-    dA_prev_map = dA_prev_temp;
+    double inv_num_examples = 1.0 / num_examples;
+    gW_map.noalias() = inv_num_examples * (dZ * A_prev.transpose());
+    gW_map.noalias() += (regularization * inv_num_examples) * W;
+    gb_map.noalias() = dZ.rowwise().sum() * inv_num_examples;
+    dA_prev_map.noalias() = W.transpose() * dZ;
 }
 
 void algebra_forward_propagation(MEMORY * inputs, MEMORY * outputs) {
@@ -81,7 +82,7 @@ void algebra_forward_propagation(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> b(inputs[2].memory, inputs[2].rows, inputs[2].cols);
     Eigen::Map<Eigen::MatrixXd> result(inputs[3].memory, inputs[3].rows, inputs[3].cols);
 
-    result = w * x;
+    result.noalias() = w * x;
     result.colwise() += b.col(0);
 }
 
@@ -467,19 +468,12 @@ void algebra_adam_optimize(MEMORY * inputs, MEMORY * outputs) {
     // Bias correction
     double beta1_pow_t = std::pow(beta1, t);
     double beta2_pow_t = std::pow(beta2, t);
+    double inv_beta1_correction = 1.0 / (1.0 - beta1_pow_t);
+    double inv_beta2_correction = 1.0 / (1.0 - beta2_pow_t);
 
-    Eigen::MatrixXd vW_corrected = vW_out.array() / (1.0 - beta1_pow_t);
-    Eigen::MatrixXd vb_corrected = vb_out.array() / (1.0 - beta1_pow_t);
-    Eigen::MatrixXd sW_corrected = sW_out.array() / (1.0 - beta2_pow_t);
-    Eigen::MatrixXd sb_corrected = sb_out.array() / (1.0 - beta2_pow_t);
-
-    // Adam update step
-    Eigen::MatrixXd W_update = vW_corrected.array() / (sW_corrected.array().sqrt() + epsilon) * learningRate;
-    Eigen::MatrixXd b_update = vb_corrected.array() / (sb_corrected.array().sqrt() + epsilon) * learningRate;
-
-    // Apply the Adam update
-    W_out = W.array() - W_update.array();
-    b_out = b.array() - b_update.array();
+    // Adam update step - compute directly without temporaries
+    W_out = W.array() - learningRate * (vW_out.array() * inv_beta1_correction) / ((sW_out.array() * inv_beta2_correction).sqrt() + epsilon);
+    b_out = b.array() - learningRate * (vb_out.array() * inv_beta1_correction) / ((sb_out.array() * inv_beta2_correction).sqrt() + epsilon);
 }
 
 void algebra_adagrad_optimize(MEMORY * inputs, MEMORY * outputs) {

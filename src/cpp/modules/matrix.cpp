@@ -1,3 +1,6 @@
+#define EIGEN_USE_THREADS
+#define EIGEN_NO_DEBUG
+
 #include "matrix.h"
 #include <iostream>
 #include <eigen3/Eigen/Core>
@@ -13,10 +16,11 @@
 #include <utility>
 #include <omp.h>
 
-#define EIGEN_USE_MKL_ALL
-#define EIGEN_USE_THREADS
+static bool initialized = false;
 
 void init() {
+    if (initialized) return;
+    initialized = true;
     omp_set_num_threads(6);
     Eigen::setNbThreads(6);
 }

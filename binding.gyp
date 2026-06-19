@@ -21,7 +21,7 @@
               'library_dirs': ['/usr/local/lib'],
              "defines": [ "NAPI_VERSION=6" ],
              "cflags_cc": [
-                "-fopenmp", "-lpthread", "-lgomp"
+                "-O3", "-march=native", "-ffast-math", "-fopenmp", "-lpthread", "-lgomp"
              ],
              "ldflags": [
                 "-fopenmp", "-lpthread", "-lgomp"

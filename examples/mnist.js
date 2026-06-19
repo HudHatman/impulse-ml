@@ -7,7 +7,6 @@ const {
     OptimizerAdagrad,
     OptimizerRMSProp,
     OptimizerAdam,
-    OptimizerDifferentialSymmetry,
   },
   Trainer: { BatchTrainer },
   Cost: { MeanSquaredErrorCost, CrossEntropyCost },
