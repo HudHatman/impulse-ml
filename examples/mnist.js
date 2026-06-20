@@ -36,19 +36,17 @@ const mem = () => {
   }
 };
 
-DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__dirname, "../data/input.csv"))).then(
+DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__dirname, "../data/mnist_train_x.csv"))).then(
   async (inputDataset) => {
     console.log("Loaded input.csv");
     DatasetBuilder.fromSource(
-      DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__dirname, "../data/output.csv")),
+      DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__dirname, "../data/mnist_train_y.csv")),
     ).then(async (outputDataset) => {
-      inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
-
-      const trainer = new BatchTrainer(network, new OptimizerGradientDescent(), new CrossEntropyCost());
-      trainer.setIterations(1);
+      const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
+      trainer.setIterations(20);
       trainer.setBatchSize(128);
-      trainer.setLearningRate(0.0001);
-      trainer.setRegularization(0.00001);
+      trainer.setLearningRate(0.001);
+      trainer.setRegularization(0.0001);
       trainer.setVerboseStep(1);
 
       trainer.setStepCallback(() => {

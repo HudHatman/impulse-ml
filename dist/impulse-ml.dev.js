@@ -2188,13 +2188,15 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
       if (isLastLayer) {
         dZ = layer.A.subtract(sigma);
       } else {
-        var dA = sigma.dot(layer.W.transpose());
-        dZ = dA.multiply(layer.derivative(layer.Z));
-        dA.destroy();
+        // sigma is dA[l] (passed from the layer above as W[l+1]^T · dZ[l+1])
+        dZ = sigma.multiply(layer.derivative(layer.Z));
       }
       layer.gW.replace(dZ.dot(previousActivations.transpose()).divide(numberOfExamples));
       layer.gb.replace(dZ.rowwiseSum().divide(numberOfExamples));
-      return dZ;
+
+      // Return dA for the previous layer: W[l]^T · dZ[l]
+      var dA_prev = layer.W.transpose().dot(dZ);
+      return dA_prev;
     }
   }]);
 }(_AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__.AbstractBackPropagation);

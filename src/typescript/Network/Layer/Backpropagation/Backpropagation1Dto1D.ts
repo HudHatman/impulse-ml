@@ -18,15 +18,16 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
     if (isLastLayer) {
       dZ = layer.A.subtract(sigma);
     } else {
-      const dA = sigma.dot(layer.W.transpose());
-      dZ = dA.multiply(layer.derivative(layer.Z));
-
-      dA.destroy();
+      dZ = sigma.multiply(layer.derivative(layer.Z));
     }
 
     layer.gW.replace(dZ.dot(previousActivations.transpose()).divide(numberOfExamples));
     layer.gb.replace(dZ.rowwiseSum().divide(numberOfExamples));
 
-    return dZ;
+    const dA_prev = layer.W.transpose().dot(dZ);
+
+    dZ.destroy();
+
+    return dA_prev;
   }
 }
