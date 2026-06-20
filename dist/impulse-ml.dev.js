@@ -1240,6 +1240,20 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       });
     }
   }, {
+    key: "dot",
+    value: function dot(m) {
+      return this.calcSync(function (calc) {
+        return calc.dot(m);
+      });
+    }
+  }, {
+    key: "rowwiseSum",
+    value: function rowwiseSum() {
+      return this.calcSync(function (calc) {
+        return calc.rowwiseSum();
+      });
+    }
+  }, {
     key: "tanhDerivative",
     value: function tanhDerivative() {
       return this.calcSync(function (calc) {
@@ -2146,14 +2160,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Backpropagation1Dto1D: () => (/* binding */ Backpropagation1Dto1D)
 /* harmony export */ });
 /* harmony import */ var _AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractBackpropagation */ "./src/typescript/Network/Layer/Backpropagation/AbstractBackpropagation.ts");
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../types */ "./src/typescript/types.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -2167,7 +2174,6 @@ function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? O
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
-
 var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
   function Backpropagation1Dto1D() {
     _classCallCheck(this, Backpropagation1Dto1D);
@@ -2177,19 +2183,18 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
   return _createClass(Backpropagation1Dto1D, [{
     key: "propagate",
     value: function propagate(input, numberOfExamples, regularization, layer, sigma, isLastLayer) {
-      var dZ = sigma;
-      if (isLastLayer && layer.getType() !== _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax) {
-        dZ.replace(sigma.multiply(layer.derivative(layer.Z)));
-      }
       var previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
-      var _dZ$backwardPropagati = dZ.backwardPropagation(layer.W, previousActivations, regularization, numberOfExamples),
-        _dZ$backwardPropagati2 = _slicedToArray(_dZ$backwardPropagati, 3),
-        gW = _dZ$backwardPropagati2[0],
-        gb = _dZ$backwardPropagati2[1],
-        dA_prev = _dZ$backwardPropagati2[2];
-      layer.gW.replace(gW);
-      layer.gb.replace(gb);
-      return dA_prev;
+      var dZ;
+      if (isLastLayer) {
+        dZ = layer.A.subtract(sigma);
+      } else {
+        var dA = sigma.dot(layer.W.transpose());
+        dZ = dA.multiply(layer.derivative(layer.Z));
+        dA.destroy();
+      }
+      layer.gW.replace(dZ.dot(previousActivations.transpose()).divide(numberOfExamples));
+      layer.gb.replace(dZ.rowwiseSum().divide(numberOfExamples));
+      return dZ;
     }
   }]);
 }(_AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__.AbstractBackPropagation);
@@ -2882,8 +2887,9 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
           var input = inputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
           var output = outputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
           var predictions = this.network.forward(input);
-          var sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
-          this.network.backward(input, this.regularization, sigma);
+          //const sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
+
+          this.network.backward(input, this.regularization, output);
           this.optimizer.setT(++t);
           this.network.getLayers().forEach(function (layer) {
             _this2.optimizer.optimize(layer);
@@ -2891,7 +2897,7 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
           input.destroy();
           output.destroy();
           predictions.destroy();
-          sigma.destroy();
+          //sigma.destroy();
         }
         if (this.verbose && (i + 1) % this.verboseStep === 0) {
           var currentResult = this.cost(this.network.forward(inputDataset.data), outputDataset.data);

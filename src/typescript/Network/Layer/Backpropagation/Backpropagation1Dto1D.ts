@@ -1,6 +1,6 @@
 import { AbstractBackPropagation } from "./AbstractBackpropagation";
 import { CalcMatrix2D } from "../../../Math";
-import { Layers, LayerType } from "../../../types";
+import { Layers } from "../../../types";
 
 export class Backpropagation1Dto1D extends AbstractBackPropagation {
   propagate(
@@ -11,18 +11,22 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
     sigma: CalcMatrix2D,
     isLastLayer: boolean,
   ): CalcMatrix2D {
-    let dZ = sigma;
+    const previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
 
-    if (isLastLayer && layer.getType() !== LayerType.softmax) {
-      dZ.replace(sigma.multiply(layer.derivative(layer.Z)));
+    let dZ: CalcMatrix2D;
+
+    if (isLastLayer) {
+      dZ = layer.A.subtract(sigma);
+    } else {
+      const dA = sigma.dot(layer.W.transpose());
+      dZ = dA.multiply(layer.derivative(layer.Z));
+
+      dA.destroy();
     }
 
-    const previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
-    const [gW, gb, dA_prev] = dZ.backwardPropagation(layer.W, previousActivations, regularization, numberOfExamples);
+    layer.gW.replace(dZ.dot(previousActivations.transpose()).divide(numberOfExamples));
+    layer.gb.replace(dZ.rowwiseSum().divide(numberOfExamples));
 
-    layer.gW.replace(gW);
-    layer.gb.replace(gb);
-
-    return dA_prev;
+    return dZ;
   }
 }

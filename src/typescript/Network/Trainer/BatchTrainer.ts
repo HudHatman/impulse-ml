@@ -31,9 +31,9 @@ export class BatchTrainer extends AbstractTrainer {
         const output = outputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
 
         const predictions = this.network.forward(input);
-        const sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
+        //const sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
 
-        this.network.backward(input, this.regularization, sigma);
+        this.network.backward(input, this.regularization, output);
 
         this.optimizer.setT(++t);
 
@@ -44,7 +44,7 @@ export class BatchTrainer extends AbstractTrainer {
         input.destroy();
         output.destroy();
         predictions.destroy();
-        sigma.destroy();
+        //sigma.destroy();
       }
 
       if (this.verbose && (i + 1) % this.verboseStep === 0) {

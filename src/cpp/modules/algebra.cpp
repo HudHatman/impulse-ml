@@ -32,7 +32,7 @@ void algebra_cross_entropy_loss(MEMORY * inputs, MEMORY * outputs) {
     double epsilon = inputs[2].memory[0];
 
     double miniBatchSize = correctOutput.cols();
-    Eigen::MatrixXd logPredictions = (predictions.array().cwiseMax(epsilon)).log();
+    Eigen::MatrixXd logPredictions = (predictions.array().cwiseMax(epsilon)).log() + 1e-8;
     double cost = (correctOutput.array() * logPredictions.array()).sum();
 
     outputs[0].memory[0] = -cost / miniBatchSize;

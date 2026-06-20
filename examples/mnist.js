@@ -44,11 +44,11 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
     ).then(async (outputDataset) => {
       inputDataset = new MinMaxScalingDatasetModifier().apply(inputDataset);
 
-      const trainer = new BatchTrainer(network, new OptimizerAdam(), new CrossEntropyCost());
-      trainer.setIterations(20);
+      const trainer = new BatchTrainer(network, new OptimizerGradientDescent(), new CrossEntropyCost());
+      trainer.setIterations(1);
       trainer.setBatchSize(128);
-      trainer.setLearningRate(0.001);
-      trainer.setRegularization(0.01);
+      trainer.setLearningRate(0.0001);
+      trainer.setRegularization(0.00001);
       trainer.setVerboseStep(1);
 
       trainer.setStepCallback(() => {
@@ -60,7 +60,7 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
       const end = new Date().getTime();
       console.log(end - start);
       mem();
-      network.save(path.resolve(__dirname, "iris.json"));
+      network.save(path.resolve(__dirname, "mnist.json"));
     });
   },
 );

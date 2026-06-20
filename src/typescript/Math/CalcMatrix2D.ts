@@ -120,6 +120,16 @@ export class CalcMatrix2D extends CalcElement {
       return calc.tanh();
     });
   }
+  public dot(m: CalcMatrix2D): CalcMatrix2D {
+    return this.calcSync((calc) => {
+      return calc.dot(m);
+    });
+  }
+  public rowwiseSum(): CalcMatrix2D {
+    return this.calcSync((calc) => {
+      return calc.rowwiseSum();
+    });
+  }
   public tanhDerivative(): CalcMatrix2D {
     return this.calcSync((calc) => {
       return calc.tanhDerivative();
