@@ -13,7 +13,6 @@ export abstract class AbstractBackPropagation {
   abstract propagate(
     input: CalcMatrix2D,
     numberOfExamples: number,
-    regularization: number,
     layer: Layers,
     sigma: CalcMatrix2D,
     isLastLayer: boolean,

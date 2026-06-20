@@ -43,7 +43,7 @@ class Network {
     for (let i = this.layers.length - 1; i >= 0; i -= 1) {
       const layer = this.layers[i];
       const isLastLayer = i === this.layers.length - 1;
-      currentSigma = layer.getBackPropagation().propagate(X, m, regularization, layer, currentSigma, isLastLayer);
+      currentSigma = layer.getBackPropagation().propagate(X, m, layer, currentSigma, isLastLayer);
     }
   }
 

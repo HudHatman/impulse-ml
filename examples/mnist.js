@@ -50,6 +50,7 @@ DatasetBuilder.fromSource(DatasetBuilderSourceCSV.fromLocalFile(path.resolve(__d
       trainer.setVerboseStep(1);
 
       trainer.setStepCallback(() => {
+        mem();
         //console.log("forward", network.forward(x).get(), outputDataset.data.get());
       });
       console.log(inputDataset.exampleAt(0));

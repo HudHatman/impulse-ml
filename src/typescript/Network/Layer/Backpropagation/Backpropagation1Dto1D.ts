@@ -6,7 +6,6 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
   propagate(
     input: CalcMatrix2D,
     numberOfExamples: number,
-    regularization: number,
     layer: Layers,
     sigma: CalcMatrix2D,
     isLastLayer: boolean,

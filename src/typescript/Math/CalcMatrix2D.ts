@@ -104,12 +104,6 @@ export class CalcMatrix2D extends CalcElement {
     });
   }
 
-  public crossEntropyDerivative(correctOutput: CalcMatrix2D, predictions: CalcMatrix2D, epsilon: number): CalcMatrix2D {
-    return this.calcSync((calc) => {
-      return calc.crossEntropyDerivative(correctOutput, predictions, epsilon);
-    });
-  }
-
   public softmax(): CalcMatrix2D {
     return this.calcSync((calc) => {
       return calc.softmax();
@@ -186,18 +180,6 @@ export class CalcMatrix2D extends CalcElement {
         return that._call(
           "algebra",
           "algebra_cross_entropy_loss",
-          async,
-        )(
-          [correctOutput, predictions, _epsilon],
-          [result],
-        )(result);
-      },
-      crossEntropyDerivative: (correctOutput: CalcMatrix2D, predictions: CalcMatrix2D, epsilon: number) => {
-        const _epsilon = new CalcScalar().allocate().set([epsilon]);
-        const result = new CalcMatrix2D(correctOutput.rows(), correctOutput.cols()).allocate();
-        return that._call(
-          "algebra",
-          "algebra_cross_entropy_derivative",
           async,
         )(
           [correctOutput, predictions, _epsilon],
