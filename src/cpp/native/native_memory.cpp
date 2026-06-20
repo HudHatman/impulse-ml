@@ -174,7 +174,7 @@ void Native::Memory::ramSet(double * input, bool async) {
 
 void Native::Memory::ramFree() {
     if (this->_RAMPointer) {
-        delete[] this->_RAMPointer;
+        std::free(this->_RAMPointer);
         this->_RAMPointer = nullptr;
         this->_alloc = false;
         this->_size = 0;

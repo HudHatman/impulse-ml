@@ -371,15 +371,118 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   DatasetVocabulary: () => (/* binding */ DatasetVocabulary)
 /* harmony export */ });
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Math */ "./src/typescript/Math/index.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-var DatasetVocabulary = /*#__PURE__*/_createClass(function DatasetVocabulary() {
-  _classCallCheck(this, DatasetVocabulary);
-});
+
+var DatasetVocabulary = /*#__PURE__*/function () {
+  function DatasetVocabulary(str) {
+    _classCallCheck(this, DatasetVocabulary);
+    _defineProperty(this, "vocabularySize", 0);
+    _defineProperty(this, "dataSize", 0);
+    _defineProperty(this, "data", "");
+    _defineProperty(this, "_examples", []);
+    this.data = str.toLowerCase();
+    var chars = _toConsumableArray(new Set(this.data.split("").sort()));
+    this.chars = chars;
+    this.dataSize = this.data.length;
+    this.vocabularySize = chars.length;
+  }
+  return _createClass(DatasetVocabulary, [{
+    key: "getVocabularySize",
+    value: function getVocabularySize() {
+      return this.vocabularySize;
+    }
+  }, {
+    key: "getCharsLength",
+    value: function getCharsLength() {
+      return this.chars.length;
+    }
+  }, {
+    key: "getCharIndices",
+    value: function getCharIndices() {
+      var result = {};
+      this.chars.forEach(function (_char, i) {
+        result[_char] = i;
+      });
+      return result;
+    }
+  }, {
+    key: "buildData",
+    value: function buildData() {
+      var tx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 40;
+      var stride = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
+      var X = [];
+      var Y = [];
+      for (var i = 0; i < this.data.length - tx; i += stride) {
+        X.push(this.data.substr(i, tx));
+        Y.push(this.data[i + tx]);
+      }
+      return [X, Y];
+    }
+  }, {
+    key: "vectorization",
+    value: function vectorization(X, Y) {
+      var _this = this;
+      var nx = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 40;
+      var m = X.length;
+      var x = new Array(m);
+      var chars = this.getCharIndices();
+      var y = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(m, this.chars.length).setZeros();
+      var xIndex = 0;
+      var rowIndex = 0;
+      X.forEach(function (sentence, _m) {
+        x[_m] = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(sentence.length, _this.chars.length).setZeros();
+        sentence.split("").forEach(function (_char2, t) {
+          x[_m].data[t][chars[_char2]] = 1;
+          rowIndex++;
+        });
+        xIndex++;
+        rowIndex = 0;
+        y.data[_m][chars[Y[_m]]] = 1;
+      });
+      return [x, y];
+    }
+  }, {
+    key: "getChars",
+    value: function getChars() {
+      return this.chars;
+    }
+  }, {
+    key: "getExamples",
+    value: function getExamples() {
+      var _this2 = this;
+      if (this._examples.length > 0) {
+        return this._examples;
+      }
+      var examples = this.data.replace(/\n+/, "\n").split("\n").map(function (example) {
+        return example + "\n";
+      });
+      var result = [];
+      examples.forEach(function (example, index) {
+        var data = [];
+        example.split("").forEach(function (ch, row) {
+          var newArr = new Array(_this2.chars.length).fill(0);
+          newArr[[_this2.getCharIndices()[ch]]] = 1;
+          data = [].concat(_toConsumableArray(data), _toConsumableArray(newArr));
+        });
+        result[index] = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(example.length, _this2.chars.length).allocate().set(data);
+      });
+      return this._examples = result;
+    }
+  }]);
+}();
 
 /***/ },
 
@@ -879,7 +982,12 @@ var CalcElement = /*#__PURE__*/function () {
   }, {
     key: "set",
     value: function set(arr) {
-      this._memory.set(new Float64Array(arr));
+      var _flatten = function flatten(array) {
+        return array.reduce(function (acc, val) {
+          return acc.concat(Array.isArray(val) ? _flatten(val) : val);
+        }, []);
+      };
+      this._memory.set(new Float64Array(_flatten(arr)));
       return this;
     }
   }, {
@@ -1219,13 +1327,6 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       });
     }
   }, {
-    key: "crossEntropyDerivative",
-    value: function crossEntropyDerivative(correctOutput, predictions, epsilon) {
-      return this.calcSync(function (calc) {
-        return calc.crossEntropyDerivative(correctOutput, predictions, epsilon);
-      });
-    }
-  }, {
     key: "softmax",
     value: function softmax() {
       return this.calcSync(function (calc) {
@@ -1295,11 +1396,6 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
           var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
           var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
           return that._call("algebra", "algebra_cross_entropy_loss", async)([correctOutput, predictions, _epsilon], [result])(result);
-        },
-        crossEntropyDerivative: function crossEntropyDerivative(correctOutput, predictions, epsilon) {
-          var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
-          var result = new CalcMatrix2D(correctOutput.rows(), correctOutput.cols()).allocate();
-          return that._call("algebra", "algebra_cross_entropy_derivative", async)([correctOutput, predictions, _epsilon], [result])(result);
         },
         block: function block(rowOffset, colOffset, numRows, numCols) {
           var result = new CalcMatrix2D(numRows, numCols).allocate();
@@ -2182,20 +2278,18 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
   _inherits(Backpropagation1Dto1D, _AbstractBackPropagat);
   return _createClass(Backpropagation1Dto1D, [{
     key: "propagate",
-    value: function propagate(input, numberOfExamples, regularization, layer, sigma, isLastLayer) {
+    value: function propagate(input, numberOfExamples, layer, sigma, isLastLayer) {
       var previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
       var dZ;
       if (isLastLayer) {
         dZ = layer.A.subtract(sigma);
       } else {
-        // sigma is dA[l] (passed from the layer above as W[l+1]^T · dZ[l+1])
         dZ = sigma.multiply(layer.derivative(layer.Z));
       }
       layer.gW.replace(dZ.dot(previousActivations.transpose()).divide(numberOfExamples));
       layer.gb.replace(dZ.rowwiseSum().divide(numberOfExamples));
-
-      // Return dA for the previous layer: W[l]^T · dZ[l]
       var dA_prev = layer.W.transpose().dot(dZ);
+      dZ.destroy();
       return dA_prev;
     }
   }]);
@@ -2679,7 +2773,7 @@ var Network = /*#__PURE__*/function () {
       for (var i = this.layers.length - 1; i >= 0; i -= 1) {
         var layer = this.layers[i];
         var isLastLayer = i === this.layers.length - 1;
-        currentSigma = layer.getBackPropagation().propagate(X, m, regularization, layer, currentSigma, isLastLayer);
+        currentSigma = layer.getBackPropagation().propagate(X, m, layer, currentSigma, isLastLayer);
       }
     }
   }, {
@@ -2889,8 +2983,6 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
           var input = inputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
           var output = outputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
           var predictions = this.network.forward(input);
-          //const sigma = this.costFunction.derivative(output, predictions, this.network.getLastLayer());
-
           this.network.backward(input, this.regularization, output);
           this.optimizer.setT(++t);
           this.network.getLayers().forEach(function (layer) {
@@ -2899,7 +2991,6 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
           input.destroy();
           output.destroy();
           predictions.destroy();
-          //sigma.destroy();
         }
         if (this.verbose && (i + 1) % this.verboseStep === 0) {
           var currentResult = this.cost(this.network.forward(inputDataset.data), outputDataset.data);
@@ -2952,7 +3043,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _AbstractCost__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractCost */ "./src/typescript/Network/Trainer/Cost/AbstractCost.ts");
 /* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Math */ "./src/typescript/Math/index.ts");
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../types */ "./src/typescript/types.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -2967,7 +3057,6 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-
 
 
 var CrossEntropyCost = /*#__PURE__*/function (_AbstractCost) {
@@ -2986,17 +3075,6 @@ var CrossEntropyCost = /*#__PURE__*/function (_AbstractCost) {
     key: "loss",
     value: function loss(correctOutput, predictions) {
       return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D().crossEntropyLoss(correctOutput, predictions, this.epsilon);
-    }
-  }, {
-    key: "derivative",
-    value: function derivative(correctOutput, predictions, lastLayer) {
-      if (lastLayer.getType() === _types__WEBPACK_IMPORTED_MODULE_2__.LayerType.softmax) {
-        // For Softmax, we compute dZ directly
-        return predictions.subtract(correctOutput);
-      }
-
-      // For other layers (like Sigmoid), we calculate dA
-      return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D().crossEntropyDerivative(correctOutput, predictions, this.epsilon);
     }
   }]);
 }(_AbstractCost__WEBPACK_IMPORTED_MODULE_0__.AbstractCost);
