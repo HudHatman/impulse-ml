@@ -76,7 +76,7 @@ void matrix_set_max(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
     double nb = inputs[1].memory[0];
     result = m.unaryExpr([nb](double x) {
-        return std::max(x, nb);
+        return std::min(x, nb);
     });
 }
 
@@ -88,7 +88,7 @@ void matrix_set_min(MEMORY * inputs, MEMORY * outputs) {
     Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
     double nb = parameter(0, 0);
     result = result = m.unaryExpr([nb](double x) {
-        return std::min(x, nb);
+        return std::max(x, nb);
     });
 }
 

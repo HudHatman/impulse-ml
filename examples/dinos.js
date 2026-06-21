@@ -43,7 +43,7 @@ DatasetVocabularyBuilder.fromSource(DatasetVocabularyBuilderSourceTextFile.fromL
     const network = builder.getNetwork();
     const iterations = 10;
     const learningRate = 0.001;
-    const data = inputDataset.buildData(40, 1);
+    const data = inputDataset.getExamples();
     console.log("Data built.");
 
     for (let i = 0; i < iterations; i++) {
@@ -54,7 +54,11 @@ DatasetVocabularyBuilder.fromSource(DatasetVocabularyBuilderSourceTextFile.fromL
 
         const layer = network.getLayers()[0];
 
-        console.log(layer.Wya.get());
+        console.log(layer.dWax.get());
+        if (isNaN(layer.dWax.get()[0])) {
+          console.log(`Iteration: ${i} ${j}`);
+          process.exit();
+        }
 
         layer.Wax.replace(layer.Wax.subtract(layer.dWax.multiply(learningRate)));
         layer.Waa.replace(layer.Waa.subtract(layer.dWaa.multiply(learningRate)));

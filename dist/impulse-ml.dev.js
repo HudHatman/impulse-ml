@@ -2484,28 +2484,35 @@ var BackpropagationRNN = /*#__PURE__*/function (_AbstractBackPropagat) {
     value: function propagate(input, numberOfExamples, layer, sigma, isLastLayer) {
       var result = [];
       var dANext = new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(layer.aCache[0].rows(), layer.aCache[0].cols()).allocate().setZeros();
+
+      // Reset accumulated gradients before BPTT
+      layer.dWax.setZeros();
+      layer.dWaa.setZeros();
+      layer.dWya.setZeros();
+      layer.dba.setZeros();
+      layer.dby.setZeros();
       for (var t = input.length - 1; t >= 0; --t) {
         var dy = sigma[t].subtract(input[t]);
         var dWya = layer.dWya.clone();
-        layer.dWya.replace(dWya.add(dy.dot(layer.aCache[t + 1])));
+        layer.dWya.replace(dWya.add(dy.dot(layer.aCache[t + 1].transpose())));
         var dby = layer.dby.clone();
         layer.dby.replace(dby.add(dy));
         var da = layer.Wya.transpose().dot(dy).add(dANext);
-        var dza = da.multiply(layer.aCache[t].pow(2).minusOne());
+        var dza = da.multiply(layer.aCache[t + 1].pow(2).minusOne());
         var dWaa = layer.dWaa.clone();
         layer.dWaa.replace(dWaa.add(dza.dot(layer.aCache[t].transpose())));
         var dWax = layer.dWax.clone();
-        layer.dWax.replace(dWax.add(dza.dot(input[t])));
+        layer.dWax.replace(dWax.add(dza.dot(input[t].transpose())));
         var dba = layer.dba.clone();
         layer.dba.replace(dba.add(dza));
         dANext.replace(layer.Waa.transpose().dot(dza));
-        layer.dWax.replace(layer.dWax.setMin(5).setMax(5));
-        layer.dWya.replace(layer.dWya.setMin(5).setMax(5));
-        layer.dWaa.replace(layer.dWaa.setMin(5).setMax(5));
-        layer.dba.replace(layer.dba.setMin(5).setMax(5));
-        layer.dby.replace(layer.dby.setMin(5).setMax(5));
         result.push(dANext);
       }
+      layer.dWax.replace(layer.dWax.setMax(5).setMin(-5));
+      layer.dWya.replace(layer.dWya.setMax(5).setMin(-5));
+      layer.dWaa.replace(layer.dWaa.setMax(5).setMin(-5));
+      layer.dba.replace(layer.dba.setMax(5).setMin(-5));
+      layer.dby.replace(layer.dby.setMax(5).setMin(-5));
       return result;
     }
   }]);
@@ -3183,14 +3190,13 @@ var NetworkRNN = /*#__PURE__*/function () {
     value: function sample(inputDataset) {
       var maxSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 50;
       var x = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(inputDataset.getCharsLength(), 1).allocate().setZeros();
-      var a = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(this.dimensions[0], 1).allocate().setZeros();
+      var a = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(this.dimensions[0], 1).allocate().setRandom(1);
       var count = 0;
       var generated = "";
       while (count < maxSize) {
         a.replace(this.layers[0].Waa.dot(a).add(this.layers[0].Wax.dot(x)).add(this.layers[0].ba).tanh());
         var z = this.layers[0].Wya.dot(a).add(this.layers[0].by);
         var p = z.softmax();
-        console.log('sample probabilities: ', p.get());
         var _char = inputDataset.getChars()[p.maxCoeff().get()[0]];
         generated += _char;
         count += 1;

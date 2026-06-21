@@ -51,7 +51,7 @@ class NetworkRNN {
 
   sample(inputDataset: DatasetVocabulary, maxSize = 50) {
     const x = new CalcMatrix2D(inputDataset.getCharsLength(), 1).allocate().setZeros();
-    const a = new CalcMatrix2D(this.dimensions[0], 1).allocate().setZeros();
+    const a = new CalcMatrix2D(this.dimensions[0], 1).allocate().setRandom(1);
     let count = 0;
     let generated = "";
 
@@ -59,8 +59,6 @@ class NetworkRNN {
       a.replace(this.layers[0].Waa.dot(a).add(this.layers[0].Wax.dot(x)).add(this.layers[0].ba).tanh());
       const z = this.layers[0].Wya.dot(a).add(this.layers[0].by);
       const p = z.softmax();
-
-      console.log('sample probabilities: ', p.get());
 
       const char = inputDataset.getChars()[p.maxCoeff().get()[0]];
       generated += char;
