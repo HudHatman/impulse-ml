@@ -424,12 +424,10 @@ var DatasetVocabulary = /*#__PURE__*/function () {
       var tx = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 40;
       var stride = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
       var X = [];
-      var Y = [];
       for (var i = 0; i < this.data.length - tx; i += stride) {
-        X.push(this.data.substr(i, tx));
-        Y.push(this.data[i + tx]);
+        X.push(this._createExampleMatrix(this.data.substr(i, tx)));
       }
-      return [X, Y];
+      return X;
     }
   }, {
     key: "vectorization",
@@ -460,9 +458,21 @@ var DatasetVocabulary = /*#__PURE__*/function () {
       return this.chars;
     }
   }, {
+    key: "_createExampleMatrix",
+    value: function _createExampleMatrix(example) {
+      var _this2 = this;
+      var data = [];
+      example.split("").forEach(function (ch, row) {
+        var newArr = new Array(_this2.chars.length).fill(0);
+        newArr[[_this2.getCharIndices()[ch]]] = 1;
+        data[row] = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(1, _this2.chars.length).allocate().set(newArr);
+      });
+      return data;
+    }
+  }, {
     key: "getExamples",
     value: function getExamples() {
-      var _this2 = this;
+      var _this3 = this;
       if (this._examples.length > 0) {
         return this._examples;
       }
@@ -471,13 +481,7 @@ var DatasetVocabulary = /*#__PURE__*/function () {
       });
       var result = [];
       examples.forEach(function (example, index) {
-        var data = [];
-        example.split("").forEach(function (ch, row) {
-          var newArr = new Array(_this2.chars.length).fill(0);
-          newArr[[_this2.getCharIndices()[ch]]] = 1;
-          data[row] = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(1, _this2.chars.length).allocate().set(newArr);
-        });
-        result[index] = data;
+        result[index] = _this3._createExampleMatrix(example);
       });
       return this._examples = result;
     }
@@ -2002,7 +2006,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _AbstractNetworkBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractNetworkBuilder */ "./src/typescript/Network/Builder/AbstractNetworkBuilder.ts");
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! fs */ "fs");
 /* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _NetworkRNN__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../NetworkRNN */ "./src/typescript/Network/NetworkRNN.ts");
+/* harmony import */ var _Layer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Layer */ "./src/typescript/Network/Layer/index.ts");
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../Math */ "./src/typescript/Math/index.ts");
+/* harmony import */ var _NetworkRNN__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../NetworkRNN */ "./src/typescript/Network/NetworkRNN.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -2019,6 +2025,8 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 
 
 
+
+
 var NetworkBuilderRNN = /*#__PURE__*/function (_AbstractNetworkBuild) {
   function NetworkBuilderRNN() {
     _classCallCheck(this, NetworkBuilderRNN);
@@ -2029,7 +2037,7 @@ var NetworkBuilderRNN = /*#__PURE__*/function (_AbstractNetworkBuild) {
     key: "configure",
     value: function configure(dimension) {
       this.dimensions = dimension;
-      this.network = new _NetworkRNN__WEBPACK_IMPORTED_MODULE_2__["default"](this.dimensions);
+      this.network = new _NetworkRNN__WEBPACK_IMPORTED_MODULE_4__["default"](this.dimensions);
     }
   }, {
     key: "firstLayerTransition",
@@ -2045,34 +2053,27 @@ var NetworkBuilderRNN = /*#__PURE__*/function (_AbstractNetworkBuild) {
             reject(err);
             return;
           }
-          /*const json = JSON.parse(data.toString());
-           const builder = new NetworkBuilderRNN(json["dimensions"]);
-           json["layers"].forEach((layerData: JSONLayerData) => {
-            let layerClass = null;
-             if (layerData["type"] === "logistic") {
-              layerClass = LogisticLayer;
-            } else if (layerData["type"] === "softmax") {
-              layerClass = SoftmaxLayer;
-            } else if (layerData["type"] === "relu") {
-              layerClass = ReluLayer;
-            } else if (layerData["type"] === "tanh") {
-              layerClass = TanhLayer;
+          var json = JSON.parse(data.toString());
+          var builder = new NetworkBuilderRNN(json["dimensions"]);
+          json["layers"].forEach(function (layerData) {
+            var layerClass = null;
+            if (layerData["type"] === "rnn") {
+              layerClass = _Layer__WEBPACK_IMPORTED_MODULE_2__.RNNLayer;
             }
-             builder.createLayer(layerClass, (layer) => {
+            builder.createLayer(layerClass, function (layer) {
               // @ts-ignore
-              layer.setSize(layerData["size"] as number);
+              layer.setSize(layerData["size"]);
             });
           });
-           const network = builder.getNetwork();
-           network.getLayers().forEach((layer, i) => {
-            layer.W = new CalcMatrix2D(json["layers"][i]["weights"]["W"].rows, json["layers"][i]["weights"]["W"].cols)
-              .allocate()
-              .set(json["layers"][i]["weights"]["W"].data);
-            layer.b = new CalcMatrix2D(json["layers"][i]["weights"]["b"].rows, json["layers"][i]["weights"]["b"].cols)
-              .allocate()
-              .set(json["layers"][i]["weights"]["b"].data);
+          var network = builder.getNetwork();
+          network.getLayers().forEach(function (layer, i) {
+            layer.Wax = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["Wax"].rows, json["layers"][i]["weights"]["Wax"].cols).allocate().set(json["layers"][i]["weights"]["Wax"].data);
+            layer.Waa = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["Waa"].rows, json["layers"][i]["weights"]["Waa"].cols).allocate().set(json["layers"][i]["weights"]["Waa"].data);
+            layer.Wya = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["Wya"].rows, json["layers"][i]["weights"]["Wya"].cols).allocate().set(json["layers"][i]["weights"]["Wya"].data);
+            layer.ba = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["ba"].rows, json["layers"][i]["weights"]["ba"].cols).allocate().set(json["layers"][i]["weights"]["ba"].data);
+            layer.by = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["by"].rows, json["layers"][i]["weights"]["by"].cols).allocate().set(json["layers"][i]["weights"]["by"].data);
           });
-           resolve(network);*/
+          resolve(network);
         });
       });
     }
@@ -2481,9 +2482,10 @@ var BackpropagationRNN = /*#__PURE__*/function (_AbstractBackPropagat) {
   return _createClass(BackpropagationRNN, [{
     key: "propagate",
     value: function propagate(input, numberOfExamples, layer, sigma, isLastLayer) {
-      var dANext = new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(layer.aCache[0].rows(), layer.aCache[0].cols()).allocate().setZeros();
+      var result = [];
       for (var t = input.length - 1; t >= 0; --t) {
-        var dy = layer.yCache[t].subtract(input[t]);
+        var dANext = new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(layer.aCache[0].rows(), layer.aCache[0].cols()).allocate().setZeros();
+        var dy = sigma[t].subtract(input[t]);
         var dWya = layer.dWya.clone();
         layer.dWya.replace(dWya.add(dy.dot(layer.aCache[t + 1])));
         var dby = layer.dby.clone();
@@ -2497,7 +2499,9 @@ var BackpropagationRNN = /*#__PURE__*/function (_AbstractBackPropagat) {
         var dba = layer.dba.clone();
         layer.dba.replace(dba.add(dza));
         dANext.replace(layer.Waa.transpose().dot(dza));
+        result.push(dANext);
       }
+      return result;
     }
   }]);
 }(_AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__.AbstractBackPropagation);
@@ -2669,13 +2673,13 @@ var RNNLayer = /*#__PURE__*/function (_AbstractLayer) {
     value: function configure() {
       this.Wax.resize(this.getHeight(), this.getWidth());
       this.dWax.resize(this.getHeight(), this.getWidth()).setZeros();
-      this.Wax.setRandom(Math.sqrt(6 / this.getWidth()));
+      this.Wax.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
       this.Waa.resize(this.getHeight(), this.getHeight());
       this.dWaa.resize(this.getHeight(), this.getHeight()).setZeros();
-      this.Waa.setRandom(Math.sqrt(6 / this.getWidth()));
+      this.Waa.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
       this.Wya.resize(this.getWidth(), this.getHeight());
       this.dWya.resize(this.getWidth(), this.getHeight()).setZeros();
-      this.Wya.setRandom(Math.sqrt(6 / this.getWidth()));
+      this.Wya.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
       this.ba.resize(this.getHeight(), 1);
       this.dba.resize(this.getHeight(), 1).setZeros();
       this.ba.setZeros();
@@ -2755,7 +2759,7 @@ var RNNLayer = /*#__PURE__*/function (_AbstractLayer) {
   }, {
     key: "getSize",
     value: function getSize() {
-      throw new Error("Method not implemented.");
+      return this.getHeight();
     }
   }, {
     key: "penalty",
@@ -3105,13 +3109,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NetworkRNN: () => (/* binding */ NetworkRNN),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Math */ "./src/typescript/Math/index.ts");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! fs */ "fs");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_1__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
 var NetworkRNN = /*#__PURE__*/function () {
   function NetworkRNN(dimensions) {
     _classCallCheck(this, NetworkRNN);
@@ -3151,12 +3166,82 @@ var NetworkRNN = /*#__PURE__*/function () {
     value: function backward(X, sigma) {
       var regularization = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
       var m = 1;
-      var currentSigma = sigma;
+      var currentSigma = this.layers[this.layers.length - 1].yCache;
       for (var i = this.layers.length - 1; i >= 0; i -= 1) {
         var layer = this.layers[i];
         var isLastLayer = i === this.layers.length - 1;
         currentSigma = layer.getBackPropagation().propagate(X, m, layer, currentSigma, isLastLayer);
       }
+    }
+  }, {
+    key: "sample",
+    value: function sample(inputDataset) {
+      var maxSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 50;
+      var x = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(inputDataset.getCharsLength(), 1).allocate().setZeros();
+      var a = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(this.dimensions[0], 1).allocate().setZeros();
+      var count = 0;
+      var generated = "";
+      while (count < maxSize) {
+        a.replace(this.layers[0].Waa.dot(a).add(this.layers[0].Wax.dot(x)).add(this.layers[0].ba).tanh());
+        var z = this.layers[0].Wya.dot(a).add(this.layers[0].by);
+        var p = z.softmax();
+        console.log('sample probabilities: ', p.get());
+        var _char = inputDataset.getChars()[p.maxCoeff().get()[0]];
+        generated += _char;
+        count += 1;
+      }
+      return generated;
+    }
+  }, {
+    key: "save",
+    value: function save(path) {
+      var resultJSON = {
+        dimensions: this.dimensions,
+        layers: []
+      };
+      this.layers.forEach(function (layer) {
+        resultJSON.layers.push({
+          type: layer.getType(),
+          size: layer.getSize(),
+          weights: {
+            Wax: {
+              data: _toConsumableArray(layer.Wax.get()),
+              rows: layer.Wax.rows(),
+              cols: layer.Wax.cols()
+            },
+            Waa: {
+              data: _toConsumableArray(layer.Waa.get()),
+              rows: layer.Waa.rows(),
+              cols: layer.Waa.cols()
+            },
+            Wya: {
+              data: _toConsumableArray(layer.Wya.get()),
+              rows: layer.Wya.rows(),
+              cols: layer.Wya.cols()
+            },
+            ba: {
+              data: _toConsumableArray(layer.ba.get()),
+              rows: layer.ba.rows(),
+              cols: layer.ba.cols()
+            },
+            by: {
+              data: _toConsumableArray(layer.by.get()),
+              rows: layer.by.rows(),
+              cols: layer.by.cols()
+            }
+          }
+        });
+      });
+      var result = JSON.stringify(resultJSON);
+      return new Promise(function (resolve, reject) {
+        fs__WEBPACK_IMPORTED_MODULE_1__.writeFile(path, result, function (err) {
+          if (err) {
+            console.error(err);
+            reject();
+          }
+          resolve(result);
+        });
+      });
     }
   }]);
 }();

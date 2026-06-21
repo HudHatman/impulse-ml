@@ -33,15 +33,13 @@ export class DatasetVocabulary {
   }
 
   buildData(tx: number = 40, stride: number = 3) {
-    const X = [];
-    const Y = [];
+    const X: Array<CalcMatrix2D> = [];
 
     for (let i = 0; i < this.data.length - tx; i += stride) {
-      X.push(this.data.substr(i, tx));
-      Y.push(this.data[i + tx]);
+      X.push(this._createExampleMatrix(this.data.substr(i, tx)));
     }
 
-    return [X, Y];
+    return X;
   }
 
   vectorization(X: string[], Y: string[], nx: number = 40): [CalcMatrix2D[], CalcMatrix2D] {
@@ -71,6 +69,16 @@ export class DatasetVocabulary {
     return this.chars;
   }
 
+  protected _createExampleMatrix(example: string): Array<CalcMatrix2D> {
+    const data: Array<CalcMatrix2D> = [];
+    example.split("").forEach((ch, row) => {
+      const newArr: Array<number> = new Array(this.chars.length).fill(0);
+      newArr[[this.getCharIndices()[ch]]] = 1;
+      data[row] = new CalcMatrix2D(1, this.chars.length).allocate().set(newArr);
+    });
+    return data;
+  }
+
   getExamples(): Array<CalcMatrix2D> {
     if (this._examples.length > 0) {
       return this._examples;
@@ -85,13 +93,7 @@ export class DatasetVocabulary {
     const result: Array<Array<CalcMatrix2D>> = [];
 
     examples.forEach((example, index) => {
-      let data: Array<CalcMatrix2D> = [];
-      example.split("").forEach((ch, row) => {
-        const newArr: Array<number> = new Array(this.chars.length).fill(0);
-        newArr[[this.getCharIndices()[ch]]] = 1;
-        data[row] = (new CalcMatrix2D(1, this.chars.length)).allocate().set(newArr);
-      });
-      result[index] = data;
+      result[index] = this._createExampleMatrix(example);
     })
 
     return this._examples = result;

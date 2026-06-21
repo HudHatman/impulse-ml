@@ -1,5 +1,5 @@
 #define EIGEN_USE_THREADS
-//#define EIGEN_NO_DEBUG
+#define EIGEN_NO_DEBUG
 
 #include "matrix.h"
 #include <iostream>

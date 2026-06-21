@@ -35,15 +35,15 @@ class RNNLayer extends AbstractLayer {
   configure(): void {
     this.Wax.resize(this.getHeight(), this.getWidth());
     this.dWax.resize(this.getHeight(), this.getWidth()).setZeros();
-    this.Wax.setRandom(Math.sqrt(6 / this.getWidth()));
+    this.Wax.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
 
     this.Waa.resize(this.getHeight(), this.getHeight());
     this.dWaa.resize(this.getHeight(), this.getHeight()).setZeros();
-    this.Waa.setRandom(Math.sqrt(6 / this.getWidth()));
+    this.Waa.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
 
     this.Wya.resize(this.getWidth(), this.getHeight());
     this.dWya.resize(this.getWidth(), this.getHeight()).setZeros();
-    this.Wya.setRandom(Math.sqrt(6 / this.getWidth()));
+    this.Wya.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
 
     this.ba.resize(this.getHeight(), 1);
     this.dba.resize(this.getHeight(), 1).setZeros();
@@ -118,7 +118,7 @@ class RNNLayer extends AbstractLayer {
   }
 
   getSize(): Dimension | number {
-    throw new Error("Method not implemented.");
+    return this.getHeight();
   }
 
   penalty(): CalcScalar {

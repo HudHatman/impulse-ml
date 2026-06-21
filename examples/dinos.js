@@ -38,12 +38,49 @@ DatasetVocabularyBuilder.fromSource(DatasetVocabularyBuilderSourceTextFile.fromL
 
     const builder = new NetworkBuilderRNN([inputDataset.getVocabularySize()]);
     builder.createLayer(RNNLayer, (layer) => {
-      layer.setSize(128);
+      layer.setSize(50);
     });
     const network = builder.getNetwork();
+    const iterations = 10;
+    const learningRate = 0.001;
+    const data = inputDataset.buildData(40, 3);
+    console.log("Data built.");
+
+    for (let i = 0; i < iterations; i++) {
+      console.log(`Iteration: ${i}`);
+      for (let j = 0; j < data.length; j++) {
+        network.forward(data[j]);
+        network.backward(data[j], data[j]);
+
+        const layer = network.getLayers()[0];
+
+        console.log(layer.Wya.get());
+
+        layer.Wax.replace(layer.Wax.subtract(layer.dWax.multiply(learningRate)));
+        layer.Waa.replace(layer.Waa.subtract(layer.dWaa.multiply(learningRate)));
+        layer.Wya.replace(layer.Wya.subtract(layer.dWya.multiply(learningRate)));
+        layer.ba.replace(layer.ba.subtract(layer.dba.multiply(learningRate)));
+        layer.by.replace(layer.by.subtract(layer.dby.multiply(learningRate)));
+
+        console.log(layer.dWax.get());
+
+        if (j % 50 === 0) {
+          console.log(`${j} / ${data.length}`);
+
+          if (j % 200 === 0) {
+            console.log(`SAMPLE: ${network.sample(inputDataset)}\n---END SAMPLE.`);
+          }
+        }
+      }
+      console.log(network.sample(inputDataset));
+      network.save("dinos.json");
+    }
 
     const o = network.forward(inputDataset.getExamples()[0]);
     network.backward(inputDataset.getExamples()[0]);
-    console.log(o[0].get());
+
+    console.log(network.sample(inputDataset));
+
+    //
   },
 );

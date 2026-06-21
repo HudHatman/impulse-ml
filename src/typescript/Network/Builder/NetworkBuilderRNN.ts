@@ -1,7 +1,7 @@
 import { AbstractNetworkBuilder } from "./AbstractNetworkBuilder";
 import { Dimension, Layers } from "../../types";
 import * as fs from "fs";
-import { LogisticLayer, ReluLayer, SoftmaxLayer, TanhLayer } from "../Layer";
+import { LogisticLayer, ReluLayer, RNNLayer, SoftmaxLayer, TanhLayer } from "../Layer";
 import { CalcMatrix2D } from "../../Math";
 import { JSONLayerData } from "./types";
 import NetworkRNN from "../NetworkRNN";
@@ -23,21 +23,15 @@ class NetworkBuilderRNN extends AbstractNetworkBuilder {
           reject(err);
           return;
         }
-        /*const json = JSON.parse(data.toString());
+        const json = JSON.parse(data.toString());
 
         const builder = new NetworkBuilderRNN(json["dimensions"]);
 
         json["layers"].forEach((layerData: JSONLayerData) => {
           let layerClass = null;
 
-          if (layerData["type"] === "logistic") {
-            layerClass = LogisticLayer;
-          } else if (layerData["type"] === "softmax") {
-            layerClass = SoftmaxLayer;
-          } else if (layerData["type"] === "relu") {
-            layerClass = ReluLayer;
-          } else if (layerData["type"] === "tanh") {
-            layerClass = TanhLayer;
+          if (layerData["type"] === "rnn") {
+            layerClass = RNNLayer;
           }
 
           builder.createLayer(layerClass, (layer) => {
@@ -49,15 +43,33 @@ class NetworkBuilderRNN extends AbstractNetworkBuilder {
         const network = builder.getNetwork();
 
         network.getLayers().forEach((layer, i) => {
-          layer.W = new CalcMatrix2D(json["layers"][i]["weights"]["W"].rows, json["layers"][i]["weights"]["W"].cols)
+          layer.Wax = new CalcMatrix2D(
+            json["layers"][i]["weights"]["Wax"].rows,
+            json["layers"][i]["weights"]["Wax"].cols,
+          )
             .allocate()
-            .set(json["layers"][i]["weights"]["W"].data);
-          layer.b = new CalcMatrix2D(json["layers"][i]["weights"]["b"].rows, json["layers"][i]["weights"]["b"].cols)
+            .set(json["layers"][i]["weights"]["Wax"].data);
+          layer.Waa = new CalcMatrix2D(
+            json["layers"][i]["weights"]["Waa"].rows,
+            json["layers"][i]["weights"]["Waa"].cols,
+          )
             .allocate()
-            .set(json["layers"][i]["weights"]["b"].data);
+            .set(json["layers"][i]["weights"]["Waa"].data);
+          layer.Wya = new CalcMatrix2D(
+            json["layers"][i]["weights"]["Wya"].rows,
+            json["layers"][i]["weights"]["Wya"].cols,
+          )
+            .allocate()
+            .set(json["layers"][i]["weights"]["Wya"].data);
+          layer.ba = new CalcMatrix2D(json["layers"][i]["weights"]["ba"].rows, json["layers"][i]["weights"]["ba"].cols)
+            .allocate()
+            .set(json["layers"][i]["weights"]["ba"].data);
+          layer.by = new CalcMatrix2D(json["layers"][i]["weights"]["by"].rows, json["layers"][i]["weights"]["by"].cols)
+              .allocate()
+              .set(json["layers"][i]["weights"]["by"].data);
         });
 
-        resolve(network);*/
+        resolve(network);
       });
     });
   }
