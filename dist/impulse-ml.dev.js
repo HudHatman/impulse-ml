@@ -475,9 +475,9 @@ var DatasetVocabulary = /*#__PURE__*/function () {
         example.split("").forEach(function (ch, row) {
           var newArr = new Array(_this2.chars.length).fill(0);
           newArr[[_this2.getCharIndices()[ch]]] = 1;
-          data = [].concat(_toConsumableArray(data), _toConsumableArray(newArr));
+          data[row] = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(1, _this2.chars.length).allocate().set(newArr);
         });
-        result[index] = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(example.length, _this2.chars.length).allocate().set(data);
+        result[index] = data;
       });
       return this._examples = result;
     }
@@ -1299,6 +1299,13 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
       });
     }
   }, {
+    key: "minusOne",
+    value: function minusOne() {
+      return this.calcSync(function (calc) {
+        return calc.minusOne();
+      });
+    }
+  }, {
     key: "multiply",
     value: function multiply(number) {
       return this.calcSync(function (calc) {
@@ -1842,8 +1849,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractNetworkBuilder: () => (/* binding */ AbstractNetworkBuilder)
 /* harmony export */ });
-/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../index */ "./src/typescript/Network/index.ts");
-/* harmony import */ var _Layer_Backpropagation_BackpropagationFactory__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Layer/Backpropagation/BackpropagationFactory */ "./src/typescript/Network/Layer/Backpropagation/BackpropagationFactory.ts");
+/* harmony import */ var _Layer_Backpropagation_BackpropagationFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Layer/Backpropagation/BackpropagationFactory */ "./src/typescript/Network/Layer/Backpropagation/BackpropagationFactory.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -1852,15 +1858,13 @@ function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
-
 var AbstractNetworkBuilder = /*#__PURE__*/function () {
   function AbstractNetworkBuilder(dimension) {
     _classCallCheck(this, AbstractNetworkBuilder);
     _defineProperty(this, "dimensions", null);
     _defineProperty(this, "lastLayer", null);
     _defineProperty(this, "network", null);
-    this.dimensions = dimension;
-    this.network = new _index__WEBPACK_IMPORTED_MODULE_0__.Network(this.dimensions);
+    this.configure(dimension);
   }
   return _createClass(AbstractNetworkBuilder, [{
     key: "createLayer",
@@ -1876,7 +1880,7 @@ var AbstractNetworkBuilder = /*#__PURE__*/function () {
         layer.transition(this.lastLayer);
       }
       layer.configure();
-      layer.setBackPropagation(_Layer_Backpropagation_BackpropagationFactory__WEBPACK_IMPORTED_MODULE_1__.BackpropagationFactory.create(this.lastLayer, layer));
+      layer.setBackPropagation(_Layer_Backpropagation_BackpropagationFactory__WEBPACK_IMPORTED_MODULE_0__.BackpropagationFactory.create(this.lastLayer, layer));
       this.network.addLayer(layer);
       this.lastLayer = layer;
       return this;
@@ -1903,10 +1907,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   NetworkBuilder1D: () => (/* binding */ NetworkBuilder1D)
 /* harmony export */ });
 /* harmony import */ var _AbstractNetworkBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractNetworkBuilder */ "./src/typescript/Network/Builder/AbstractNetworkBuilder.ts");
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! fs */ "fs");
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _Layer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Layer */ "./src/typescript/Network/Layer/index.ts");
-/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../Math */ "./src/typescript/Math/index.ts");
+/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../index */ "./src/typescript/Network/index.ts");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! fs */ "fs");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _Layer__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Layer */ "./src/typescript/Network/Layer/index.ts");
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../Math */ "./src/typescript/Math/index.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -1924,6 +1929,7 @@ function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf 
 
 
 
+
 var NetworkBuilder1D = /*#__PURE__*/function (_AbstractNetworkBuild) {
   function NetworkBuilder1D() {
     _classCallCheck(this, NetworkBuilder1D);
@@ -1931,6 +1937,101 @@ var NetworkBuilder1D = /*#__PURE__*/function (_AbstractNetworkBuild) {
   }
   _inherits(NetworkBuilder1D, _AbstractNetworkBuild);
   return _createClass(NetworkBuilder1D, [{
+    key: "configure",
+    value: function configure(dimension) {
+      this.dimensions = dimension;
+      this.network = new _index__WEBPACK_IMPORTED_MODULE_1__.Network(this.dimensions);
+    }
+  }, {
+    key: "firstLayerTransition",
+    value: function firstLayerTransition(layer) {
+      layer.setWidth(this.dimensions[0]);
+    }
+  }], [{
+    key: "fromJSON",
+    value: function fromJSON(jsonPath) {
+      return new Promise(function (resolve, reject) {
+        fs__WEBPACK_IMPORTED_MODULE_2__.readFile(jsonPath, function (err, data) {
+          if (err) {
+            reject(err);
+            return;
+          }
+          var json = JSON.parse(data.toString());
+          var builder = new NetworkBuilder1D(json["dimensions"]);
+          json["layers"].forEach(function (layerData) {
+            var layerClass = null;
+            if (layerData["type"] === "logistic") {
+              layerClass = _Layer__WEBPACK_IMPORTED_MODULE_3__.LogisticLayer;
+            } else if (layerData["type"] === "softmax") {
+              layerClass = _Layer__WEBPACK_IMPORTED_MODULE_3__.SoftmaxLayer;
+            } else if (layerData["type"] === "relu") {
+              layerClass = _Layer__WEBPACK_IMPORTED_MODULE_3__.ReluLayer;
+            } else if (layerData["type"] === "tanh") {
+              layerClass = _Layer__WEBPACK_IMPORTED_MODULE_3__.TanhLayer;
+            }
+            builder.createLayer(layerClass, function (layer) {
+              // @ts-ignore
+              layer.setSize(layerData["size"]);
+            });
+          });
+          var network = builder.getNetwork();
+          network.getLayers().forEach(function (layer, i) {
+            layer.W = new _Math__WEBPACK_IMPORTED_MODULE_4__.CalcMatrix2D(json["layers"][i]["weights"]["W"].rows, json["layers"][i]["weights"]["W"].cols).allocate().set(json["layers"][i]["weights"]["W"].data);
+            layer.b = new _Math__WEBPACK_IMPORTED_MODULE_4__.CalcMatrix2D(json["layers"][i]["weights"]["b"].rows, json["layers"][i]["weights"]["b"].cols).allocate().set(json["layers"][i]["weights"]["b"].data);
+          });
+          resolve(network);
+        });
+      });
+    }
+  }]);
+}(_AbstractNetworkBuilder__WEBPACK_IMPORTED_MODULE_0__.AbstractNetworkBuilder);
+
+
+/***/ },
+
+/***/ "./src/typescript/Network/Builder/NetworkBuilderRNN.ts"
+/*!*************************************************************!*\
+  !*** ./src/typescript/Network/Builder/NetworkBuilderRNN.ts ***!
+  \*************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   NetworkBuilderRNN: () => (/* binding */ NetworkBuilderRNN)
+/* harmony export */ });
+/* harmony import */ var _AbstractNetworkBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractNetworkBuilder */ "./src/typescript/Network/Builder/AbstractNetworkBuilder.ts");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! fs */ "fs");
+/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _NetworkRNN__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../NetworkRNN */ "./src/typescript/Network/NetworkRNN.ts");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+
+
+
+var NetworkBuilderRNN = /*#__PURE__*/function (_AbstractNetworkBuild) {
+  function NetworkBuilderRNN() {
+    _classCallCheck(this, NetworkBuilderRNN);
+    return _callSuper(this, NetworkBuilderRNN, arguments);
+  }
+  _inherits(NetworkBuilderRNN, _AbstractNetworkBuild);
+  return _createClass(NetworkBuilderRNN, [{
+    key: "configure",
+    value: function configure(dimension) {
+      this.dimensions = dimension;
+      this.network = new _NetworkRNN__WEBPACK_IMPORTED_MODULE_2__["default"](this.dimensions);
+    }
+  }, {
     key: "firstLayerTransition",
     value: function firstLayerTransition(layer) {
       layer.setWidth(this.dimensions[0]);
@@ -1944,30 +2045,34 @@ var NetworkBuilder1D = /*#__PURE__*/function (_AbstractNetworkBuild) {
             reject(err);
             return;
           }
-          var json = JSON.parse(data.toString());
-          var builder = new NetworkBuilder1D(json["dimensions"]);
-          json["layers"].forEach(function (layerData) {
-            var layerClass = null;
-            if (layerData["type"] === "logistic") {
-              layerClass = _Layer__WEBPACK_IMPORTED_MODULE_2__.LogisticLayer;
+          /*const json = JSON.parse(data.toString());
+           const builder = new NetworkBuilderRNN(json["dimensions"]);
+           json["layers"].forEach((layerData: JSONLayerData) => {
+            let layerClass = null;
+             if (layerData["type"] === "logistic") {
+              layerClass = LogisticLayer;
             } else if (layerData["type"] === "softmax") {
-              layerClass = _Layer__WEBPACK_IMPORTED_MODULE_2__.SoftmaxLayer;
+              layerClass = SoftmaxLayer;
             } else if (layerData["type"] === "relu") {
-              layerClass = _Layer__WEBPACK_IMPORTED_MODULE_2__.ReluLayer;
+              layerClass = ReluLayer;
             } else if (layerData["type"] === "tanh") {
-              layerClass = _Layer__WEBPACK_IMPORTED_MODULE_2__.TanhLayer;
+              layerClass = TanhLayer;
             }
-            builder.createLayer(layerClass, function (layer) {
+             builder.createLayer(layerClass, (layer) => {
               // @ts-ignore
-              layer.setSize(layerData["size"]);
+              layer.setSize(layerData["size"] as number);
             });
           });
-          var network = builder.getNetwork();
-          network.getLayers().forEach(function (layer, i) {
-            layer.W = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["W"].rows, json["layers"][i]["weights"]["W"].cols).allocate().set(json["layers"][i]["weights"]["W"].data);
-            layer.b = new _Math__WEBPACK_IMPORTED_MODULE_3__.CalcMatrix2D(json["layers"][i]["weights"]["b"].rows, json["layers"][i]["weights"]["b"].cols).allocate().set(json["layers"][i]["weights"]["b"].data);
+           const network = builder.getNetwork();
+           network.getLayers().forEach((layer, i) => {
+            layer.W = new CalcMatrix2D(json["layers"][i]["weights"]["W"].rows, json["layers"][i]["weights"]["W"].cols)
+              .allocate()
+              .set(json["layers"][i]["weights"]["W"].data);
+            layer.b = new CalcMatrix2D(json["layers"][i]["weights"]["b"].rows, json["layers"][i]["weights"]["b"].cols)
+              .allocate()
+              .set(json["layers"][i]["weights"]["b"].data);
           });
-          resolve(network);
+           resolve(network);*/
         });
       });
     }
@@ -1986,10 +2091,13 @@ var NetworkBuilder1D = /*#__PURE__*/function (_AbstractNetworkBuild) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractNetworkBuilder: () => (/* reexport safe */ _AbstractNetworkBuilder__WEBPACK_IMPORTED_MODULE_0__.AbstractNetworkBuilder),
-/* harmony export */   NetworkBuilder1D: () => (/* reexport safe */ _NetworkBuilder1D__WEBPACK_IMPORTED_MODULE_1__.NetworkBuilder1D)
+/* harmony export */   NetworkBuilder1D: () => (/* reexport safe */ _NetworkBuilder1D__WEBPACK_IMPORTED_MODULE_1__.NetworkBuilder1D),
+/* harmony export */   NetworkBuilderRNN: () => (/* reexport safe */ _NetworkBuilderRNN__WEBPACK_IMPORTED_MODULE_2__.NetworkBuilderRNN)
 /* harmony export */ });
 /* harmony import */ var _AbstractNetworkBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractNetworkBuilder */ "./src/typescript/Network/Builder/AbstractNetworkBuilder.ts");
 /* harmony import */ var _NetworkBuilder1D__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./NetworkBuilder1D */ "./src/typescript/Network/Builder/NetworkBuilder1D.ts");
+/* harmony import */ var _NetworkBuilderRNN__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./NetworkBuilderRNN */ "./src/typescript/Network/Builder/NetworkBuilderRNN.ts");
+
 
 
 
@@ -2307,13 +2415,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   BackpropagationFactory: () => (/* binding */ BackpropagationFactory)
 /* harmony export */ });
-/* harmony import */ var _Backpropagation1Dto1D__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Backpropagation1Dto1D */ "./src/typescript/Network/Layer/Backpropagation/Backpropagation1Dto1D.ts");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../types */ "./src/typescript/types.ts");
+/* harmony import */ var _BackpropagationRNN__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BackpropagationRNN */ "./src/typescript/Network/Layer/Backpropagation/BackpropagationRNN.ts");
+/* harmony import */ var _Backpropagation1Dto1D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Backpropagation1Dto1D */ "./src/typescript/Network/Layer/Backpropagation/Backpropagation1Dto1D.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
 
 var BackpropagationFactory = /*#__PURE__*/function () {
   function BackpropagationFactory() {
@@ -2322,10 +2434,73 @@ var BackpropagationFactory = /*#__PURE__*/function () {
   return _createClass(BackpropagationFactory, null, [{
     key: "create",
     value: function create(previousLayer, layer) {
-      return new _Backpropagation1Dto1D__WEBPACK_IMPORTED_MODULE_0__.Backpropagation1Dto1D(layer, previousLayer);
+      if (layer.getType() === _types__WEBPACK_IMPORTED_MODULE_0__.LayerType.rnn) {
+        return new _BackpropagationRNN__WEBPACK_IMPORTED_MODULE_1__.BackpropagationRNN(layer, previousLayer);
+      } else {
+        return new _Backpropagation1Dto1D__WEBPACK_IMPORTED_MODULE_2__.Backpropagation1Dto1D(layer, previousLayer);
+      }
     }
   }]);
 }();
+
+/***/ },
+
+/***/ "./src/typescript/Network/Layer/Backpropagation/BackpropagationRNN.ts"
+/*!****************************************************************************!*\
+  !*** ./src/typescript/Network/Layer/Backpropagation/BackpropagationRNN.ts ***!
+  \****************************************************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   BackpropagationRNN: () => (/* binding */ BackpropagationRNN)
+/* harmony export */ });
+/* harmony import */ var _AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractBackpropagation */ "./src/typescript/Network/Layer/Backpropagation/AbstractBackpropagation.ts");
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Math */ "./src/typescript/Math/index.ts");
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+
+
+var BackpropagationRNN = /*#__PURE__*/function (_AbstractBackPropagat) {
+  function BackpropagationRNN() {
+    _classCallCheck(this, BackpropagationRNN);
+    return _callSuper(this, BackpropagationRNN, arguments);
+  }
+  _inherits(BackpropagationRNN, _AbstractBackPropagat);
+  return _createClass(BackpropagationRNN, [{
+    key: "propagate",
+    value: function propagate(input, numberOfExamples, layer, sigma, isLastLayer) {
+      var dANext = new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D(layer.aCache[0].rows(), layer.aCache[0].cols()).allocate().setZeros();
+      for (var t = input.length - 1; t >= 0; --t) {
+        var dy = layer.yCache[t].subtract(input[t]);
+        var dWya = layer.dWya.clone();
+        layer.dWya.replace(dWya.add(dy.dot(layer.aCache[t + 1])));
+        var dby = layer.dby.clone();
+        layer.dby.replace(dby.add(dy));
+        var da = layer.Wya.transpose().dot(dy).add(dANext);
+        var dza = da.multiply(layer.aCache[t + 1].pow(2).minusOne());
+        var dWaa = layer.dWaa.clone();
+        layer.dWaa.replace(dWaa.add(dza.dot(layer.aCache[t + 1].transpose())));
+        var dWax = layer.dWax.clone();
+        layer.dWax.replace(dWax.add(dza.dot(input[t])));
+        var dba = layer.dba.clone();
+        layer.dba.replace(dba.add(dza));
+        dANext.replace(layer.Waa.transpose().dot(dza));
+      }
+    }
+  }]);
+}(_AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__.AbstractBackPropagation);
 
 /***/ },
 
@@ -2449,14 +2624,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   RNNLayer: () => (/* binding */ RNNLayer)
 /* harmony export */ });
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types */ "./src/typescript/types.ts");
-/* harmony import */ var _AbstractLayer1D__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AbstractLayer1D */ "./src/typescript/Network/Layer/AbstractLayer1D.ts");
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../Math */ "./src/typescript/Math/index.ts");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types */ "./src/typescript/types.ts");
+/* harmony import */ var _AbstractLayer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AbstractLayer */ "./src/typescript/Network/Layer/AbstractLayer.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
@@ -2464,15 +2638,85 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
-var RNNLayer = /*#__PURE__*/function (_AbstractLayer1D) {
+
+var RNNLayer = /*#__PURE__*/function (_AbstractLayer) {
   function RNNLayer() {
+    var _this;
     _classCallCheck(this, RNNLayer);
-    return _callSuper(this, RNNLayer, arguments);
+    _this = _callSuper(this, RNNLayer);
+    _defineProperty(_this, "aCache", []);
+    _defineProperty(_this, "yCache", []);
+    _this.Wax = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D();
+    _this.Waa = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D();
+    _this.Wya = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D();
+    _this.ba = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D();
+    _this.by = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D();
+    _this.dWax = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D();
+    _this.dWaa = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D();
+    _this.dWya = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D();
+    _this.dba = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D();
+    _this.dby = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D();
+    return _this;
   }
-  _inherits(RNNLayer, _AbstractLayer1D);
+  _inherits(RNNLayer, _AbstractLayer);
   return _createClass(RNNLayer, [{
+    key: "configure",
+    value: function configure() {
+      this.Wax.resize(this.getHeight(), this.getWidth());
+      this.dWax.resize(this.getHeight(), this.getWidth()).setZeros();
+      this.Wax.setRandom(Math.sqrt(6 / this.getWidth()));
+      this.Waa.resize(this.getHeight(), this.getHeight());
+      this.dWaa.resize(this.getHeight(), this.getHeight()).setZeros();
+      this.Waa.setRandom(Math.sqrt(6 / this.getWidth()));
+      this.Wya.resize(this.getWidth(), this.getHeight());
+      this.dWya.resize(this.getWidth(), this.getHeight()).setZeros();
+      this.Wya.setRandom(Math.sqrt(6 / this.getWidth()));
+      this.ba.resize(this.getHeight(), 1);
+      this.dba.resize(this.getHeight(), 1).setZeros();
+      this.ba.setZeros();
+      this.by.resize(this.getWidth(), 1);
+      this.dby.resize(this.getWidth(), 1).setZeros();
+      this.by.setZeros();
+    }
+  }, {
+    key: "is1D",
+    value: function is1D() {
+      return false;
+    }
+  }, {
+    key: "is2D",
+    value: function is2D() {
+      return false;
+    }
+  }, {
+    key: "is3D",
+    value: function is3D() {
+      return false;
+    }
+  }, {
+    key: "forward",
+    value: function forward(input) {
+      this.aCache.forEach(function (c) {
+        c.destroy();
+      });
+      this.yCache.forEach(function (c) {
+        c.destroy();
+      });
+      this.aCache[0] = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(this.getHeight(), 1).allocate().setZeros();
+      for (var row = 0, aCacheIndex = 1; row < input.length; row++, aCacheIndex++) {
+        var z = this.Waa.dot(this.aCache[aCacheIndex - 1]).add(this.Wax.dot(input[row]));
+        this.aCache[aCacheIndex] = z.tanh();
+        var z_y = this.Wya.dot(this.aCache[aCacheIndex]).add(this.by);
+        this.yCache[row] = z_y.softmax();
+      }
+      return this.yCache;
+    }
+  }, {
     key: "activation",
     value: function activation(m) {
       return m.tanh();
@@ -2480,15 +2724,46 @@ var RNNLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   }, {
     key: "getType",
     value: function getType() {
-      return _types__WEBPACK_IMPORTED_MODULE_0__.LayerType.rnn;
+      return _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.rnn;
     }
   }, {
     key: "derivative",
     value: function derivative(sigma) {
       return sigma.tanhDerivative();
     }
+  }, {
+    key: "setSize",
+    value: function setSize(value) {
+      this.setHeight(value);
+      return this;
+    }
+  }, {
+    key: "getOutputWidth",
+    value: function getOutputWidth() {
+      throw new Error("Method not implemented.");
+    }
+  }, {
+    key: "getOutputHeight",
+    value: function getOutputHeight() {
+      throw new Error("Method not implemented.");
+    }
+  }, {
+    key: "getOutputDepth",
+    value: function getOutputDepth() {
+      throw new Error("Method not implemented.");
+    }
+  }, {
+    key: "getSize",
+    value: function getSize() {
+      throw new Error("Method not implemented.");
+    }
+  }, {
+    key: "penalty",
+    value: function penalty() {
+      return new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([0.0]);
+    }
   }]);
-}(_AbstractLayer1D__WEBPACK_IMPORTED_MODULE_1__.AbstractLayer1D);
+}(_AbstractLayer__WEBPACK_IMPORTED_MODULE_2__.AbstractLayer);
 
 
 /***/ },
@@ -2767,7 +3042,7 @@ var Network = /*#__PURE__*/function () {
     }
   }, {
     key: "backward",
-    value: function backward(X, regularization, sigma) {
+    value: function backward(X, sigma) {
       var m = X.cols();
       var currentSigma = sigma;
       for (var i = this.layers.length - 1; i >= 0; i -= 1) {
@@ -2816,6 +3091,77 @@ var Network = /*#__PURE__*/function () {
 }();
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Network);
+
+/***/ },
+
+/***/ "./src/typescript/Network/NetworkRNN.ts"
+/*!**********************************************!*\
+  !*** ./src/typescript/Network/NetworkRNN.ts ***!
+  \**********************************************/
+(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   NetworkRNN: () => (/* binding */ NetworkRNN),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+var NetworkRNN = /*#__PURE__*/function () {
+  function NetworkRNN(dimensions) {
+    _classCallCheck(this, NetworkRNN);
+    _defineProperty(this, "dimensions", null);
+    _defineProperty(this, "size", 0);
+    _defineProperty(this, "layers", []);
+    this.dimensions = dimensions;
+  }
+  return _createClass(NetworkRNN, [{
+    key: "addLayer",
+    value: function addLayer(layer) {
+      this.size++;
+      this.layers.push(layer);
+      return this;
+    }
+  }, {
+    key: "getLayers",
+    value: function getLayers() {
+      return this.layers;
+    }
+  }, {
+    key: "getLastLayer",
+    value: function getLastLayer() {
+      return this.layers[this.layers.length - 1];
+    }
+  }, {
+    key: "forward",
+    value: function forward(input) {
+      var output = input;
+      this.layers.forEach(function (layer) {
+        output = layer.forward(output);
+      });
+      return output;
+    }
+  }, {
+    key: "backward",
+    value: function backward(X, sigma) {
+      var regularization = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      var m = 1;
+      var currentSigma = sigma;
+      for (var i = this.layers.length - 1; i >= 0; i -= 1) {
+        var layer = this.layers[i];
+        var isLastLayer = i === this.layers.length - 1;
+        currentSigma = layer.getBackPropagation().propagate(X, m, layer, currentSigma, isLastLayer);
+      }
+    }
+  }]);
+}();
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (NetworkRNN);
 
 /***/ },
 
@@ -2983,7 +3329,7 @@ var BatchTrainer = /*#__PURE__*/function (_AbstractTrainer) {
           var input = inputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
           var output = outputDataset.getBatch(offset, Math.min(numberOfExamples - offset, this._batchSize));
           var predictions = this.network.forward(input);
-          this.network.backward(input, this.regularization, output);
+          this.network.backward(input, output, this.regularization);
           this.optimizer.setT(++t);
           this.network.getLayers().forEach(function (layer) {
             _this2.optimizer.optimize(layer);
@@ -3604,13 +3950,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var NetworkBuilder = {
-  NetworkBuilder1D: _Network_Builder__WEBPACK_IMPORTED_MODULE_1__.NetworkBuilder1D
+  NetworkBuilder1D: _Network_Builder__WEBPACK_IMPORTED_MODULE_1__.NetworkBuilder1D,
+  NetworkBuilderRNN: _Network_Builder__WEBPACK_IMPORTED_MODULE_1__.NetworkBuilderRNN
 };
 var Layer = {
   SoftmaxLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.SoftmaxLayer,
   LogisticLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.LogisticLayer,
   ReluLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.ReluLayer,
-  TanhLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.TanhLayer
+  TanhLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.TanhLayer,
+  RNNLayer: _Network_Layer__WEBPACK_IMPORTED_MODULE_2__.RNNLayer
 };
 var Optimizer = {
   OptimizerAdam: _Network_Trainer_Optimizer__WEBPACK_IMPORTED_MODULE_3__.OptimizerAdam,

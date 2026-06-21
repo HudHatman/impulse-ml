@@ -32,7 +32,7 @@ export class BatchTrainer extends AbstractTrainer {
 
         const predictions = this.network.forward(input);
 
-        this.network.backward(input, this.regularization, output);
+        this.network.backward(input, output, this.regularization);
 
         this.optimizer.setT(++t);
 

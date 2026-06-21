@@ -82,6 +82,12 @@ export class CalcMatrix2D extends CalcElement {
     });
   }
 
+  public minusOne(): CalcMatrix2D {
+    return this.calcSync((calc) => {
+      return calc.minusOne();
+    });
+  }
+
   public multiply(number: number | CalcMatrix2D): CalcMatrix2D {
     return this.calcSync((calc) => {
       return calc.multiply(number);

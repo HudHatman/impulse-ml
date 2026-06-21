@@ -11,10 +11,10 @@ export abstract class AbstractBackPropagation {
   }
 
   abstract propagate(
-    input: CalcMatrix2D,
+    input: CalcMatrix2D | Array<CalcMatrix2D>,
     numberOfExamples: number,
     layer: Layers,
-    sigma: CalcMatrix2D,
+    sigma: CalcMatrix2D | Array<CalcMatrix2D>,
     isLastLayer: boolean,
-  ): CalcMatrix2D;
+  ): CalcMatrix2D | Array<CalcMatrix2D>;
 }

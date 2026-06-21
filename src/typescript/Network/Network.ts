@@ -36,7 +36,7 @@ class Network {
     return output;
   }
 
-  backward(X: CalcMatrix2D, regularization: number, sigma: CalcMatrix2D): void {
+  backward(X: CalcMatrix2D, sigma: CalcMatrix2D): void {
     const m = X.cols();
     let currentSigma = sigma;
 

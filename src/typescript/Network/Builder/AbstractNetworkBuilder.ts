@@ -8,9 +8,10 @@ abstract class AbstractNetworkBuilder {
   protected network: Networks | null = null;
 
   constructor(dimension: Dimension) {
-    this.dimensions = dimension;
-    this.network = new Network(this.dimensions);
+    this.configure(dimension);
   }
+
+  abstract configure(dimension: Dimension): void;
 
   createLayer(layerClass: Layers, callback: (layer: Layers) => void | null = null): AbstractNetworkBuilder {
     const layer: Layers = new layerClass();

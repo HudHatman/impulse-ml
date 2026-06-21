@@ -5,7 +5,7 @@ export class DatasetVocabulary {
   public dataSize = 0;
   public data: string = "";
   public chars: string[];
-  protected _examples: Array<CalcMatrix2D> = [];
+  protected _examples: Array<Array<CalcMatrix2D>> = [];
 
   constructor(str: string) {
     this.data = str.toLowerCase();
@@ -82,16 +82,16 @@ export class DatasetVocabulary {
       .map((example: string) => {
         return example + "\n";
       });
-    const result: Array<CalcMatrix2D> = [];
+    const result: Array<Array<CalcMatrix2D>> = [];
 
     examples.forEach((example, index) => {
-      let data: Array<number> = [];
+      let data: Array<CalcMatrix2D> = [];
       example.split("").forEach((ch, row) => {
         const newArr: Array<number> = new Array(this.chars.length).fill(0);
         newArr[[this.getCharIndices()[ch]]] = 1;
-        data = [...data, ...newArr];
+        data[row] = (new CalcMatrix2D(1, this.chars.length)).allocate().set(newArr);
       });
-      result[index] = (new CalcMatrix2D(example.length, this.chars.length).allocate().set(data))
+      result[index] = data;
     })
 
     return this._examples = result;

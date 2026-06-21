@@ -1,6 +1,6 @@
 const {
-  NetworkBuilder: { NetworkBuilder1D },
-  Layer: { LogisticLayer, ReluLayer, TanhLayer, SoftmaxLayer },
+  NetworkBuilder: { NetworkBuilderRNN },
+  Layer: { RNNLayer },
   Optimizer: { OptimizerGradientDescent, OptimizerMomentum, OptimizerAdagrad, OptimizerRMSProp, OptimizerAdam },
   Trainer: { BatchTrainer },
   Cost: { MeanSquaredErrorCost, CrossEntropyCost },
@@ -34,6 +34,16 @@ DatasetVocabularyBuilder.fromSource(DatasetVocabularyBuilderSourceTextFile.fromL
   async (inputDataset) => {
     console.log("Loaded dinos.txt.");
 
-    console.log('getVocabularySize', inputDataset.getExamples()[1].get())
+    console.log('getVocabularySize', inputDataset.getVocabularySize());
+
+    const builder = new NetworkBuilderRNN([inputDataset.getVocabularySize()]);
+    builder.createLayer(RNNLayer, (layer) => {
+      layer.setSize(128);
+    });
+    const network = builder.getNetwork();
+
+    const o = network.forward(inputDataset.getExamples()[0]);
+    network.backward(inputDataset.getExamples()[0]);
+    console.log(o[0].get());
   },
 );

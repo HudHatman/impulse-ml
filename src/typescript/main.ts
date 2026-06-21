@@ -1,6 +1,6 @@
 import Math from "./Math";
-import { NetworkBuilder1D } from "./Network/Builder";
-import { LogisticLayer, ReluLayer, SoftmaxLayer, TanhLayer } from "./Network/Layer";
+import { NetworkBuilder1D, NetworkBuilderRNN } from "./Network/Builder";
+import { LogisticLayer, ReluLayer, SoftmaxLayer, TanhLayer, RNNLayer } from "./Network/Layer";
 import {
   OptimizerAdagrad,
   OptimizerAdam,
@@ -27,12 +27,13 @@ import {
   SplitDatasetModifier,
 } from "./Dataset/Modifier";
 
-const NetworkBuilder = { NetworkBuilder1D };
+const NetworkBuilder = { NetworkBuilder1D, NetworkBuilderRNN };
 const Layer = {
   SoftmaxLayer,
   LogisticLayer,
   ReluLayer,
   TanhLayer,
+  RNNLayer,
 };
 const Optimizer = {
   OptimizerAdam,
