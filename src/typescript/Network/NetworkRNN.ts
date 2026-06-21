@@ -51,7 +51,7 @@ class NetworkRNN {
 
   sample(inputDataset: DatasetVocabulary, maxSize = 50) {
     const x = new CalcMatrix2D(inputDataset.getCharsLength(), 1).allocate().setZeros();
-    const a = new CalcMatrix2D(this.dimensions[0], 1).allocate().setRandom(1);
+    const a = new CalcMatrix2D(this.layers[0].Waa.dims()[0], 1).allocate().setZeros();
     let count = 0;
     let generated = "";
 

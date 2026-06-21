@@ -70,14 +70,17 @@ class RNNLayer extends AbstractLayer {
     this.aCache.forEach((c: CalcMatrix2D) => {
       c.destroy();
     });
+    this.aCache = [];
+
     this.yCache.forEach((c: CalcMatrix2D) => {
       c.destroy();
     });
+    this.yCache = [];
 
     this.aCache[0] = new CalcMatrix2D(this.getHeight(), 1).allocate().setZeros();
 
     for (let row = 0, aCacheIndex = 1; row < input.length; row++, aCacheIndex++) {
-      const z = this.Waa.dot(this.aCache[aCacheIndex - 1]).add(this.Wax.dot(input[row])).add(this.ba);
+      const z = this.Waa.dot(this.aCache[aCacheIndex - 1]).add(this.Wax.dot(input[row].transpose())).add(this.ba);
       this.aCache[aCacheIndex] = z.tanh();
 
       const z_y = this.Wya.dot(this.aCache[aCacheIndex]).add(this.by);

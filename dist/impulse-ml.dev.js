@@ -2492,7 +2492,7 @@ var BackpropagationRNN = /*#__PURE__*/function (_AbstractBackPropagat) {
       layer.dba.setZeros();
       layer.dby.setZeros();
       for (var t = input.length - 1; t >= 0; --t) {
-        var dy = layer.yCache[t].subtract(sigma[t]);
+        var dy = layer.yCache[t].subtract(sigma[t].transpose());
         var dWya = layer.dWya.clone();
         layer.dWya.replace(dWya.add(dy.dot(layer.aCache[t + 1].transpose())));
         var dby = layer.dby.clone();
@@ -2502,7 +2502,7 @@ var BackpropagationRNN = /*#__PURE__*/function (_AbstractBackPropagat) {
         var dWaa = layer.dWaa.clone();
         layer.dWaa.replace(dWaa.add(dza.dot(layer.aCache[t].transpose())));
         var dWax = layer.dWax.clone();
-        layer.dWax.replace(dWax.add(dza.dot(input[t].transpose())));
+        layer.dWax.replace(dWax.add(dza.dot(input[t])));
         var dba = layer.dba.clone();
         layer.dba.replace(dba.add(dza));
         dANext.replace(layer.Waa.transpose().dot(dza));
@@ -2720,12 +2720,14 @@ var RNNLayer = /*#__PURE__*/function (_AbstractLayer) {
       this.aCache.forEach(function (c) {
         c.destroy();
       });
+      this.aCache = [];
       this.yCache.forEach(function (c) {
         c.destroy();
       });
+      this.yCache = [];
       this.aCache[0] = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(this.getHeight(), 1).allocate().setZeros();
       for (var row = 0, aCacheIndex = 1; row < input.length; row++, aCacheIndex++) {
-        var z = this.Waa.dot(this.aCache[aCacheIndex - 1]).add(this.Wax.dot(input[row])).add(this.ba);
+        var z = this.Waa.dot(this.aCache[aCacheIndex - 1]).add(this.Wax.dot(input[row].transpose())).add(this.ba);
         this.aCache[aCacheIndex] = z.tanh();
         var z_y = this.Wya.dot(this.aCache[aCacheIndex]).add(this.by);
         this.yCache[row] = z_y.softmax();
@@ -3190,7 +3192,7 @@ var NetworkRNN = /*#__PURE__*/function () {
     value: function sample(inputDataset) {
       var maxSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 50;
       var x = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(inputDataset.getCharsLength(), 1).allocate().setZeros();
-      var a = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(this.dimensions[0], 1).allocate().setRandom(1);
+      var a = new _Math__WEBPACK_IMPORTED_MODULE_0__.CalcMatrix2D(this.layers[0].Waa.dims()[0], 1).allocate().setZeros();
       var count = 0;
       var generated = "";
       while (count < maxSize) {

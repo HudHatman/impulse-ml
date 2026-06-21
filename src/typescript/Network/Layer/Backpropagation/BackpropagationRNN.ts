@@ -22,22 +22,21 @@ export class BackpropagationRNN extends AbstractBackPropagation {
     layer.dby.setZeros();
 
     for (let t = input.length - 1; t >= 0; --t) {
-      const dy = layer.yCache[t].subtract(sigma[t]);
-
+      const dy = layer.yCache[t].subtract(sigma[t].transpose());
       const dWya = layer.dWya.clone();
       layer.dWya.replace(dWya.add(dy.dot(layer.aCache[t + 1].transpose())));
 
       const dby = layer.dby.clone();
       layer.dby.replace(dby.add(dy));
-
       const da = layer.Wya.transpose().dot(dy).add(dANext);
+
       const dza = da.multiply(layer.aCache[t + 1].tanhDerivative());
 
       const dWaa = layer.dWaa.clone();
       layer.dWaa.replace(dWaa.add(dza.dot(layer.aCache[t].transpose())));
 
       const dWax = layer.dWax.clone();
-      layer.dWax.replace(dWax.add(dza.dot(input[t].transpose())));
+      layer.dWax.replace(dWax.add(dza.dot(input[t])));
 
       const dba = layer.dba.clone();
       layer.dba.replace(dba.add(dza));

@@ -43,15 +43,15 @@ DatasetVocabularyBuilder.fromSource(
   });
   const network = builder.getNetwork();
   const iterations = 10;
-  const learningRate = 0.001;
+  const learningRate = 0.01;
   const data = inputDataset.buildData(40, 1);
   console.log("Data built.");
 
   for (let i = 0; i < iterations; i++) {
     console.log(`Iteration: ${i}`);
-    for (let j = 0; j < data.length; j++) {
+    for (let j = 0; j < data.length - 1; j++) {
       network.forward(data[j]);
-      network.backward(data[j], data[j]);
+      network.backward(data[j], data[j + 1]);
 
       const layer = network.getLayers()[0];
 
@@ -61,15 +61,8 @@ DatasetVocabularyBuilder.fromSource(
       layer.ba.replace(layer.ba.subtract(layer.dba.multiply(learningRate)));
       layer.by.replace(layer.by.subtract(layer.dby.multiply(learningRate)));
 
-      //if (j % 5 === 0) process.exit();
-      console.log(`${j} / ${data.length}`);
-      if (isNaN(layer.Wax.get()[0])) {
-        console.log(layer.Wax.get(), layer.dWax.get());process.exit();
-      }
       if (j % 50 === 0) {
-        if (j % 200 === 0) {
-          console.log(`SAMPLE: ${network.sample(inputDataset)}\n---END SAMPLE.`);
-        }
+        console.log(`SAMPLE at iteration ${j}: ${network.sample(inputDataset)}\n---END SAMPLE.`);
       }
     }
     console.log(network.sample(inputDataset));
