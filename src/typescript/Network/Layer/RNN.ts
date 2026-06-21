@@ -35,15 +35,15 @@ class RNNLayer extends AbstractLayer {
   configure(): void {
     this.Wax.resize(this.getHeight(), this.getWidth());
     this.dWax.resize(this.getHeight(), this.getWidth()).setZeros();
-    this.Wax.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
+    this.Wax.setRandom(Math.sqrt(2 / this.getHeight()));
 
     this.Waa.resize(this.getHeight(), this.getHeight());
     this.dWaa.resize(this.getHeight(), this.getHeight()).setZeros();
-    this.Waa.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
+    this.Waa.setRandom(Math.sqrt(2 / this.getHeight()));
 
     this.Wya.resize(this.getWidth(), this.getHeight());
     this.dWya.resize(this.getWidth(), this.getHeight()).setZeros();
-    this.Wya.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
+    this.Wya.setRandom(Math.sqrt(2 / this.getHeight()));
 
     this.ba.resize(this.getHeight(), 1);
     this.dba.resize(this.getHeight(), 1).setZeros();

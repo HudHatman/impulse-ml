@@ -40,7 +40,7 @@ class NetworkRNN {
 
   backward(X: Array<CalcMatrix2D>, sigma: Array<CalcMatrix2D>, regularization = 0): void {
     const m = 1;
-    let currentSigma = this.layers[this.layers.length - 1].yCache;
+    let currentSigma = sigma;
 
     for (let i = this.layers.length - 1; i >= 0; i -= 1) {
       const layer = this.layers[i];

@@ -2492,13 +2492,13 @@ var BackpropagationRNN = /*#__PURE__*/function (_AbstractBackPropagat) {
       layer.dba.setZeros();
       layer.dby.setZeros();
       for (var t = input.length - 1; t >= 0; --t) {
-        var dy = sigma[t].subtract(input[t]);
+        var dy = layer.yCache[t].subtract(sigma[t]);
         var dWya = layer.dWya.clone();
         layer.dWya.replace(dWya.add(dy.dot(layer.aCache[t + 1].transpose())));
         var dby = layer.dby.clone();
         layer.dby.replace(dby.add(dy));
         var da = layer.Wya.transpose().dot(dy).add(dANext);
-        var dza = da.multiply(layer.aCache[t + 1].pow(2).minusOne());
+        var dza = da.multiply(layer.aCache[t + 1].tanhDerivative());
         var dWaa = layer.dWaa.clone();
         layer.dWaa.replace(dWaa.add(dza.dot(layer.aCache[t].transpose())));
         var dWax = layer.dWax.clone();
@@ -2507,12 +2507,12 @@ var BackpropagationRNN = /*#__PURE__*/function (_AbstractBackPropagat) {
         layer.dba.replace(dba.add(dza));
         dANext.replace(layer.Waa.transpose().dot(dza));
         result.push(dANext);
+        layer.dWax.replace(layer.dWax.setMax(5).setMin(-5));
+        layer.dWya.replace(layer.dWya.setMax(5).setMin(-5));
+        layer.dWaa.replace(layer.dWaa.setMax(5).setMin(-5));
+        layer.dba.replace(layer.dba.setMax(5).setMin(-5));
+        layer.dby.replace(layer.dby.setMax(5).setMin(-5));
       }
-      layer.dWax.replace(layer.dWax.setMax(5).setMin(-5));
-      layer.dWya.replace(layer.dWya.setMax(5).setMin(-5));
-      layer.dWaa.replace(layer.dWaa.setMax(5).setMin(-5));
-      layer.dba.replace(layer.dba.setMax(5).setMin(-5));
-      layer.dby.replace(layer.dby.setMax(5).setMin(-5));
       return result;
     }
   }]);
@@ -2685,13 +2685,13 @@ var RNNLayer = /*#__PURE__*/function (_AbstractLayer) {
     value: function configure() {
       this.Wax.resize(this.getHeight(), this.getWidth());
       this.dWax.resize(this.getHeight(), this.getWidth()).setZeros();
-      this.Wax.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
+      this.Wax.setRandom(Math.sqrt(2 / this.getHeight()));
       this.Waa.resize(this.getHeight(), this.getHeight());
       this.dWaa.resize(this.getHeight(), this.getHeight()).setZeros();
-      this.Waa.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
+      this.Waa.setRandom(Math.sqrt(2 / this.getHeight()));
       this.Wya.resize(this.getWidth(), this.getHeight());
       this.dWya.resize(this.getWidth(), this.getHeight()).setZeros();
-      this.Wya.setRandom(Math.sqrt(6 / this.getHeight())).multiply(0.01);
+      this.Wya.setRandom(Math.sqrt(2 / this.getHeight()));
       this.ba.resize(this.getHeight(), 1);
       this.dba.resize(this.getHeight(), 1).setZeros();
       this.ba.setZeros();
@@ -3178,7 +3178,7 @@ var NetworkRNN = /*#__PURE__*/function () {
     value: function backward(X, sigma) {
       var regularization = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
       var m = 1;
-      var currentSigma = this.layers[this.layers.length - 1].yCache;
+      var currentSigma = sigma;
       for (var i = this.layers.length - 1; i >= 0; i -= 1) {
         var layer = this.layers[i];
         var isLastLayer = i === this.layers.length - 1;

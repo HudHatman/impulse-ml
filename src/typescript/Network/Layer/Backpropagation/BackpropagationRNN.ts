@@ -22,8 +22,7 @@ export class BackpropagationRNN extends AbstractBackPropagation {
     layer.dby.setZeros();
 
     for (let t = input.length - 1; t >= 0; --t) {
-
-      const dy = sigma[t].subtract(input[t]);
+      const dy = layer.yCache[t].subtract(sigma[t]);
 
       const dWya = layer.dWya.clone();
       layer.dWya.replace(dWya.add(dy.dot(layer.aCache[t + 1].transpose())));
@@ -32,7 +31,7 @@ export class BackpropagationRNN extends AbstractBackPropagation {
       layer.dby.replace(dby.add(dy));
 
       const da = layer.Wya.transpose().dot(dy).add(dANext);
-      const dza = da.multiply(layer.aCache[t + 1].pow(2).minusOne());
+      const dza = da.multiply(layer.aCache[t + 1].tanhDerivative());
 
       const dWaa = layer.dWaa.clone();
       layer.dWaa.replace(dWaa.add(dza.dot(layer.aCache[t].transpose())));
@@ -46,13 +45,13 @@ export class BackpropagationRNN extends AbstractBackPropagation {
       dANext.replace(layer.Waa.transpose().dot(dza));
 
       result.push(dANext);
-    }
 
-    layer.dWax.replace(layer.dWax.setMax(5).setMin(-5));
-    layer.dWya.replace(layer.dWya.setMax(5).setMin(-5));
-    layer.dWaa.replace(layer.dWaa.setMax(5).setMin(-5));
-    layer.dba.replace(layer.dba.setMax(5).setMin(-5));
-    layer.dby.replace(layer.dby.setMax(5).setMin(-5));
+      layer.dWax.replace(layer.dWax.setMax(5).setMin(-5));
+      layer.dWya.replace(layer.dWya.setMax(5).setMin(-5));
+      layer.dWaa.replace(layer.dWaa.setMax(5).setMin(-5));
+      layer.dba.replace(layer.dba.setMax(5).setMin(-5));
+      layer.dby.replace(layer.dby.setMax(5).setMin(-5));
+    }
 
     return result;
   }
