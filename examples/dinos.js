@@ -43,7 +43,7 @@ DatasetVocabularyBuilder.fromSource(
   });
   const network = builder.getNetwork();
   const iterations = 10;
-  const learningRate = 0.01;
+  const learningRate = 0.001;
   const data = inputDataset.buildData(40, 1);
   console.log("Data built.");
 
@@ -62,7 +62,7 @@ DatasetVocabularyBuilder.fromSource(
       layer.by.replace(layer.by.subtract(layer.dby.multiply(learningRate)));
 
       if (j % 50 === 0) {
-        console.log(`SAMPLE at iteration ${j}: ${network.sample(inputDataset)}\n---END SAMPLE.`);
+        console.log(`SAMPLE at iteration ${j}: ${network.sample(inputDataset).replace(/\n/g, "")}\n---END SAMPLE.`);
       }
     }
     console.log(network.sample(inputDataset));

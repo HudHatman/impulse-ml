@@ -54,12 +54,7 @@ export class CalcElement {
   }
 
   public set(arr: Array<any>) {
-    const flatten = (array: Array<any>): number[] => {
-      return array.reduce((acc, val) => {
-        return acc.concat(Array.isArray(val) ? flatten(val) : val);
-      }, []);
-    };
-    this._memory.set(new Float64Array(flatten(arr)));
+    this._memory.set(new Float64Array(arr));
     return this;
   }
 

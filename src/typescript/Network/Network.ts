@@ -1,31 +1,9 @@
-import { Dimension, Layers } from "../types";
+import { Layers } from "../types";
 import { CalcMatrix2D } from "../Math";
 import * as fs from "fs";
+import { AbstractNetwork } from "./AbstractNetwork";
 
-class Network {
-  private readonly dimensions: Dimension | null = null;
-  private size = 0;
-  private layers: Layers[] = [];
-
-  constructor(dimensions: Dimension) {
-    this.dimensions = dimensions;
-  }
-
-  addLayer(layer: Layers): Network {
-    this.size++;
-    this.layers.push(layer);
-
-    return this;
-  }
-
-  getLayers(): Layers[] {
-    return this.layers;
-  }
-
-  getLastLayer(): Layers {
-    return this.layers[this.layers.length - 1];
-  }
-
+class Network extends AbstractNetwork {
   forward(input: CalcMatrix2D): CalcMatrix2D {
     let output = input;
 

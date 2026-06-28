@@ -3,31 +3,9 @@ import { CalcMatrix2D } from "../Math";
 import * as fs from "fs";
 import { RNNLayer } from "./Layer";
 import { DatasetVocabulary } from "../Dataset/DatasetVocabulary";
+import { AbstractNetwork } from "./AbstractNetwork";
 
-class NetworkRNN {
-  private readonly dimensions: Dimension | null = null;
-  private size = 0;
-  private layers: RNNLayer[] = [];
-
-  constructor(dimensions: Dimension) {
-    this.dimensions = dimensions;
-  }
-
-  addLayer(layer: Layers): NetworkRNN {
-    this.size++;
-    this.layers.push(layer);
-
-    return this;
-  }
-
-  getLayers(): Layers[] {
-    return this.layers;
-  }
-
-  getLastLayer(): Layers {
-    return this.layers[this.layers.length - 1];
-  }
-
+class NetworkRNN extends AbstractNetwork {
   forward(input: Array<CalcMatrix2D>): Array<CalcMatrix2D> {
     let output = input;
 
@@ -51,7 +29,7 @@ class NetworkRNN {
 
   sample(inputDataset: DatasetVocabulary, maxSize = 50) {
     const x = new CalcMatrix2D(inputDataset.getCharsLength(), 1).allocate().setZeros();
-    const a = new CalcMatrix2D(this.layers[0].Waa.dims()[0], 1).allocate().setZeros();
+    const a = new CalcMatrix2D(this.layers[0].Waa.dims()[0], 1).allocate().setRandom(1);
     let count = 0;
     let generated = "";
 

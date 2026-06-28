@@ -76,6 +76,7 @@ export abstract class AbstractTrainer {
       cost += (this.regularization / (2 * miniBatchSize)) * penalty;
     }
 
+
     let correctPredictions = 0;
     for (let i = 0; i < miniBatchSize; i += 1) {
       const predictionCol = predictions.col(i);
