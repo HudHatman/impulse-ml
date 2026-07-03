@@ -1,5 +1,5 @@
 import { AbstractBackPropagation } from "./AbstractBackpropagation";
-import { CalcMatrix2D } from "../../../Math";
+import { Calc, CalcMatrix2D } from "../../../Math";
 import { Layers } from "../../../types";
 
 export class Backpropagation1Dto1D extends AbstractBackPropagation {
@@ -12,21 +12,23 @@ export class Backpropagation1Dto1D extends AbstractBackPropagation {
   ): CalcMatrix2D {
     const previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
 
-    let dZ: CalcMatrix2D;
+    return Calc.instance(({subtract, multiply, dot, transpose, divide, rowwiseSum}) => {
+      let dZ: CalcMatrix2D;
 
-    if (isLastLayer) {
-      dZ = layer.A.subtract(sigma);
-    } else {
-      dZ = sigma.multiply(layer.derivative(layer.Z));
-    }
+      if (isLastLayer) {
+        dZ = subtract(layer.A, sigma)
+      } else {
+        dZ = multiply(sigma, layer.derivative(layer.Z))
+      }
 
-    layer.gW.replace(dZ.dot(previousActivations.transpose()).divide(numberOfExamples));
-    layer.gb.replace(dZ.rowwiseSum().divide(numberOfExamples));
+      layer.gW.replace(divide(dot(dZ, transpose(previousActivations)), numberOfExamples));
+      layer.gb.replace(divide(rowwiseSum(dZ), numberOfExamples));
 
-    const dA_prev = layer.W.transpose().dot(dZ);
+      const dA_prev = dot(transpose(layer.W), dZ);
 
-    dZ.destroy();
+      dZ.destroy();
 
-    return dA_prev;
+      return dA_prev;
+    })
   }
 }

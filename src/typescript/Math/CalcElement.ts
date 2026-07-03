@@ -1,5 +1,4 @@
 import { getDevice } from "./Computation";
-import { CalcScalar } from "./CalcScalar";
 import { Calc } from "./Calc";
 
 export class CalcElement {
@@ -82,98 +81,10 @@ export class CalcElement {
     return false;
   }
 
-  public setZeros() {
-    return this.calcSync((calc) => {
-      return calc.setZeros();
-    });
-  }
-
-  public setRandom(number: number) {
-    return this.calcSync((calc) => {
-      return calc.setRandom(number);
-    });
-  }
-
-  public setMax(number: number) {
-    return this.calcSync((calc) => {
-      return calc.setMax(number);
-    });
-  }
-
-  public setMin(number: number) {
-    return this.calcSync((calc) => {
-      return calc.setMin(number);
-    });
-  }
-
-  public reluBackpropagation() {
-    return this.calcSync((calc) => {
-      return calc.reluBackpropagation();
-    });
-  }
-  public pow(number: number) {
-    return this.calcSync((calc) => {
-      return calc.pow(number);
-    });
-  }
-  public sum() {
-    return this.calcSync((calc) => {
-      return calc.sum();
-    });
-  }
-  public reluForwardPropagation() {
-    return this.calcSync((calc) => {
-      return calc.reluForwardPropagation();
-    });
-  }
-
   private getCalcSandbox(async = false) {
     return {
-      sum: () => {
-        const result = new CalcScalar().allocate();
-        return this._call("algebra", "algebra_sum", async)([this, result])(result);
-      },
-      setZeros: () => {
-        return this._call("matrix", "matrix_set_zeros", async)([this])(this);
-      },
-      setRandom: (number: number) => {
-        const nb = new CalcScalar().allocate().set([number]);
-        return this._call("matrix", "matrix_set_random", async)([this, nb])(this);
-      },
+
     };
-  }
-
-  protected _call(module: string, kernel: string, async: boolean) {
-    return (params, result) => {
-      const calc = Calc.get().setResult(result).setParams(params);
-      return (result) => {
-        if (async) {
-          return new Promise((resolve) => {
-            calc.execAsync(module, kernel).then(() => {
-              resolve(result);
-            });
-          });
-        } else {
-          calc.execSync(module, kernel);
-          return result;
-        }
-      };
-    };
-  }
-
-  public calcSync(callback) {
-    return callback(this.getCalcSandbox(false));
-  }
-
-  public calcAsync(callback) {
-    return new Promise((resolve, reject) => {
-      try {
-        const result = callback(this.getCalcSandbox(true));
-        resolve(result);
-      } catch (e) {
-        reject(e);
-      }
-    });
   }
 
   public getMemory() {
@@ -185,15 +96,15 @@ export class CalcElement {
   }
 
   public destroy() {
-    this._memory.free();
-    this._dims = [0, 0, 0];
-    this._allocated = false;
+    if (this._allocated) {
+      this._memory.free();
+      this._dims = [0, 0, 0];
+      this._allocated = false;
+    }
   }
 
   public copyFrom(other: CalcElement) {
-    if (this._allocated) {
-      this.destroy();
-    }
+    this.destroy();
     this._dims = other.dims();
     this.allocate();
     this._memory.setWidth(other.rows());
@@ -213,5 +124,15 @@ export class CalcElement {
     }
     other.destroy();
     return this;
+  }
+}
+
+export class CalcScalar extends CalcElement {
+  constructor() {
+    super(1);
+  }
+
+  public isScalar() {
+    return true;
   }
 }

@@ -1,7 +1,7 @@
 import { Network } from "../index";
 import { AbstractOptimizer } from "./Optimizer/AbstractOptimizer";
 import { Dataset } from "../../Dataset";
-import { CalcMatrix2D } from "../../Math";
+import { Calc, CalcMatrix2D } from "../../Math";
 import { AbstractCost } from "./Cost/AbstractCost";
 
 export interface CostResult {
@@ -79,19 +79,21 @@ export abstract class AbstractTrainer {
 
     let correctPredictions = 0;
     for (let i = 0; i < miniBatchSize; i += 1) {
-      const predictionCol = predictions.col(i);
-      const outputCol = correctOutput.col(i);
-      const predictionIndex = predictionCol.maxCoeff();
-      const outputIndex = outputCol.maxCoeff();
+      Calc.instance(({col, maxCoeff}) => {
+        const predictionCol = col(predictions, i)
+        const outputCol = col(correctOutput, i);
+        const predictionIndex = maxCoeff(predictionCol);
+        const outputIndex = maxCoeff(outputCol);
 
-      if (predictionIndex.get()[0] === outputIndex.get()[0]) {
-        correctPredictions++;
-      }
+        if (predictionIndex.get()[0] === outputIndex.get()[0]) {
+          correctPredictions++;
+        }
 
-      predictionCol.destroy();
-      outputCol.destroy();
-      predictionIndex.destroy();
-      outputIndex.destroy();
+        predictionCol.destroy();
+        outputCol.destroy();
+        predictionIndex.destroy();
+        outputIndex.destroy();
+      })
     }
 
     const accuracy = (correctPredictions / miniBatchSize) * 100.0;

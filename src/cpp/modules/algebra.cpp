@@ -20,8 +20,8 @@ static bool initialized = false;
 void init() {
     if (initialized) return;
     initialized = true;
-    omp_set_num_threads(6);
-    Eigen::setNbThreads(6);
+    omp_set_num_threads(12);
+    Eigen::setNbThreads(12);
 }
 
 void algebra_cross_entropy_loss(MEMORY * inputs, MEMORY * outputs) {
@@ -90,10 +90,9 @@ void algebra_pow(MEMORY * inputs, MEMORY * outputs) {
     init();
 
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
-    Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
     double number = inputs[1].memory[0];
 
-    result = m.unaryExpr([&number](double x) {
+    m = m.unaryExpr([&number](double x) {
     	return std::pow(x, number);
     });
 }
@@ -118,18 +117,6 @@ void algebra_minus_one(MEMORY * inputs, MEMORY * outputs) {
     result = m.unaryExpr([](double x) {
         return 1.0 - x;
     });
-}
-
-void algebra_softmax_derivative(MEMORY * inputs, MEMORY * outputs) {
-    init();
-
-    Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
-    Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
-
-    // This is mathematically incorrect for backpropagation and should not be used.
-    // However, to prevent crashes, we can return a matrix of ones.
-    // The correct path is through CrossEntropyCost, which avoids this derivative.
-    result = Eigen::MatrixXd::Ones(m.rows(), m.cols());
 }
 
 void algebra_multiply(MEMORY * inputs, MEMORY * outputs) {
@@ -229,9 +216,8 @@ void algebra_leaky_reluBackpropagation(MEMORY * inputs, MEMORY * outputs) {
 
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     double alpha = inputs[1].memory[0];
-    Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
 
-    result = m.unaryExpr([&alpha](const double x) {
+    m = m.unaryExpr([&alpha](const double x) {
         return (x > 0.0) ? 1.0 : alpha;
     });
 }
@@ -410,12 +396,12 @@ void algebra_softmax(MEMORY * inputs, MEMORY * outputs) {
     init();
 
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
-    Eigen::Map<Eigen::MatrixXd> result(inputs[1].memory, inputs[1].rows, inputs[1].cols);
+    Eigen::Map<Eigen::MatrixXd> tmp;
 
     Eigen::MatrixXd stabilized = m.rowwise() - m.colwise().maxCoeff();
-    result = stabilized.array().exp();
-    Eigen::MatrixXd divider = result.colwise().sum().replicate(result.rows(), 1);
-    result = result.array() / divider.array();
+    tmp = stabilized.array().exp();
+    Eigen::MatrixXd divider = tmp.colwise().sum().replicate(tmp.rows(), 1);
+    m = tmp.array() / divider.array();
 }
 
 void algebra_fraction(MEMORY * inputs, MEMORY * outputs) {

@@ -1,5 +1,5 @@
 import { Calc } from "./Calc";
-import { CalcScalar } from "./CalcScalar";
+import { CalcElement, CalcScalar } from "./CalcElement";
 import { CalcColVector } from "./CalcColVector";
 import { CalcRowVector } from "./CalcRowVector";
 import { CalcMatrix2D } from "./CalcMatrix2D";

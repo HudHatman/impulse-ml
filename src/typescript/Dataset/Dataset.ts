@@ -1,4 +1,4 @@
-import { CalcMatrix2D } from "../Math";
+import { Calc, CalcMatrix2D } from "../Math";
 
 export class Dataset {
   public data: CalcMatrix2D | null = null;
@@ -12,7 +12,9 @@ export class Dataset {
   }
 
   exampleAt(index: number): CalcMatrix2D {
-    return this.data.col(index);
+    return Calc.instance(({col}) => {
+      return col(this.data, index);
+    })
   }
 
   getNumberOfExamples(): number {
@@ -24,6 +26,8 @@ export class Dataset {
   }
 
   getBatch(offset: number, batchSize: number): CalcMatrix2D {
-    return this.data.block(0, offset, this.getExampleSize(), batchSize);
+    return Calc.instance(({block}) => {
+      return block(this.data, 0, offset, this.getExampleSize(), batchSize)
+    })
   }
 }

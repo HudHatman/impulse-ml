@@ -317,6 +317,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Dataset: () => (/* binding */ Dataset)
 /* harmony export */ });
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Math */ "./src/typescript/Math/index.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -324,6 +325,7 @@ function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), 
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
 var Dataset = /*#__PURE__*/function () {
   function Dataset() {
     var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -334,7 +336,11 @@ var Dataset = /*#__PURE__*/function () {
   return _createClass(Dataset, [{
     key: "exampleAt",
     value: function exampleAt(index) {
-      return this.data.col(index);
+      var _this = this;
+      return _Math__WEBPACK_IMPORTED_MODULE_0__.Calc.instance(function (_ref) {
+        var col = _ref.col;
+        return col(_this.data, index);
+      });
     }
   }, {
     key: "getNumberOfExamples",
@@ -349,7 +355,11 @@ var Dataset = /*#__PURE__*/function () {
   }, {
     key: "getBatch",
     value: function getBatch(offset, batchSize) {
-      return this.data.block(0, offset, this.getExampleSize(), batchSize);
+      var _this2 = this;
+      return _Math__WEBPACK_IMPORTED_MODULE_0__.Calc.instance(function (_ref2) {
+        var block = _ref2.block;
+        return block(_this2.data, 0, offset, _this2.getExampleSize(), batchSize);
+      });
     }
   }], [{
     key: "fromMatrix",
@@ -760,7 +770,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   Calc: () => (/* binding */ Calc)
 /* harmony export */ });
-/* harmony import */ var _Computation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Computation */ "./src/typescript/Math/Computation/index.ts");
+/* harmony import */ var _CalcElement__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CalcElement */ "./src/typescript/Math/CalcElement.ts");
+/* harmony import */ var _Computation__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Computation */ "./src/typescript/Math/Computation/index.ts");
+/* harmony import */ var _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CalcMatrix2D */ "./src/typescript/Math/CalcMatrix2D.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -768,6 +780,8 @@ function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), 
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
 
 var Calc = /*#__PURE__*/function () {
   function Calc() {
@@ -813,7 +827,7 @@ var Calc = /*#__PURE__*/function () {
     value: function exec(module, kernel) {
       var async = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
       try {
-        var device = (0,_Computation__WEBPACK_IMPORTED_MODULE_0__.getDevice)();
+        var device = (0,_Computation__WEBPACK_IMPORTED_MODULE_1__.getDevice)();
         var m = device.loadModule(module);
         var fn = m.loadFunction(kernel);
         return function () {
@@ -834,6 +848,181 @@ var Calc = /*#__PURE__*/function () {
     key: "get",
     value: function get() {
       return new Calc();
+    }
+  }, {
+    key: "instance",
+    value: function instance(fn) {
+      var props = {
+        clone: function clone(m) {
+          return m.clone();
+        },
+        newInstance: function newInstance() {
+          var width = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+          var height = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(width, height).allocate();
+          return result;
+        },
+        forwardPropagation: function forwardPropagation(input, W, b) {
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(W.rows(), input.cols()).allocate();
+          new Calc().exec("algebra", "algebra_forward_propagation", false)([W, input, b, result]);
+          return result;
+        },
+        sum: function sum(m) {
+          var result = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([0]);
+          new Calc().exec("algebra", "algebra_sum", false)([m, result]);
+          return result;
+        },
+        pow: function pow(m, _pow) {
+          new Calc().exec("algebra", "algebra_pow", false)([m, new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([_pow])]);
+          return m;
+        },
+        setZeros: function setZeros(m) {
+          new Calc().exec("matrix", "matrix_set_zeros", false)([m]);
+          return m;
+        },
+        setRandom: function setRandom(m, number) {
+          var nb = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([number]);
+          new Calc().exec("matrix", "matrix_set_random", false)([m, nb]);
+          return m;
+        },
+        add: function add(m, n) {
+          if (typeof n === "number") {
+            var num = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([n]);
+            new Calc().exec("algebra", "algebra_add_number", false)([m, num]);
+            return m;
+          } else {
+            if (m.rows() !== n.rows() || m.cols() !== n.cols()) {
+              throw new Error("Add - dimension error");
+            }
+            new Calc().exec("algebra", "algebra_add_matrix", false)([m, n]);
+            return m;
+          }
+        },
+        leakyRelu: function leakyRelu(m, alpha) {
+          new Calc().exec("algebra", "algebra_leaky_relu", false)([m, new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([alpha])]);
+          return m;
+        },
+        leakyReluBackPropagation: function leakyReluBackPropagation(m, alpha) {
+          new Calc().exec("algebra", "algebra_leaky_reluBackpropagation", false)([m, new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([alpha])]);
+          return m;
+        },
+        subtract: function subtract(m, num) {
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(m.rows(), m.cols()).allocate();
+          new Calc().exec("algebra", "algebra_subtract", false)([m, num, result]);
+          return result;
+        },
+        multiply: function multiply(m, n) {
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(m.rows(), m.cols()).allocate();
+          if (typeof n === "number") {
+            var _n = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([n]);
+            new Calc().exec("algebra", "algebra_multiply_number", false)([m, _n, result]);
+          } else {
+            if (m.rows() !== n.rows() || m.cols() !== n.cols()) {
+              throw new Error("Multiply - dimension error");
+            }
+            new Calc().exec("algebra", "algebra_multiply", false)([m, n, result]);
+          }
+          return result;
+        },
+        rowwiseSum: function rowwiseSum(m) {
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(m.rows(), 1).allocate();
+          new Calc().exec("algebra", "algebra_rowwise_sum", false)([m, result]);
+          return result;
+        },
+        transpose: function transpose(m) {
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(m.cols(), m.rows()).allocate();
+          new Calc().exec("matrix", "matrix_transpose", false)([m, result]);
+          return result;
+        },
+        divide: function divide(m, nOrNumber) {
+          if (typeof nOrNumber === "number") {
+            var num = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([nOrNumber]);
+            new Calc().exec("algebra", "algebra_divide_number", false)([m, num]);
+            return m;
+          } else {
+            if (m.rows() !== nOrNumber.rows() || m.cols() !== nOrNumber.cols()) {
+              throw new Error("Divide - dimension error");
+            }
+            new Calc().exec("algebra", "algebra_divide_matrix", false)([m, nOrNumber]);
+            return m;
+          }
+        },
+        dot: function dot(m, n) {
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(m.rows(), n.cols()).allocate();
+          new Calc().exec("algebra", "algebra_dot", false)([m, n, result]);
+          return result;
+        },
+        softmax: function softmax(m) {
+          new Calc().exec("algebra", "algebra_softmax", false)([m]);
+          return m;
+        },
+        row: function row(m, index) {
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(1, m.cols()).allocate();
+          new Calc().exec("matrix", "matrix_row", false)([m, new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set(new Float64Array([index])), result]);
+          return result;
+        },
+        col: function col(m, index) {
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(m.rows(), 1).allocate();
+          new Calc().exec("matrix", "matrix_col", false)([m, new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set(new Float64Array([index])), result]);
+          return result;
+        },
+        maxCoeff: function maxCoeff(m) {
+          var result = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate();
+          new Calc().exec("algebra", "algebra_max_coeff", false)([m, result]);
+          return result;
+        },
+        block: function block(m, rowOffset, colOffset, numRows, numCols) {
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(numRows, numCols).allocate();
+          var _rowOffset = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([rowOffset]);
+          var _colOffset = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([colOffset]);
+          var _numRows = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([numRows]);
+          var _numCols = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([numCols]);
+          new Calc().exec("matrix", "matrix_block", false)([m, _rowOffset, _colOffset, _numRows, _numCols, result]);
+          return result;
+        },
+        crossEntropyLoss: function crossEntropyLoss(correctOutput, predictions, epsilon) {
+          var _epsilon = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([epsilon]);
+          var result = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate();
+          new Calc().exec("algebra", "algebra_cross_entropy_loss", false)([correctOutput, predictions, _epsilon], [result]);
+          return result;
+        },
+        adamOptimize: function adamOptimize(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t) {
+          // Allocate memory for the results
+          var updatedW = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(W.rows(), W.cols()).allocate();
+          var updatedB = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(b.rows(), b.cols()).allocate();
+          var updatedVW = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(vW.rows(), vW.cols()).allocate();
+          var updatedVB = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(vb.rows(), vb.cols()).allocate();
+          var updatedSW = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(sW.rows(), sW.cols()).allocate();
+          var updatedSB = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(sb.rows(), sb.cols()).allocate();
+
+          // Create CalcScalar instances for numbers
+          var _learningRate = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([learningRate]);
+          var _beta1 = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([beta1]);
+          var _beta2 = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([beta2]);
+          var _epsilon = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([epsilon]);
+          var _t = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([t]);
+
+          // Call the C++ function
+          new Calc().exec("algebra", "algebra_adam_optimize", false)([W, b, gW, gb, vW, vb, sW, sb, _learningRate, _beta1, _beta2, _epsilon, _t],
+          // Inputs
+          [updatedW, updatedB, updatedVW, updatedVB, updatedSW, updatedSB] // Outputs
+          );
+          return [updatedW, updatedB, updatedVW, updatedVB, updatedSW, updatedSB];
+        },
+        setMin: function setMin(m, number) {
+          var nb = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([number]);
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(m.rows(), m.cols()).allocate();
+          new Calc().exec("matrix", "matrix_set_min", false)([m, nb, result]);
+          return result;
+        },
+        setMax: function setMax(m, number) {
+          var nb = new _CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcScalar().allocate().set([number]);
+          var result = new _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_2__.CalcMatrix2D(m.rows(), m.cols()).allocate();
+          new Calc().exec("matrix", "matrix_set_max", false)([m, nb, result]);
+          return result;
+        }
+      };
+      return fn(props);
     }
   }]);
 }();
@@ -898,12 +1087,18 @@ var CalcColVector = /*#__PURE__*/function (_CalcElement) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   CalcElement: () => (/* binding */ CalcElement)
+/* harmony export */   CalcElement: () => (/* binding */ CalcElement),
+/* harmony export */   CalcScalar: () => (/* binding */ CalcScalar)
 /* harmony export */ });
 /* harmony import */ var _Computation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Computation */ "./src/typescript/Math/Computation/index.ts");
-/* harmony import */ var _CalcScalar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CalcScalar */ "./src/typescript/Math/CalcScalar.ts");
-/* harmony import */ var _Calc__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Calc */ "./src/typescript/Math/Calc.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -916,8 +1111,6 @@ function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), 
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-
-
 
 var CalcElement = /*#__PURE__*/function () {
   function CalcElement() {
@@ -1020,116 +1213,10 @@ var CalcElement = /*#__PURE__*/function () {
       return false;
     }
   }, {
-    key: "setZeros",
-    value: function setZeros() {
-      return this.calcSync(function (calc) {
-        return calc.setZeros();
-      });
-    }
-  }, {
-    key: "setRandom",
-    value: function setRandom(number) {
-      return this.calcSync(function (calc) {
-        return calc.setRandom(number);
-      });
-    }
-  }, {
-    key: "setMax",
-    value: function setMax(number) {
-      return this.calcSync(function (calc) {
-        return calc.setMax(number);
-      });
-    }
-  }, {
-    key: "setMin",
-    value: function setMin(number) {
-      return this.calcSync(function (calc) {
-        return calc.setMin(number);
-      });
-    }
-  }, {
-    key: "reluBackpropagation",
-    value: function reluBackpropagation() {
-      return this.calcSync(function (calc) {
-        return calc.reluBackpropagation();
-      });
-    }
-  }, {
-    key: "pow",
-    value: function pow(number) {
-      return this.calcSync(function (calc) {
-        return calc.pow(number);
-      });
-    }
-  }, {
-    key: "sum",
-    value: function sum() {
-      return this.calcSync(function (calc) {
-        return calc.sum();
-      });
-    }
-  }, {
-    key: "reluForwardPropagation",
-    value: function reluForwardPropagation() {
-      return this.calcSync(function (calc) {
-        return calc.reluForwardPropagation();
-      });
-    }
-  }, {
     key: "getCalcSandbox",
     value: function getCalcSandbox() {
-      var _this = this;
       var async = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      return {
-        sum: function sum() {
-          var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_1__.CalcScalar().allocate();
-          return _this._call("algebra", "algebra_sum", async)([_this, result])(result);
-        },
-        setZeros: function setZeros() {
-          return _this._call("matrix", "matrix_set_zeros", async)([_this])(_this);
-        },
-        setRandom: function setRandom(number) {
-          var nb = new _CalcScalar__WEBPACK_IMPORTED_MODULE_1__.CalcScalar().allocate().set([number]);
-          return _this._call("matrix", "matrix_set_random", async)([_this, nb])(_this);
-        }
-      };
-    }
-  }, {
-    key: "_call",
-    value: function _call(module, kernel, async) {
-      return function (params, result) {
-        var calc = _Calc__WEBPACK_IMPORTED_MODULE_2__.Calc.get().setResult(result).setParams(params);
-        return function (result) {
-          if (async) {
-            return new Promise(function (resolve) {
-              calc.execAsync(module, kernel).then(function () {
-                resolve(result);
-              });
-            });
-          } else {
-            calc.execSync(module, kernel);
-            return result;
-          }
-        };
-      };
-    }
-  }, {
-    key: "calcSync",
-    value: function calcSync(callback) {
-      return callback(this.getCalcSandbox(false));
-    }
-  }, {
-    key: "calcAsync",
-    value: function calcAsync(callback) {
-      var _this2 = this;
-      return new Promise(function (resolve, reject) {
-        try {
-          var result = callback(_this2.getCalcSandbox(true));
-          resolve(result);
-        } catch (e) {
-          reject(e);
-        }
-      });
+      return {};
     }
   }, {
     key: "getMemory",
@@ -1144,16 +1231,16 @@ var CalcElement = /*#__PURE__*/function () {
   }, {
     key: "destroy",
     value: function destroy() {
-      this._memory.free();
-      this._dims = [0, 0, 0];
-      this._allocated = false;
+      if (this._allocated) {
+        this._memory.free();
+        this._dims = [0, 0, 0];
+        this._allocated = false;
+      }
     }
   }, {
     key: "copyFrom",
     value: function copyFrom(other) {
-      if (this._allocated) {
-        this.destroy();
-      }
+      this.destroy();
       this._dims = other.dims();
       this.allocate();
       this._memory.setWidth(other.rows());
@@ -1177,6 +1264,19 @@ var CalcElement = /*#__PURE__*/function () {
     }
   }]);
 }();
+var CalcScalar = /*#__PURE__*/function (_CalcElement2) {
+  function CalcScalar() {
+    _classCallCheck(this, CalcScalar);
+    return _callSuper(this, CalcScalar, [1]);
+  }
+  _inherits(CalcScalar, _CalcElement2);
+  return _createClass(CalcScalar, [{
+    key: "isScalar",
+    value: function isScalar() {
+      return true;
+    }
+  }]);
+}(CalcElement);
 
 /***/ },
 
@@ -1191,13 +1291,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   CalcMatrix2D: () => (/* binding */ CalcMatrix2D)
 /* harmony export */ });
 /* harmony import */ var _CalcElement__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CalcElement */ "./src/typescript/Math/CalcElement.ts");
-/* harmony import */ var _CalcRowVector__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CalcRowVector */ "./src/typescript/Math/CalcRowVector.ts");
-/* harmony import */ var _CalcScalar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CalcScalar */ "./src/typescript/Math/CalcScalar.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _readOnlyError(r) { throw new TypeError('"' + r + '" is read-only'); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -1207,14 +1302,9 @@ function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstruct
 function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
 function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _superPropGet(t, o, e, r) { var p = _get(_getPrototypeOf(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
-function _get() { return _get = "undefined" != typeof Reflect && Reflect.get ? Reflect.get.bind() : function (e, t, r) { var p = _superPropBase(e, t); if (p) { var n = Object.getOwnPropertyDescriptor(p, t); return n.get ? n.get.call(arguments.length < 3 ? e : r) : n.value; } }, _get.apply(null, arguments); }
-function _superPropBase(t, o) { for (; !{}.hasOwnProperty.call(t, o) && null !== (t = _getPrototypeOf(t));); return t; }
 function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
-
-
 
 var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
   function CalcMatrix2D() {
@@ -1229,385 +1319,91 @@ var CalcMatrix2D = /*#__PURE__*/function (_CalcElement) {
     value: function isMatrix2D() {
       return true;
     }
-  }, {
-    key: "row",
-    value: function row(index) {
-      var result = new CalcMatrix2D(1, this.cols()).allocate();
-      return this._call("matrix", "matrix_row", false)([this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set(new Float64Array([index])), result])(result);
-    }
-  }, {
-    key: "col",
-    value: function col(index) {
-      var result = new CalcMatrix2D(this.rows(), 1).allocate();
-      return this._call("matrix", "matrix_col", false)([this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set(new Float64Array([index])), result])(result);
-    }
-  }, {
-    key: "maxCoeff",
-    value: function maxCoeff() {
-      return this.calcSync(function (calc) {
-        return calc.maxCoeff();
-      });
-    }
-  }, {
-    key: "add",
-    value: function add(m) {
-      return this.calcSync(function (calc) {
-        return calc.add(m);
-      });
-    }
-  }, {
-    key: "forwardPropagation",
-    value: function forwardPropagation(w, b) {
-      return this.calcSync(function (calc) {
-        return calc.forwardPropagation(w, b);
-      });
-    }
-  }, {
-    key: "backwardPropagation",
-    value: function backwardPropagation(w, a_prev, regularization, num_examples) {
-      return this.calcSync(function (calc) {
-        return calc.backwardPropagation(w, a_prev, regularization, num_examples);
-      });
-    }
-  }, {
-    key: "transpose",
-    value: function transpose() {
-      return this.calcSync(function (calc) {
-        return calc.transpose();
-      });
-    }
-  }, {
-    key: "logisticForwardPropagation",
-    value: function logisticForwardPropagation() {
-      return this.calcSync(function (calc) {
-        return calc.logisticForwardPropagation();
-      });
-    }
-  }, {
-    key: "logisticBackwardPropagation",
-    value: function logisticBackwardPropagation() {
-      return this.calcSync(function (calc) {
-        return calc.logisticBackwardPropagation();
-      });
-    }
-  }, {
-    key: "pow",
-    value: function pow(number) {
-      return this.calcSync(function (calc) {
-        return calc.pow(number);
-      });
-    }
-  }, {
-    key: "minusOne",
-    value: function minusOne() {
-      return this.calcSync(function (calc) {
-        return calc.minusOne();
-      });
-    }
-  }, {
-    key: "multiply",
-    value: function multiply(number) {
-      return this.calcSync(function (calc) {
-        return calc.multiply(number);
-      });
-    }
-  }, {
-    key: "divide",
-    value: function divide(mOrNumber) {
-      return this.calcSync(function (calc) {
-        return calc.divide(mOrNumber);
-      });
-    }
-  }, {
-    key: "subtract",
-    value: function subtract(m) {
-      return this.calcSync(function (calc) {
-        return calc.subtract(m);
-      });
-    }
-  }, {
-    key: "crossEntropyLoss",
-    value: function crossEntropyLoss(correctOutput, predictions, epsilon) {
-      return this.calcSync(function (calc) {
-        return calc.crossEntropyLoss(correctOutput, predictions, epsilon);
-      });
-    }
-  }, {
-    key: "softmax",
-    value: function softmax() {
-      return this.calcSync(function (calc) {
-        return calc.softmax();
-      });
-    }
-  }, {
-    key: "tanh",
-    value: function tanh() {
-      return this.calcSync(function (calc) {
-        return calc.tanh();
-      });
-    }
-  }, {
-    key: "dot",
-    value: function dot(m) {
-      return this.calcSync(function (calc) {
-        return calc.dot(m);
-      });
-    }
-  }, {
-    key: "rowwiseSum",
-    value: function rowwiseSum() {
-      return this.calcSync(function (calc) {
-        return calc.rowwiseSum();
-      });
-    }
-  }, {
-    key: "tanhDerivative",
-    value: function tanhDerivative() {
-      return this.calcSync(function (calc) {
-        return calc.tanhDerivative();
-      });
-    }
-  }, {
-    key: "block",
-    value: function block(rowOffset, colOffset, numRows, numCols) {
-      return this.calcSync(function (calc) {
-        return calc.block(rowOffset, colOffset, numRows, numCols);
-      });
-    }
-  }, {
-    key: "softmaxDerivative",
-    value: function softmaxDerivative() {
-      return this.calcSync(function (calc) {
-        return calc.softmaxDerivative();
-      });
-    }
-  }, {
-    key: "minMax",
-    value: function minMax() {
-      return this.calcSync(function (calc) {
-        return calc.minMax();
-      });
-    }
 
-    // Static method to run Adam optimizer
-  }, {
-    key: "getCalcSandbox",
-    value: function getCalcSandbox() {
-      var _this = this;
-      var async = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      var baseSandbox = _superPropGet(CalcMatrix2D, "getCalcSandbox", this, 3)([async]);
-      var that = this;
-      return _objectSpread(_objectSpread({}, baseSandbox), {}, {
-        crossEntropyLoss: function crossEntropyLoss(correctOutput, predictions, epsilon) {
-          var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
-          var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
-          return that._call("algebra", "algebra_cross_entropy_loss", async)([correctOutput, predictions, _epsilon], [result])(result);
+    /*protected getCalcSandbox(async = false) {
+      const baseSandbox = super.getCalcSandbox(async);
+      const that = this;
+      return {
+        ...baseSandbox,
+        fraction: (number: number) => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+          return that._call(
+            "algebra",
+            "algebra_fraction",
+            async,
+          )([this, new CalcScalar().allocate().set([number]), result])(result);
         },
-        block: function block(rowOffset, colOffset, numRows, numCols) {
-          var result = new CalcMatrix2D(numRows, numCols).allocate();
-          var _rowOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([rowOffset]);
-          var _colOffset = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([colOffset]);
-          var _numRows = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numRows]);
-          var _numCols = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([numCols]);
-          return that._call("matrix", "matrix_block", async)([that, _rowOffset, _colOffset, _numRows, _numCols, result])(result);
+        sqrt: () => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+          return that._call("algebra", "algebra_sqrt", async)([this, result])(result);
         },
-        forwardPropagation: function forwardPropagation(w, b) {
-          var result = new CalcMatrix2D(w.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_forward_propagation", async)([w, _this, b, result])(result);
+        tanh: () => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+          return that._call("algebra", "algebra_tanh", async)([this, result])(result);
         },
-        backwardPropagation: function backwardPropagation(w, a_prev, regularization, num_examples) {
-          var gW = new CalcMatrix2D(w.rows(), w.cols()).allocate();
-          var gb = new CalcMatrix2D(w.rows(), 1).allocate();
-          var dA_prev = new CalcMatrix2D(a_prev.rows(), a_prev.cols()).allocate();
-          var _regularization = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([regularization]);
-          var _num_examples = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([num_examples]);
-          return that._call("algebra", "algebra_backward_propagation", async)([_this, w, a_prev, _regularization, _num_examples, gW, gb, dA_prev])([gW, gb, dA_prev]);
+        tanhDerivative: () => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+          return that._call("algebra", "algebra_tanh_derivative", async)([this, result])(result);
         },
-        pow: function pow(number) {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_pow", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]), result])(result);
+        softmaxDerivative: () => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+          return that._call("algebra", "algebra_softmax_derivative", async)([this, result])(result);
         },
-        fraction: function fraction(number) {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_fraction", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]), result])(result);
+        rowwiseSum: () => {
+          const result = new CalcMatrix2D(this.rows(), 1).allocate();
+          return that._call("algebra", "algebra_rowwise_sum", async)([this, result])(result);
         },
-        softmax: function softmax() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_softmax", async)([_this, result])(result);
-        },
-        sqrt: function sqrt() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_sqrt", async)([_this, result])(result);
-        },
-        tanh: function tanh() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_tanh", async)([_this, result])(result);
-        },
-        tanhDerivative: function tanhDerivative() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_tanh_derivative", async)([_this, result])(result);
-        },
-        softmaxDerivative: function softmaxDerivative() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_softmax_derivative", async)([_this, result])(result);
-        },
-        rowwiseSum: function rowwiseSum() {
-          var result = new CalcMatrix2D(_this.rows(), 1).allocate();
-          return that._call("algebra", "algebra_rowwise_sum", async)([_this, result])(result);
-        },
-        multiply: function multiply(m) {
+        multiply: (m: CalcMatrix2D | number) => {
           if (typeof m === "number") {
-            var _m = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([m]);
-            var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-            return that._call("algebra", "algebra_multiply_number", async)([_this, _m, result])(result);
+            const _m = new CalcScalar().allocate().set([m]);
+            const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+            return that._call("algebra", "algebra_multiply_number", async)([this, _m, result])(result);
           } else {
-            var _result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-            return that._call("algebra", "algebra_multiply", async)([_this, m, _result])(_result);
+            const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+            return that._call("algebra", "algebra_multiply", async)([this, m, result])(result);
           }
         },
-        log: function log() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_log", async)([_this, result])(result);
+        log: () => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+          return that._call("algebra", "algebra_log", async)([this, result])(result);
         },
-        divide: function divide(mOrNumber) {
-          if (typeof mOrNumber === "number") {
-            var num = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([mOrNumber]);
-            var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-            return that._call("algebra", "algebra_divide_number", async)([_this, num, result])(result);
-          } else {
-            var _result2 = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-            return that._call("algebra", "algebra_divide_matrix", async)([_this, mOrNumber, _result2])(_result2);
-          }
+        minusOne: () => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate(); // Corrected dimensions for dot product result
+          return that._call("algebra", "algebra_minus_one", async)([this, result])(result);
         },
-        dot: function dot(m) {
-          var result = new CalcMatrix2D(_this.rows(), m.cols()).allocate();
-          return that._call("algebra", "algebra_dot", async)([_this, m, result])(result);
+        logisticForwardPropagation: () => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+          return that._call("algebra", "algebra_logistic_forward_propagation", async)([this, result])(result);
         },
-        add: function add(m) {
-          if (typeof m === "number") {
-            var num = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([m]);
-            var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
-            return that._call("algebra", "algebra_add_number", async)([_this, num, result])(result);
-          } else {
-            var _result3 = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
-            return that._call("algebra", "algebra_add_matrix", async)([_this, m, _result3])(_result3);
-          }
+        logisticBackwardPropagation: () => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+          return that._call("algebra", "algebra_logistic_backward_propagation", async)([this, result])(result);
         },
-        subtract: function subtract(m) {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
-          return that._call("algebra", "algebra_subtract", async)([_this, m, result])(result);
+        min: () => {
+          const result = new CalcScalar().allocate();
+          return that._call("matrix", "matrix_min", async)([this, result])(result);
         },
-        transpose: function transpose() {
-          var result = new CalcMatrix2D(_this.cols(), _this.rows()).allocate(); // Corrected dimensions for dot product result
-          return that._call("matrix", "matrix_transpose", async)([_this, result])(result);
+        max: () => {
+          const result = new CalcScalar().allocate();
+          return that._call("matrix", "matrix_max", async)([this, result])(result);
         },
-        logMinusOne: function logMinusOne() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
-          return that._call("algebra", "algebra_log_minus_one", async)([_this, result])(result);
+        minMax: () => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+          return that._call("algebra", "algebra_min_max", async)([this, result])(result);
         },
-        minusOne: function minusOne() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate(); // Corrected dimensions for dot product result
-          return that._call("algebra", "algebra_minus_one", async)([_this, result])(result);
+        img2col: (filterSize, stride, padding) => {
+          const result = new CalcMatrix2D(this.rows(), this.cols()).allocate();
+          const params = new CalcRowVector(3).allocate().set([filterSize, stride, padding]);
+          return that._call("algebra", "algebra_img2col", async)([this, params, result])(result);
         },
-        logisticForwardPropagation: function logisticForwardPropagation() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_logistic_forward_propagation", async)([_this, result])(result);
-        },
-        conjugate: function conjugate() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_conjugate", async)([_this, result])(result);
-        },
-        logisticBackwardPropagation: function logisticBackwardPropagation() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_logistic_backward_propagation", async)([_this, result])(result);
-        },
-        leakyRelu: function leakyRelu(alpha) {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_leaky_relu", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([alpha]), result])(result);
-        },
-        leakyReluBackpropagation: function leakyReluBackpropagation(alpha) {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_leaky_reluBackpropagation", async)([_this, new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([alpha]), result])(result);
-        },
-        maxCoeff: function maxCoeff() {
-          var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
-          return that._call("algebra", "algebra_max_coeff", async)([_this, result])(result);
-        },
-        setMin: function setMin(number) {
-          var nb = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]);
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("matrix", "matrix_set_min", async)([_this, nb, result])(result);
-        },
-        setMax: function setMax(number) {
-          var nb = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([number]);
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("matrix", "matrix_set_max", async)([_this, nb, result])(result);
-        },
-        min: function min() {
-          var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
-          return that._call("matrix", "matrix_min", async)([_this, result])(result);
-        },
-        max: function max() {
-          var result = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate();
-          return that._call("matrix", "matrix_max", async)([_this, result])(result);
-        },
-        minMax: function minMax() {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          return that._call("algebra", "algebra_min_max", async)([_this, result])(result);
-        },
-        img2col: function img2col(filterSize, stride, padding) {
-          var result = new CalcMatrix2D(_this.rows(), _this.cols()).allocate();
-          var params = new _CalcRowVector__WEBPACK_IMPORTED_MODULE_1__.CalcRowVector(3).allocate().set([filterSize, stride, padding]);
-          return that._call("algebra", "algebra_img2col", async)([_this, params, result])(result);
-        },
-        adamOptimize: function adamOptimize(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t) {
-          // Allocate memory for the results
-          var updatedW = new CalcMatrix2D(W.rows(), W.cols()).allocate();
-          var updatedB = new CalcMatrix2D(b.rows(), b.cols()).allocate();
-          var updatedVW = new CalcMatrix2D(vW.rows(), vW.cols()).allocate();
-          var updatedVB = new CalcMatrix2D(vb.rows(), vb.cols()).allocate();
-          var updatedSW = new CalcMatrix2D(sW.rows(), sW.cols()).allocate();
-          var updatedSB = new CalcMatrix2D(sb.rows(), sb.cols()).allocate();
-
-          // Create CalcScalar instances for numbers
-          var _learningRate = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([learningRate]);
-          var _beta1 = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([beta1]);
-          var _beta2 = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([beta2]);
-          var _epsilon = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([epsilon]);
-          var _t = new _CalcScalar__WEBPACK_IMPORTED_MODULE_2__.CalcScalar().allocate().set([t]);
-
-          // Call the C++ function
-          return that._call("algebra", "algebra_adam_optimize", async)([W, b, gW, gb, vW, vb, sW, sb, _learningRate, _beta1, _beta2, _epsilon, _t],
-          // Inputs
-          [updatedW, updatedB, updatedVW, updatedVB, updatedSW, updatedSB] // Outputs
-          )({
-            // Return object mapping
-            W: updatedW,
-            b: updatedB,
-            vW: updatedVW,
-            vb: updatedVB,
-            sW: updatedSW,
-            sb: updatedSB
-          });
-        }
-      });
-    }
+      };
+    }*/
   }, {
     key: "clone",
     value: function clone() {
       var clone = new CalcMatrix2D(this.rows(), this.cols());
       clone.copyFrom(this);
       return clone;
-    }
-  }], [{
-    key: "runAdamOptimizer",
-    value: function runAdamOptimizer(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t) {
-      // Create a dummy CalcMatrix2D instance to access calcSync
-      var dummy = new CalcMatrix2D(1, 1);
-      return dummy.calcSync(function (calc) {
-        // Call the sandbox version of adamOptimize
-        return calc.adamOptimize(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t);
-      });
     }
   }]);
 }(_CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcElement);
@@ -1708,47 +1504,6 @@ var CalcRowVector = /*#__PURE__*/function (_CalcElement) {
 
 /***/ },
 
-/***/ "./src/typescript/Math/CalcScalar.ts"
-/*!*******************************************!*\
-  !*** ./src/typescript/Math/CalcScalar.ts ***!
-  \*******************************************/
-(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   CalcScalar: () => (/* binding */ CalcScalar)
-/* harmony export */ });
-/* harmony import */ var _CalcElement__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CalcElement */ "./src/typescript/Math/CalcElement.ts");
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
-function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
-function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
-function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
-function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
-
-var CalcScalar = /*#__PURE__*/function (_CalcElement) {
-  function CalcScalar() {
-    _classCallCheck(this, CalcScalar);
-    return _callSuper(this, CalcScalar, [1]);
-  }
-  _inherits(CalcScalar, _CalcElement);
-  return _createClass(CalcScalar, [{
-    key: "isScalar",
-    value: function isScalar() {
-      return true;
-    }
-  }]);
-}(_CalcElement__WEBPACK_IMPORTED_MODULE_0__.CalcElement);
-
-/***/ },
-
 /***/ "./src/typescript/Math/Computation/index.ts"
 /*!**************************************************!*\
   !*** ./src/typescript/Math/Computation/index.ts ***!
@@ -1806,12 +1561,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   CalcMatrix2D: () => (/* reexport safe */ _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_4__.CalcMatrix2D),
 /* harmony export */   CalcMatrix3D: () => (/* reexport safe */ _CalcMatrix3D__WEBPACK_IMPORTED_MODULE_5__.CalcMatrix3D),
 /* harmony export */   CalcRowVector: () => (/* reexport safe */ _CalcRowVector__WEBPACK_IMPORTED_MODULE_3__.CalcRowVector),
-/* harmony export */   CalcScalar: () => (/* reexport safe */ _CalcScalar__WEBPACK_IMPORTED_MODULE_1__.CalcScalar),
+/* harmony export */   CalcScalar: () => (/* reexport safe */ _CalcElement__WEBPACK_IMPORTED_MODULE_1__.CalcScalar),
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
 /* harmony export */   round: () => (/* binding */ round)
 /* harmony export */ });
 /* harmony import */ var _Calc__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Calc */ "./src/typescript/Math/Calc.ts");
-/* harmony import */ var _CalcScalar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CalcScalar */ "./src/typescript/Math/CalcScalar.ts");
+/* harmony import */ var _CalcElement__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CalcElement */ "./src/typescript/Math/CalcElement.ts");
 /* harmony import */ var _CalcColVector__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CalcColVector */ "./src/typescript/Math/CalcColVector.ts");
 /* harmony import */ var _CalcRowVector__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./CalcRowVector */ "./src/typescript/Math/CalcRowVector.ts");
 /* harmony import */ var _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./CalcMatrix2D */ "./src/typescript/Math/CalcMatrix2D.ts");
@@ -1828,7 +1583,7 @@ var round = function round(num, decimalPlaces) {
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   Calc: _Calc__WEBPACK_IMPORTED_MODULE_0__.Calc,
-  CalcScalar: _CalcScalar__WEBPACK_IMPORTED_MODULE_1__.CalcScalar,
+  CalcScalar: _CalcElement__WEBPACK_IMPORTED_MODULE_1__.CalcScalar,
   CalcMatrix2D: _CalcMatrix2D__WEBPACK_IMPORTED_MODULE_4__.CalcMatrix2D,
   CalcColVector: _CalcColVector__WEBPACK_IMPORTED_MODULE_2__.CalcColVector,
   CalcRowVector: _CalcRowVector__WEBPACK_IMPORTED_MODULE_3__.CalcRowVector,
@@ -2292,30 +2047,44 @@ var AbstractLayer1D = /*#__PURE__*/function (_AbstractLayer) {
   return _createClass(AbstractLayer1D, [{
     key: "configure",
     value: function configure() {
+      var _this2 = this;
       this.W.resize(this.getHeight(), this.getWidth());
-      this.W.setRandom(Math.sqrt(6 / this.getWidth()));
-      this.b.resize(this.getHeight(), 1).setZeros().add(1.0);
+      this.b.resize(this.getHeight(), 1);
       this.gW.resize(this.getHeight(), this.getWidth());
-      this.gW.setZeros();
       this.gb.resize(this.getHeight(), 1);
-      this.gb.setZeros();
       this.sW.resize(this.getHeight(), this.getWidth());
-      this.sW.setZeros();
       this.sb.resize(this.getHeight(), 1);
-      this.sb.setZeros();
       this.vW.resize(this.getHeight(), this.getWidth());
-      this.vW.setZeros();
       this.vb.resize(this.getHeight(), 1);
-      this.vb.setZeros();
       this.dW.resize(this.getHeight(), this.getWidth());
-      this.dW.setZeros();
       this.db.resize(this.getHeight(), 1);
-      this.db.setZeros();
+      _Math__WEBPACK_IMPORTED_MODULE_1__.Calc.instance(function (_ref) {
+        var setZeros = _ref.setZeros,
+          setRandom = _ref.setRandom,
+          add = _ref.add;
+        setRandom(_this2.W, Math.sqrt(6) / _this2.getWidth());
+        setZeros(_this2.b);
+        add(_this2.b, 1.0);
+        setZeros(_this2.gW);
+        setZeros(_this2.gb);
+        setZeros(_this2.sW);
+        setZeros(_this2.sb);
+        setZeros(_this2.vW);
+        setZeros(_this2.vb);
+        setZeros(_this2.dW);
+        setZeros(_this2.db);
+      });
     }
   }, {
     key: "forward",
     value: function forward(input) {
-      this.Z = input.forwardPropagation(this.W, this.b);
+      var _this3 = this;
+      this.Z.destroy();
+      this.A.destroy();
+      this.Z = _Math__WEBPACK_IMPORTED_MODULE_1__.Calc.instance(function (_ref2) {
+        var forwardPropagation = _ref2.forwardPropagation;
+        return forwardPropagation(input, _this3.W, _this3.b);
+      });
       this.A = this.activation(this.Z);
       return this.A;
     }
@@ -2369,7 +2138,16 @@ var AbstractLayer1D = /*#__PURE__*/function (_AbstractLayer) {
   }, {
     key: "penalty",
     value: function penalty() {
-      return this.W.pow(2).sum();
+      var _this4 = this;
+      return _Math__WEBPACK_IMPORTED_MODULE_1__.Calc.instance(function (_ref3) {
+        var pow = _ref3.pow,
+          sum = _ref3.sum,
+          clone = _ref3.clone;
+        var powered = pow(clone(_this4.W), 2);
+        var result = sum(powered);
+        powered.destroy();
+        return result;
+      });
     }
   }]);
 }(_AbstractLayer__WEBPACK_IMPORTED_MODULE_0__.AbstractLayer);
@@ -2415,6 +2193,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   Backpropagation1Dto1D: () => (/* binding */ Backpropagation1Dto1D)
 /* harmony export */ });
 /* harmony import */ var _AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractBackpropagation */ "./src/typescript/Network/Layer/Backpropagation/AbstractBackpropagation.ts");
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Math */ "./src/typescript/Math/index.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -2429,6 +2208,7 @@ function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? O
 function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
+
 var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
   function Backpropagation1Dto1D() {
     _classCallCheck(this, Backpropagation1Dto1D);
@@ -2439,17 +2219,25 @@ var Backpropagation1Dto1D = /*#__PURE__*/function (_AbstractBackPropagat) {
     key: "propagate",
     value: function propagate(input, numberOfExamples, layer, sigma, isLastLayer) {
       var previousActivations = this.previousLayer !== null ? this.previousLayer.A : input;
-      var dZ;
-      if (isLastLayer) {
-        dZ = layer.A.subtract(sigma);
-      } else {
-        dZ = sigma.multiply(layer.derivative(layer.Z));
-      }
-      layer.gW.replace(dZ.dot(previousActivations.transpose()).divide(numberOfExamples));
-      layer.gb.replace(dZ.rowwiseSum().divide(numberOfExamples));
-      var dA_prev = layer.W.transpose().dot(dZ);
-      dZ.destroy();
-      return dA_prev;
+      return _Math__WEBPACK_IMPORTED_MODULE_1__.Calc.instance(function (_ref) {
+        var subtract = _ref.subtract,
+          multiply = _ref.multiply,
+          dot = _ref.dot,
+          transpose = _ref.transpose,
+          divide = _ref.divide,
+          rowwiseSum = _ref.rowwiseSum;
+        var dZ;
+        if (isLastLayer) {
+          dZ = subtract(layer.A, sigma);
+        } else {
+          dZ = multiply(sigma, layer.derivative(layer.Z));
+        }
+        layer.gW.replace(divide(dot(dZ, transpose(previousActivations)), numberOfExamples));
+        layer.gb.replace(divide(rowwiseSum(dZ), numberOfExamples));
+        var dA_prev = dot(transpose(layer.W), dZ);
+        dZ.destroy();
+        return dA_prev;
+      });
     }
   }]);
 }(_AbstractBackpropagation__WEBPACK_IMPORTED_MODULE_0__.AbstractBackPropagation);
@@ -2846,8 +2634,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ReluLayer: () => (/* binding */ ReluLayer)
 /* harmony export */ });
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types */ "./src/typescript/types.ts");
-/* harmony import */ var _AbstractLayer1D__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AbstractLayer1D */ "./src/typescript/Network/Layer/AbstractLayer1D.ts");
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../Math */ "./src/typescript/Math/index.ts");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types */ "./src/typescript/types.ts");
+/* harmony import */ var _AbstractLayer1D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AbstractLayer1D */ "./src/typescript/Network/Layer/AbstractLayer1D.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -2864,6 +2653,7 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
+
 var ReluLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   function ReluLayer() {
     var _this;
@@ -2878,27 +2668,30 @@ var ReluLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   _inherits(ReluLayer, _AbstractLayer1D);
   return _createClass(ReluLayer, [{
     key: "activation",
-    value: function activation(m) {
-      var _this2 = this;
-      return m.calcSync(function (calc) {
-        return calc.leakyRelu(_this2.alpha);
+    value: function activation(Z) {
+      return _Math__WEBPACK_IMPORTED_MODULE_0__.Calc.instance(function (_ref) {
+        var leakyRelu = _ref.leakyRelu,
+          clone = _ref.clone;
+        return leakyRelu(clone(Z));
       });
     }
   }, {
     key: "getType",
     value: function getType() {
-      return _types__WEBPACK_IMPORTED_MODULE_0__.LayerType.relu;
+      return _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.relu;
     }
   }, {
     key: "derivative",
     value: function derivative(delta) {
-      var _this3 = this;
-      return delta.calcSync(function (calc) {
-        return calc.leakyReluBackpropagation(_this3.alpha);
+      var _this2 = this;
+      return _Math__WEBPACK_IMPORTED_MODULE_0__.Calc.instance(function (_ref2) {
+        var leakyReluBackPropagation = _ref2.leakyReluBackPropagation,
+          clone = _ref2.clone;
+        return leakyReluBackPropagation(clone(delta), _this2.alpha);
       });
     }
   }]);
-}(_AbstractLayer1D__WEBPACK_IMPORTED_MODULE_1__.AbstractLayer1D);
+}(_AbstractLayer1D__WEBPACK_IMPORTED_MODULE_2__.AbstractLayer1D);
 
 
 /***/ },
@@ -2913,8 +2706,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   SoftmaxLayer: () => (/* binding */ SoftmaxLayer)
 /* harmony export */ });
-/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../types */ "./src/typescript/types.ts");
-/* harmony import */ var _AbstractLayer1D__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AbstractLayer1D */ "./src/typescript/Network/Layer/AbstractLayer1D.ts");
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../Math */ "./src/typescript/Math/index.ts");
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../types */ "./src/typescript/types.ts");
+/* harmony import */ var _AbstractLayer1D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AbstractLayer1D */ "./src/typescript/Network/Layer/AbstractLayer1D.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -2930,6 +2724,7 @@ function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new T
 function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 
 
+
 var SoftmaxLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   function SoftmaxLayer() {
     _classCallCheck(this, SoftmaxLayer);
@@ -2938,13 +2733,17 @@ var SoftmaxLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   _inherits(SoftmaxLayer, _AbstractLayer1D);
   return _createClass(SoftmaxLayer, [{
     key: "activation",
-    value: function activation(m) {
-      return m.softmax();
+    value: function activation(Z) {
+      return _Math__WEBPACK_IMPORTED_MODULE_0__.Calc.instance(function (_ref) {
+        var softmax = _ref.softmax,
+          clone = _ref.clone;
+        return softmax(clone(Z));
+      });
     }
   }, {
     key: "getType",
     value: function getType() {
-      return _types__WEBPACK_IMPORTED_MODULE_0__.LayerType.softmax;
+      return _types__WEBPACK_IMPORTED_MODULE_1__.LayerType.softmax;
     }
   }, {
     key: "derivative",
@@ -2954,7 +2753,7 @@ var SoftmaxLayer = /*#__PURE__*/function (_AbstractLayer1D) {
       return delta;
     }
   }]);
-}(_AbstractLayer1D__WEBPACK_IMPORTED_MODULE_1__.AbstractLayer1D);
+}(_AbstractLayer1D__WEBPACK_IMPORTED_MODULE_2__.AbstractLayer1D);
 
 
 /***/ },
@@ -3301,6 +3100,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AbstractTrainer: () => (/* binding */ AbstractTrainer)
 /* harmony export */ });
+/* harmony import */ var _Math__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../Math */ "./src/typescript/Math/index.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -3308,6 +3108,7 @@ function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), 
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
 var AbstractTrainer = /*#__PURE__*/function () {
   function AbstractTrainer(network, optimizer, costFunction) {
     _classCallCheck(this, AbstractTrainer);
@@ -3374,18 +3175,25 @@ var AbstractTrainer = /*#__PURE__*/function () {
         cost += this.regularization / (2 * miniBatchSize) * penalty;
       }
       var correctPredictions = 0;
+      var _loop = function _loop(i) {
+        _Math__WEBPACK_IMPORTED_MODULE_0__.Calc.instance(function (_ref) {
+          var col = _ref.col,
+            maxCoeff = _ref.maxCoeff;
+          var predictionCol = col(predictions, i);
+          var outputCol = col(correctOutput, i);
+          var predictionIndex = maxCoeff(predictionCol);
+          var outputIndex = maxCoeff(outputCol);
+          if (predictionIndex.get()[0] === outputIndex.get()[0]) {
+            correctPredictions++;
+          }
+          predictionCol.destroy();
+          outputCol.destroy();
+          predictionIndex.destroy();
+          outputIndex.destroy();
+        });
+      };
       for (var i = 0; i < miniBatchSize; i += 1) {
-        var predictionCol = predictions.col(i);
-        var outputCol = correctOutput.col(i);
-        var predictionIndex = predictionCol.maxCoeff();
-        var outputIndex = outputCol.maxCoeff();
-        if (predictionIndex.get()[0] === outputIndex.get()[0]) {
-          correctPredictions++;
-        }
-        predictionCol.destroy();
-        outputCol.destroy();
-        predictionIndex.destroy();
-        outputIndex.destroy();
+        _loop(i);
       }
       var accuracy = correctPredictions / miniBatchSize * 100.0;
       return {
@@ -3546,7 +3354,11 @@ var CrossEntropyCost = /*#__PURE__*/function (_AbstractCost) {
   return _createClass(CrossEntropyCost, [{
     key: "loss",
     value: function loss(correctOutput, predictions) {
-      return new _Math__WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D().crossEntropyLoss(correctOutput, predictions, this.epsilon);
+      var _this2 = this;
+      return _Math__WEBPACK_IMPORTED_MODULE_1__.Calc.instance(function (_ref) {
+        var crossEntropyLoss = _ref.crossEntropyLoss;
+        return crossEntropyLoss(correctOutput, predictions, _this2.epsilon);
+      });
     }
   }]);
 }(_AbstractCost__WEBPACK_IMPORTED_MODULE_0__.AbstractCost);
@@ -3718,6 +3530,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _AbstractOptimizer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AbstractOptimizer */ "./src/typescript/Network/Trainer/Optimizer/AbstractOptimizer.ts");
 /* harmony import */ var _Math___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Math/ */ "./src/typescript/Math/index.ts");
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
 function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -3763,13 +3581,23 @@ var OptimizerAdam = /*#__PURE__*/function (_AbstractOptimizer) {
         beta2 = this.beta2,
         epsilon = this.epsilon,
         t = this.t;
-      var updatedMatrices = _Math___WEBPACK_IMPORTED_MODULE_1__.CalcMatrix2D.runAdamOptimizer(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t);
-      layer.W.replace(updatedMatrices.W);
-      layer.b.replace(updatedMatrices.b);
-      layer.vW.replace(updatedMatrices.vW);
-      layer.vb.replace(updatedMatrices.vb);
-      layer.sW.replace(updatedMatrices.sW);
-      layer.sb.replace(updatedMatrices.sb);
+      var _Calc$instance = _Math___WEBPACK_IMPORTED_MODULE_1__.Calc.instance(function (_ref) {
+          var adamOptimize = _ref.adamOptimize;
+          return adamOptimize(W, b, gW, gb, vW, vb, sW, sb, learningRate, beta1, beta2, epsilon, t);
+        }),
+        _Calc$instance2 = _slicedToArray(_Calc$instance, 6),
+        updatedW = _Calc$instance2[0],
+        updatedB = _Calc$instance2[1],
+        updatedVW = _Calc$instance2[2],
+        updatedVB = _Calc$instance2[3],
+        updatedSW = _Calc$instance2[4],
+        updatedSB = _Calc$instance2[5];
+      layer.W.replace(updatedW);
+      layer.b.replace(updatedB);
+      layer.vW.replace(updatedVW);
+      layer.vb.replace(updatedVB);
+      layer.sW.replace(updatedSW);
+      layer.sb.replace(updatedSB);
     }
   }]);
 }(_AbstractOptimizer__WEBPACK_IMPORTED_MODULE_0__.AbstractOptimizer);

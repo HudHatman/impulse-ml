@@ -32,7 +32,6 @@ extern "C" {
     void algebra_tanh_derivative(MEMORY * inputs, MEMORY * outputs);
     void algebra_log_minus_one(MEMORY * inputs, MEMORY * outputs);
     void algebra_sqrt(MEMORY * inputs, MEMORY * outputs);
-    void algebra_softmax_derivative(MEMORY * inputs, MEMORY * outputs);
     void algebra_min(MEMORY * inputs, MEMORY * outputs);
     void algebra_max(MEMORY * inputs, MEMORY * outputs);
     void algebra_min_max(MEMORY * inputs, MEMORY * outputs);

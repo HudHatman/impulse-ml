@@ -1,14 +1,14 @@
-import { CalcMatrix2D } from "../../Math";
+import { Calc, CalcMatrix2D } from "../../Math";
 import { LayerType } from "../../types";
 import { AbstractLayer1D } from "./AbstractLayer1D";
 
 class ReluLayer extends AbstractLayer1D {
   private readonly alpha = 0.01;
 
-  activation(m: CalcMatrix2D): CalcMatrix2D {
-    return m.calcSync((calc) => {
-      return calc.leakyRelu(this.alpha);
-    });
+  activation(Z: CalcMatrix2D): CalcMatrix2D {
+    return Calc.instance(({leakyRelu, clone}) => {
+      return leakyRelu(clone(Z));
+    })
   }
 
   getType(): LayerType {
@@ -16,9 +16,9 @@ class ReluLayer extends AbstractLayer1D {
   }
 
   derivative(delta: CalcMatrix2D) {
-    return delta.calcSync((calc) => {
-      return calc.leakyReluBackpropagation(this.alpha);
-    });
+    return Calc.instance(({leakyReluBackPropagation, clone}) => {
+      return leakyReluBackPropagation(clone(delta), this.alpha);
+    })
   }
 }
 

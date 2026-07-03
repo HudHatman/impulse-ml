@@ -1,6 +1,6 @@
 import { AbstractLayer } from "./AbstractLayer";
 import { Layers } from "../../types";
-import { CalcMatrix2D, CalcScalar } from "../../Math";
+import { Calc, CalcMatrix2D, CalcScalar } from "../../Math";
 
 abstract class AbstractLayer1D extends AbstractLayer {
   protected depth = 1;
@@ -35,39 +35,43 @@ abstract class AbstractLayer1D extends AbstractLayer {
 
   configure(): void {
     this.W.resize(this.getHeight(), this.getWidth());
-
-    this.W.setRandom(Math.sqrt(6 / this.getWidth()));
-
-    this.b.resize(this.getHeight(), 1).setZeros().add(1.0);
-
+    this.b.resize(this.getHeight(), 1)
     this.gW.resize(this.getHeight(), this.getWidth());
-    this.gW.setZeros();
-
     this.gb.resize(this.getHeight(), 1);
-    this.gb.setZeros();
-
     this.sW.resize(this.getHeight(), this.getWidth());
-    this.sW.setZeros();
-
     this.sb.resize(this.getHeight(), 1);
-    this.sb.setZeros();
-
     this.vW.resize(this.getHeight(), this.getWidth());
-    this.vW.setZeros();
-
     this.vb.resize(this.getHeight(), 1);
-    this.vb.setZeros();
-
     this.dW.resize(this.getHeight(), this.getWidth());
-    this.dW.setZeros();
-
     this.db.resize(this.getHeight(), 1);
-    this.db.setZeros();
+
+    Calc.instance(({setZeros, setRandom, add}) => {
+      setRandom(this.W, Math.sqrt(6) / this.getWidth());
+
+      setZeros(this.b);
+      add(this.b, 1.0);
+
+      setZeros(this.gW);
+      setZeros(this.gb);
+      setZeros(this.sW);
+      setZeros(this.sb);
+      setZeros(this.vW);
+      setZeros(this.vb);
+      setZeros(this.dW);
+      setZeros(this.db);
+    })
   }
 
   forward(input: CalcMatrix2D): CalcMatrix2D {
-    this.Z = input.forwardPropagation(this.W, this.b);
+    this.Z.destroy();
+    this.A.destroy();
+
+    this.Z = Calc.instance(({forwardPropagation}) => {
+      return forwardPropagation(input, this.W, this.b);
+    })
+
     this.A = this.activation(this.Z);
+
     return this.A;
   }
   is1D(): boolean {
@@ -113,7 +117,14 @@ abstract class AbstractLayer1D extends AbstractLayer {
   }
 
   penalty(): CalcScalar {
-    return this.W.pow(2).sum();
+    return Calc.instance(({pow, sum, clone}) => {
+      const powered = pow(clone(this.W), 2);
+      const result = sum(powered);
+
+      powered.destroy();
+
+      return result
+    });
   }
 }
 
