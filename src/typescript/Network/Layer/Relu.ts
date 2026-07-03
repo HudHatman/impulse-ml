@@ -7,7 +7,7 @@ class ReluLayer extends AbstractLayer1D {
 
   activation(Z: CalcMatrix2D): CalcMatrix2D {
     return Calc.instance(({leakyRelu, clone}) => {
-      return leakyRelu(clone(Z));
+      return leakyRelu(clone(Z), this.alpha);
     })
   }
 

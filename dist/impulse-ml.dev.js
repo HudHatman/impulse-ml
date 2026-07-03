@@ -2669,10 +2669,11 @@ var ReluLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   return _createClass(ReluLayer, [{
     key: "activation",
     value: function activation(Z) {
+      var _this2 = this;
       return _Math__WEBPACK_IMPORTED_MODULE_0__.Calc.instance(function (_ref) {
         var leakyRelu = _ref.leakyRelu,
           clone = _ref.clone;
-        return leakyRelu(clone(Z));
+        return leakyRelu(clone(Z), _this2.alpha);
       });
     }
   }, {
@@ -2683,11 +2684,11 @@ var ReluLayer = /*#__PURE__*/function (_AbstractLayer1D) {
   }, {
     key: "derivative",
     value: function derivative(delta) {
-      var _this2 = this;
+      var _this3 = this;
       return _Math__WEBPACK_IMPORTED_MODULE_0__.Calc.instance(function (_ref2) {
         var leakyReluBackPropagation = _ref2.leakyReluBackPropagation,
           clone = _ref2.clone;
-        return leakyReluBackPropagation(clone(delta), _this2.alpha);
+        return leakyReluBackPropagation(clone(delta), _this3.alpha);
       });
     }
   }]);

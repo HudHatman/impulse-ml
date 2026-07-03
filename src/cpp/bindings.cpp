@@ -9,8 +9,6 @@
 #include <node_buffer.h>
 #include <node_object_wrap.h>
 
-#define EIGEN_USE_MKL_ALL
-#define EIGEN_USE_THREADS
 #define EIGEN_NO_DEBUG
 //#include <cuda.h>
 //#include <cuda_runtime.h>

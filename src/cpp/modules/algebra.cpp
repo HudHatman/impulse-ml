@@ -1,5 +1,4 @@
-#define EIGEN_USE_THREADS
-#define EIGEN_NO_DEBUG
+//#define EIGEN_NO_DEBUG
 
 #include "algebra.h"
 #include <iostream>
@@ -163,9 +162,8 @@ void algebra_divide_number(MEMORY * inputs, MEMORY * outputs) {
 
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> num(inputs[1].memory, inputs[1].rows, inputs[1].cols);
-    Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
 
-    result = m.array() / num(0, 0);
+    m = m.array() / num(0, 0);
 }
 
 void algebra_divide_matrix(MEMORY * inputs, MEMORY * outputs) {
@@ -173,9 +171,8 @@ void algebra_divide_matrix(MEMORY * inputs, MEMORY * outputs) {
 
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     Eigen::Map<Eigen::MatrixXd> n(inputs[1].memory, inputs[1].rows, inputs[1].cols);
-    Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
 
-    result = m.array() / n.array();
+    m = m.array() / n.array();
 }
 
 void algebra_sum(MEMORY * inputs, MEMORY * outputs) {
@@ -204,9 +201,8 @@ void algebra_leaky_relu(MEMORY * inputs, MEMORY * outputs) {
 
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     double alpha = inputs[1].memory[0];
-    Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
 
-    result = m.unaryExpr([&alpha](const double x) {
+    m = m.unaryExpr([&alpha](const double x) {
         return (x > 0.0) ? x : alpha * x;
     });
 }
@@ -263,9 +259,8 @@ void algebra_add_number(MEMORY * inputs, MEMORY * outputs) {
 
     Eigen::Map<Eigen::MatrixXd> m1(inputs[0].memory, inputs[0].rows, inputs[0].cols);
     double num = inputs[1].memory[0];
-    Eigen::Map<Eigen::MatrixXd> result(inputs[2].memory, inputs[2].rows, inputs[2].cols);
 
-    result = m1.array() + num;
+    m1 = m1.array() + num;
 }
 
 void algebra_logistic_forward_propagation(MEMORY * inputs, MEMORY * outputs) {
@@ -396,12 +391,12 @@ void algebra_softmax(MEMORY * inputs, MEMORY * outputs) {
     init();
 
     Eigen::Map<Eigen::MatrixXd> m(inputs[0].memory, inputs[0].rows, inputs[0].cols);
-    Eigen::Map<Eigen::MatrixXd> tmp;
 
     Eigen::MatrixXd stabilized = m.rowwise() - m.colwise().maxCoeff();
-    tmp = stabilized.array().exp();
-    Eigen::MatrixXd divider = tmp.colwise().sum().replicate(tmp.rows(), 1);
-    m = tmp.array() / divider.array();
+    Eigen::MatrixXd exps = stabilized.array().exp();
+    Eigen::MatrixXd divider = exps.colwise().sum().replicate(exps.rows(), 1);
+
+    m = exps.array() / divider.array();
 }
 
 void algebra_fraction(MEMORY * inputs, MEMORY * outputs) {
