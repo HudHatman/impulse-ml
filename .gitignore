@@ -3,3 +3,4 @@ node_modules/
 .idea/
 build
 data/mnist_train_x.csv
+.kiro
