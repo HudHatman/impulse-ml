@@ -1,4 +1,5 @@
-//#define EIGEN_NO_DEBUG
+#define EIGEN_NO_DEBUG
+#define EIGEN_USE_BLAS
 
 #include "algebra.h"
 #include <iostream>
@@ -19,6 +20,7 @@ static bool initialized = false;
 void init() {
     if (initialized) return;
     initialized = true;
+    Eigen::initParallel();
     omp_set_num_threads(12);
     Eigen::setNbThreads(12);
 }

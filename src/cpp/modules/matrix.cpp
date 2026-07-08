@@ -1,4 +1,5 @@
-//#define EIGEN_NO_DEBUG
+#define EIGEN_NO_DEBUG
+#define EIGEN_USE_BLAS
 
 #include "matrix.h"
 #include <iostream>
